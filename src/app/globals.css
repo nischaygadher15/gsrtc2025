@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #173c62;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  scroll-behavior: smooth;
+}
+
+.myContainer {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 768px) {
+  .myContainer {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .myContainer {
+    padding-left: 75px;
+    padding-right: 75px;
+  }
+}
+
+.hideScrollBar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox, Safari 18.2+, Chromium 121+ */
+}
+.hideScrollBar::-webkit-scrollbar {
+  display: none; /* Older Safari and Chromium */
+}
+
+/* Footer accordinas css */
+#popCitiesAccordian::before {
+  display: none;
+}
+
+#knowYourSeatTypes {
+  border: 1px solid #e6e6e6;
+  border-collapse: collapse;
+}
+
+#knowYourSeatTypes tr {
+  border: 1px solid #e6e6e6;
+}
+
+#knowYourSeatTypes td,
+th {
+  padding: 16px;
+}
