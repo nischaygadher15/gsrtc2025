@@ -340,6 +340,21 @@ const BookTicketDrawer = ({
     ));
   };
 
+  const ScrollElementIntoView = (element: HTMLElement) => {
+    if (BusInfoParentRef.current && element) {
+      const containerTop = BusInfoParentRef.current.getBoundingClientRect().top;
+      const elementTop = element.getBoundingClientRect().top;
+
+      const scrollOffset =
+        elementTop - containerTop + BusInfoParentRef.current.scrollTop - 40;
+
+      BusInfoParentRef.current.scrollTo({
+        top: scrollOffset,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <Drawer
       anchor={"bottom"}
@@ -571,13 +586,7 @@ const BookTicketDrawer = ({
                     ) => {
                       event.preventDefault();
                       let element = document.getElementById("busRoute");
-                      if (BusInfoParentRef.current && element) {
-                        console.log(element.offsetTop, element.scrollHeight);
-                        BusInfoParentRef.current.scrollTo({
-                          top: element.offsetTop - element.scrollHeight + 40,
-                          behavior: "smooth",
-                        });
-                      }
+                      if (element) ScrollElementIntoView(element);
                     }}
                     label="Bus route"
                     disableRipple
@@ -598,13 +607,7 @@ const BookTicketDrawer = ({
                     ) => {
                       event.preventDefault();
                       let element = document.getElementById("boardingPoint");
-                      if (BusInfoParentRef.current && element) {
-                        console.log(element.offsetTop, element.scrollHeight);
-                        BusInfoParentRef.current.scrollTo({
-                          top: element.offsetTop - element.scrollHeight + 40,
-                          behavior: "smooth",
-                        });
-                      }
+                      if (element) ScrollElementIntoView(element);
                     }}
                     label="Boarding point"
                     disableRipple
@@ -625,13 +628,7 @@ const BookTicketDrawer = ({
                     ) => {
                       event.preventDefault();
                       let element = document.getElementById("droppingPoint");
-                      if (BusInfoParentRef.current && element) {
-                        console.log(element.offsetTop, element.scrollHeight);
-                        BusInfoParentRef.current.scrollTo({
-                          top: element.offsetTop - element.scrollHeight + 40,
-                          behavior: "smooth",
-                        });
-                      }
+                      if (element) ScrollElementIntoView(element);
                     }}
                     label="Dropping point"
                     disableRipple
@@ -646,6 +643,14 @@ const BookTicketDrawer = ({
                     }}
                   />
                   <Tab
+                    component="a"
+                    onClick={(
+                      event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+                    ) => {
+                      event.preventDefault();
+                      let element = document.getElementById("restStop");
+                      if (element) ScrollElementIntoView(element);
+                    }}
                     label="Rest stop"
                     disableRipple
                     sx={{
@@ -659,6 +664,14 @@ const BookTicketDrawer = ({
                     }}
                   />
                   <Tab
+                    component="a"
+                    onClick={(
+                      event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+                    ) => {
+                      event.preventDefault();
+                      let element = document.getElementById("amenities");
+                      if (element) ScrollElementIntoView(element);
+                    }}
                     label="Amenities"
                     disableRipple
                     sx={{
@@ -714,7 +727,7 @@ const BookTicketDrawer = ({
                 </div>
 
                 {/* Boarding points */}
-                <div id="boardingPoint">
+                <div id="boardingPoint" className="p-4">
                   <div className="mb-4">
                     <p className="font-bold">Boarding Points</p>
                     <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
@@ -800,7 +813,7 @@ const BookTicketDrawer = ({
                 </div>
 
                 {/* Dropping points */}
-                <div id="droppingPoint">
+                <div id="droppingPoint" className="p-4">
                   <div className="mb-4">
                     <p className="font-bold">Dropping Points</p>
                     <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
