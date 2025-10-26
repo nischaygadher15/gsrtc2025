@@ -70,6 +70,9 @@ import seaterFemale from "@/assets/SeatTypes/imgi_21_seater_fem.svg";
 import bookedSeaterByMale from "@/assets/SeatTypes/imgi_25_seat-male-blocked.webp";
 import bookedSeaterByFemale from "@/assets/SeatTypes/imgi_56_seat-fem-blocked.webp";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import BusStationTimeline from "@/components/common/BusStationTimeline";
+import { FaThumbsUp } from "react-icons/fa";
+import { FaThumbsDown } from "react-icons/fa";
 
 interface ContentsList {
   filterId: string;
@@ -715,9 +718,12 @@ const BookTicketDrawer = ({
 
               <div ref={BusInfoSectionsRef}>
                 {/* Bus Route */}
-                <div className="p-4 border-b border-b-gray-200" id="busRoute">
+                <div
+                  className="px-4 py-6 border-b border-b-gray-200"
+                  id="busRoute"
+                >
                   <div className="mb-4">
-                    <p className="font-bold">Bus route</p>
+                    <p className="font-bold text-xl">Bus route</p>
                     <p className="text-sm text-[#1d1d1da3]">6 hr 40 min</p>
                   </div>
 
@@ -727,175 +733,82 @@ const BookTicketDrawer = ({
                 </div>
 
                 {/* Boarding points */}
-                <div id="boardingPoint" className="p-4">
+                <div
+                  id="boardingPoint"
+                  className="px-4 py-6 border-b border-b-gray-200"
+                >
                   <div className="mb-4">
-                    <p className="font-bold">Boarding Points</p>
+                    <p className="font-bold text-xl">Boarding Points</p>
                     <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
                   </div>
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Earum, optio cupiditate, a iste ex ipsam velit amet harum
-                  repudiandae ratione rerum atque mollitia vel praesentium,
-                  reprehenderit illum. Quaerat, in quisquam. Veniam saepe
-                  praesentium, at eum aperiam minus itaque ad? Possimus,
-                  perspiciatis voluptatibus perferendis minima dolor, corrupti
-                  sequi reiciendis commodi ea eaque aperiam magni excepturi
-                  nulla blanditiis, eos velit voluptatem. Dolores. In itaque
-                  cupiditate fuga. Asperiores ducimus magnam corporis ex
-                  dignissimos quis fuga quia nihil rerum, molestiae nisi quo ad
-                  deleniti et laudantium nemo, vel, iusto cupiditate. Dicta
-                  nihil est eius! Vero totam voluptatem ullam incidunt ipsa esse
-                  dolore sunt, optio dolores, maxime nam repudiandae fugiat
-                  aperiam, possimus laudantium eius. Nulla quae debitis ad
-                  minima odio deleniti quis facilis rerum hic? Maxime a soluta
-                  repudiandae eveniet illo aliquid molestias impedit hic
-                  consequuntur saepe, atque accusamus officia veritatis
-                  consequatur omnis doloremque voluptatem inventore suscipit, ea
-                  odit, pariatur adipisci? Magnam nulla tempora itaque. Nobis
-                  pariatur suscipit soluta repudiandae voluptatum dignissimos
-                  provident a tempora vel amet beatae facere quia, expedita non,
-                  asperiores eius dicta quo hic iusto est aut doloribus. Aperiam
-                  exercitationem vero perspiciatis? Ipsa eveniet libero numquam
-                  soluta deserunt praesentium fugit explicabo unde molestiae
-                  ipsam excepturi corporis qui voluptate, rem iusto delectus!
-                  Dolor soluta, sint consequatur nam eos aperiam aliquam! A,
-                  impedit quo. Quis quam eligendi deserunt nemo culpa vel omnis
-                  fuga ea dolorem natus aliquam expedita eius optio quisquam,
-                  tenetur odio illo blanditiis nesciunt iusto accusamus?
-                  Voluptatem sint praesentium temporibus nulla. Laborum! Amet,
-                  suscipit! Dicta quibusdam temporibus unde blanditiis eligendi
-                  aliquid asperiores vero repellendus, tenetur eveniet suscipit,
-                  aspernatur cumque provident, excepturi soluta quas aut
-                  voluptates cupiditate dolores minus iusto possimus ex. Minus!
-                  Similique doloremque tempore impedit error delectus maiores
-                  accusantium laboriosam numquam pariatur. Iste cumque nihil
-                  unde, ad fugit ratione hic velit ducimus quos minima natus
-                  expedita alias quisquam a soluta adipisci. Et repellat aliquid
-                  suscipit eum excepturi similique, repudiandae sint
-                  exercitationem, recusandae tenetur dolorem accusamus, quo
-                  quaerat! Facilis tenetur maiores officia ut? Consectetur,
-                  quibusdam eius? Alias eos quidem in itaque praesentium.
-                  Eligendi omnis voluptatibus id accusamus odio rerum sed
-                  laborum iusto quis et corrupti consectetur ut inventore enim,
-                  soluta est unde deleniti explicabo laudantium amet, nulla
-                  optio ipsum! Veritatis, atque quisquam. Asperiores, nostrum
-                  suscipit voluptatum ad expedita magni, soluta illo, delectus
-                  temporibus deserunt adipisci optio impedit iure eos quasi quis
-                  officiis laborum minima fugiat numquam aliquid dolor nesciunt!
-                  Perferendis, incidunt similique. Sunt ipsam quasi culpa
-                  explicabo enim, temporibus deleniti veritatis accusamus
-                  consequuntur ea officiis. Corrupti aut, excepturi
-                  necessitatibus tenetur porro omnis placeat est suscipit
-                  laborum molestias ea, nam, asperiores sapiente eos! Veritatis
-                  iste rem quia natus doloribus, asperiores tenetur facere porro
-                  alias explicabo consectetur id dolor reiciendis provident
-                  aspernatur iusto itaque dolore eligendi nobis excepturi. Quae
-                  facilis illum dignissimos explicabo labore! Similique iusto
-                  totam repellendus illo, vel, accusamus laudantium provident
-                  incidunt vitae inventore cum fuga reprehenderit quibusdam
-                  fugiat non aperiam minus nesciunt cumque quae magnam
-                  architecto pariatur, harum sunt! Alias, aperiam. Pariatur nam
-                  perferendis ullam, praesentium dignissimos architecto
-                  asperiores, beatae accusantium vitae recusandae modi
-                  laudantium dolorum id adipisci aspernatur voluptates quia
-                  voluptate libero cumque exercitationem quos totam maiores!
-                  Minima, iusto ipsum! Hic, illum deleniti. Accusamus corrupti
-                  temporibus id beatae et praesentium maxime. Ab minus
-                  consequatur culpa? Eum in culpa vero voluptates ex. Nobis sit
-                  dolore incidunt omnis doloremque illum provident eveniet! Quas
-                  libero placeat ipsa eligendi similique est tempore debitis
-                  minima cupiditate fugiat deserunt provident, sed
-                  exercitationem voluptates nostrum ipsum temporibus. Commodi
-                  nulla repudiandae nostrum laboriosam soluta dolorem voluptatum
-                  dolores in! Repudiandae laudantium qui corporis eos
-                  architecto. Doloribus, quod maxime ipsum voluptatem saepe nam
-                  aspernatur nisi totam doloremque, ex velit molestiae. Dolorum
-                  tempora fuga totam nemo laboriosam. Esse enim rerum sunt.
+
+                  {/* Boarding point timeline */}
+                  <BusStationTimeline />
                 </div>
 
                 {/* Dropping points */}
-                <div id="droppingPoint" className="p-4">
+                <div
+                  id="droppingPoint"
+                  className="px-4 py-6 border-b border-b-gray-200"
+                >
                   <div className="mb-4">
-                    <p className="font-bold">Dropping Points</p>
+                    <p className="font-bold text-xl">Dropping Points</p>
                     <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
                   </div>
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Earum, optio cupiditate, a iste ex ipsam velit amet harum
-                  repudiandae ratione rerum atque mollitia vel praesentium,
-                  reprehenderit illum. Quaerat, in quisquam. Veniam saepe
-                  praesentium, at eum aperiam minus itaque ad? Possimus,
-                  perspiciatis voluptatibus perferendis minima dolor, corrupti
-                  sequi reiciendis commodi ea eaque aperiam magni excepturi
-                  nulla blanditiis, eos velit voluptatem. Dolores. In itaque
-                  cupiditate fuga. Asperiores ducimus magnam corporis ex
-                  dignissimos quis fuga quia nihil rerum, molestiae nisi quo ad
-                  deleniti et laudantium nemo, vel, iusto cupiditate. Dicta
-                  nihil est eius! Vero totam voluptatem ullam incidunt ipsa esse
-                  dolore sunt, optio dolores, maxime nam repudiandae fugiat
-                  aperiam, possimus laudantium eius. Nulla quae debitis ad
-                  minima odio deleniti quis facilis rerum hic? Maxime a soluta
-                  repudiandae eveniet illo aliquid molestias impedit hic
-                  consequuntur saepe, atque accusamus officia veritatis
-                  consequatur omnis doloremque voluptatem inventore suscipit, ea
-                  odit, pariatur adipisci? Magnam nulla tempora itaque. Nobis
-                  pariatur suscipit soluta repudiandae voluptatum dignissimos
-                  provident a tempora vel amet beatae facere quia, expedita non,
-                  asperiores eius dicta quo hic iusto est aut doloribus. Aperiam
-                  exercitationem vero perspiciatis? Ipsa eveniet libero numquam
-                  soluta deserunt praesentium fugit explicabo unde molestiae
-                  ipsam excepturi corporis qui voluptate, rem iusto delectus!
-                  Dolor soluta, sint consequatur nam eos aperiam aliquam! A,
-                  impedit quo. Quis quam eligendi deserunt nemo culpa vel omnis
-                  fuga ea dolorem natus aliquam expedita eius optio quisquam,
-                  tenetur odio illo blanditiis nesciunt iusto accusamus?
-                  Voluptatem sint praesentium temporibus nulla. Laborum! Amet,
-                  suscipit! Dicta quibusdam temporibus unde blanditiis eligendi
-                  aliquid asperiores vero repellendus, tenetur eveniet suscipit,
-                  aspernatur cumque provident, excepturi soluta quas aut
-                  voluptates cupiditate dolores minus iusto possimus ex. Minus!
-                  Similique doloremque tempore impedit error delectus maiores
-                  accusantium laboriosam numquam pariatur. Iste cumque nihil
-                  unde, ad fugit ratione hic velit ducimus quos minima natus
-                  expedita alias quisquam a soluta adipisci. Et repellat aliquid
-                  suscipit eum excepturi similique, repudiandae sint
-                  exercitationem, recusandae tenetur dolorem accusamus, quo
-                  quaerat! Facilis tenetur maiores officia ut? Consectetur,
-                  quibusdam eius? Alias eos quidem in itaque praesentium.
-                  Eligendi omnis voluptatibus id accusamus odio rerum sed
-                  laborum iusto quis et corrupti consectetur ut inventore enim,
-                  soluta est unde deleniti explicabo laudantium amet, nulla
-                  optio ipsum! Veritatis, atque quisquam. Asperiores, nostrum
-                  suscipit voluptatum ad expedita magni, soluta illo, delectus
-                  temporibus deserunt adipisci optio impedit iure eos quasi quis
-                  officiis laborum minima fugiat numquam aliquid dolor nesciunt!
-                  Perferendis, incidunt similique. Sunt ipsam quasi culpa
-                  explicabo enim, temporibus deleniti veritatis accusamus
-                  consequuntur ea officiis. Corrupti aut, excepturi
-                  necessitatibus tenetur porro omnis placeat est suscipit
-                  laborum molestias ea, nam, asperiores sapiente eos! Veritatis
-                  iste rem quia natus doloribus, asperiores tenetur facere porro
-                  alias explicabo consectetur id dolor reiciendis provident
-                  aspernatur iusto itaque dolore eligendi nobis excepturi. Quae
-                  facilis illum dignissimos explicabo labore! Similique iusto
-                  totam repellendus illo, vel, accusamus laudantium provident
-                  incidunt vitae inventore cum fuga reprehenderit quibusdam
-                  fugiat non aperiam minus nesciunt cumque quae magnam
-                  architecto pariatur, harum sunt! Alias, aperiam. Pariatur nam
-                  perferendis ullam, praesentium dignissimos architecto
-                  asperiores, beatae accusantium vitae recusandae modi
-                  laudantium dolorum id adipisci aspernatur voluptates quia
-                  voluptate libero cumque exercitationem quos totam maiores!
-                  Minima, iusto ipsum! Hic, illum deleniti. Accusamus corrupti
-                  temporibus id beatae et praesentium maxime. Ab minus
-                  consequatur culpa? Eum in culpa vero voluptates ex. Nobis sit
-                  dolore incidunt omnis doloremque illum provident eveniet! Quas
-                  libero placeat ipsa eligendi similique est tempore debitis
-                  minima cupiditate fugiat deserunt provident, sed
-                  exercitationem voluptates nostrum ipsum temporibus. Commodi
-                  nulla repudiandae nostrum laboriosam soluta dolorem voluptatum
-                  dolores in! Repudiandae laudantium qui corporis eos
-                  architecto. Doloribus, quod maxime ipsum voluptatem saepe nam
-                  aspernatur nisi totam doloremque, ex velit molestiae. Dolorum
-                  tempora fuga totam nemo laboriosam. Esse enim rerum sunt.
+
+                  {/* Dropping point timeline */}
+                  <BusStationTimeline />
+                </div>
+
+                {/* Rest stops */}
+                <div
+                  id="restStop"
+                  className="px-4 py-6 border-b border-b-gray-200"
+                >
+                  <div className="mb-4">
+                    <p className="font-bold text-xl">Rest stop</p>
+                  </div>
+
+                  <div>
+                    <div className="mb-5">
+                      <p className="font-bold">Hotel Honest</p>
+                      <div className="flex items-center">
+                        <span className="text-[#1d1d1da3] text-sm">
+                          02:15 PM
+                        </span>
+                        <LuDot />
+                        <span className="text-red-500 text-sm">
+                          15 Min stop
+                        </span>
+                      </div>
+                    </div>
+
+                    <ul>
+                      <li>
+                        <p className="text-sm font-semibold mb-4">
+                          Traveler experience
+                        </p>
+                        <div className="flex flex-col gap-2">
+                          <div className="w-auto flex px-2 py-1 rounded-lg items-center gap-x-1 bg-[#adf2b3] mb-2">
+                            <FaThumbsUp className="text-sm" />
+                            <span className="text-xs font-medium">
+                              Food Quality
+                            </span>
+                          </div>
+                          <div className="w-auto flex px-2 py-1 rounded-lg items-center gap-x-1 bg-[#e6e6e6]">
+                            <FaThumbsDown className="text-sm" />
+                            <span className="text-xs font-medium">
+                              Food Quality
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <p className="bg-primary/10 p-4 rounded-lg">
+                    This bus has no rest stop
+                  </p>
                 </div>
               </div>
             </div>
