@@ -45,16 +45,43 @@ body {
   display: none;
 }
 
-#knowYourSeatTypes {
+#knowYourSeatTypes,
+#cancellationTable {
   border: 1px solid #e6e6e6;
   border-collapse: collapse;
 }
 
-#knowYourSeatTypes tr {
+#knowYourSeatTypes tr,
+#cancellationTable tr,
+th,
+td,
+#dateChangePolicyTable tr,
+th,
+td {
   border: 1px solid #e6e6e6;
 }
 
 #knowYourSeatTypes td,
+th,
+#cancellationTable td,
+th,
+#dateChangePolicyTable td,
 th {
   padding: 16px;
+}
+
+#cancellationTable,
+#dateChangePolicyTable {
+  font-size: 14px;
+}
+
+#cancellationTable td,
+#dateChangePolicyTable td {
+  font-weight: 500;
+}
+
+#ratePercentageTable tr,
+th,
+td {
+  border: none;
 }
