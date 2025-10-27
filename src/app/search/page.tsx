@@ -73,6 +73,8 @@ import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import BusStationTimeline from "@/components/common/BusStationTimeline";
 import { FaThumbsUp } from "react-icons/fa";
 import { FaThumbsDown } from "react-icons/fa";
+import { TbBulb } from "react-icons/tb";
+import LinearProgress from "@mui/material/LinearProgress";
 
 interface ContentsList {
   filterId: string;
@@ -788,7 +790,7 @@ const BookTicketDrawer = ({
                         <p className="text-sm font-semibold mb-4">
                           Traveler experience
                         </p>
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
                           <div className="w-auto flex px-2 py-1 rounded-lg items-center gap-x-1 bg-[#adf2b3] mb-2">
                             <FaThumbsUp className="text-sm" />
                             <span className="text-xs font-medium">
@@ -809,6 +811,113 @@ const BookTicketDrawer = ({
                   <p className="bg-primary/10 p-4 rounded-lg">
                     This bus has no rest stop
                   </p>
+                </div>
+
+                {/* Amenities */}
+                <div
+                  id="amenities"
+                  className="px-4 py-6 border-b border-b-gray-200"
+                >
+                  <div className="mb-4">
+                    <p className="font-bold text-xl">2 amenities</p>
+                  </div>
+
+                  <ul className="flex flex-col gap-y-4">
+                    <li>
+                      <div className="flex items-center gap-x-3">
+                        <PiPlugCharging className="text-2xl" />
+                        <span className="text-sm font-medium">
+                          Charging Point
+                        </span>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="flex items-center gap-x-3">
+                        <TbBulb className="text-2xl" />
+                        <span className="text-sm font-medium">
+                          Reading light
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Rate  and Review */}
+                <div className="px-4 py-6 border-b border-b-gray-200">
+                  <div className="mb-4 flex justify-between">
+                    <p className="font-bold text-xl">Ratings & reviews</p>
+                    <div>
+                      <p className="text-[#007b28] flex items-center">
+                        <FaStar className="text-xl" />
+                        <span className="font-bold text-xl">4.4</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <table className="w-full">
+                    <tbody>
+                      <tr>
+                        <td className="w-[5%]">
+                          <div className="flex items-center gap-x-1">
+                            <span className="text-sm font-medium">5</span>
+                            <FaStar className="text-sm" />
+                          </div>
+                        </td>
+                        <td className="w-[90%] px-4">
+                          <LinearProgress variant="determinate" value={70} />
+                        </td>
+                        <td className="text-sm font-medium w-[5%]">70%</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div className="flex items-center gap-x-1">
+                            <span className="text-sm font-medium">4</span>
+                            <FaStar className="text-sm" />
+                          </div>
+                        </td>
+                        <td className="px-4">
+                          <LinearProgress variant="determinate" value={16} />
+                        </td>
+                        <td className="text-sm font-medium">16%</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div className="flex items-center gap-x-1">
+                            <span className="text-sm font-medium">3</span>
+                            <FaStar className="text-sm" />
+                          </div>
+                        </td>
+                        <td className="px-4">
+                          <LinearProgress variant="determinate" value={0} />
+                        </td>
+                        <td className="text-sm font-medium">0%</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div className="flex items-center gap-x-1">
+                            <span className="text-sm font-medium">2</span>
+                            <FaStar className="text-sm" />
+                          </div>
+                        </td>
+                        <td className="px-4">
+                          <LinearProgress variant="determinate" value={10} />
+                        </td>
+                        <td className="text-sm font-medium">10%</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div className="flex items-center gap-x-1">
+                            <span className="text-sm font-medium">1</span>
+                            <FaStar className="text-sm" />
+                          </div>
+                        </td>
+                        <td className="px-4">
+                          <LinearProgress variant="determinate" value={15} />
+                        </td>
+                        <td className="text-sm font-medium">15%</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
