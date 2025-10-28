@@ -1304,6 +1304,7 @@ const SearchBus = () => {
               <BookTicketDrawer
                 data={{
                   viewDrawer,
+                  openViewDrawer,
                   closeViewDrawer,
                 }}
               />
