@@ -52,7 +52,6 @@ const BookTicketDrawer = ({
   let { viewDrawer, closeViewDrawer, openViewDrawer } = data;
   const [windowSize, setWindowSize] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [activeTabBusInfo, setActiveTabBusInfo] = useState<number>(0);
   const knowYourSeatType = [
     {
       seatType: "Available",
@@ -90,21 +89,9 @@ const BookTicketDrawer = ({
       sleeper: bookedSleeperByMale,
     },
   ];
-  const [BusPhotosCarouselRef] = useEmblaCarousel({ dragFree: true });
-  const BusInfoParentRef = useRef<HTMLDivElement | null>(null);
-  const BusInfoSectionsRef = useRef<HTMLDivElement | null>(null);
-
-  const busPhotos: string[] = ["o1", "o1", "o1", "o1", "o1"];
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
-  };
-
-  const handleBusInfoTabChange = (
-    event: React.SyntheticEvent,
-    newValue: number
-  ) => {
-    setActiveTabBusInfo(newValue);
   };
 
   // Window size listener
@@ -123,102 +110,9 @@ const BookTicketDrawer = ({
     };
   }, []);
 
-  // Intersection Observer
   useEffect(() => {
-    if (!BusInfoSectionsRef.current) return;
-
-    let activeBusInfoSectionObservers: IntersectionObserver[] = [];
-
-    Array.from(BusInfoSectionsRef.current.children).map((section, inx) => {
-      let observer = new IntersectionObserver(
-        (entries) => {
-          console.log("intersecting divs", entries);
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              console.log("Div is intersecting", inx, entry);
-              setActiveTabBusInfo(inx);
-            }
-          });
-        },
-        { threshold: 0.2 }
-      );
-
-      observer.observe(section);
-      activeBusInfoSectionObservers.push(observer);
-    });
-
-    return () => {
-      activeBusInfoSectionObservers.forEach((observer) =>
-        observer.disconnect()
-      );
-    };
-  }, [BusInfoSectionsRef]);
-
-  //Bus Route maker from array
-  const BusRoute = [
-    "Gandhinagar (Gujarat)",
-    "Ahmedabad",
-    "Chotila",
-    "Rajkot (Gujarat)",
-    "Padadhri",
-    "Dhrol",
-    "Sonyal",
-    "Falla",
-    "Jambuda",
-    "Dared",
-    "Jamnagar",
-    "Changa",
-    "Lath",
-    "Haripar Aarikhana",
-    "Murila",
-    "Lalpur (Rajasthan)",
-    "Govana (Gujarat)",
-    "Bhangor (Gujarat)",
-    "Sanosari",
-    "Gop",
-    "Dharmagarh",
-    "Verad",
-    "Tran Patiya (Gujarat)",
-    "Fatehpur (Gujarat)",
-    "Bhanvad",
-    "Rupamora (Gujarat)",
-    "Mota Gundala",
-  ];
-
-  const MakeBusRouteString = (cityList: string[]) => {
-    return cityList.map((city, inx) => (
-      <p key={`busRoute-city-${city}`} className="flex items-center gap-x-1">
-        <span id={`busRoute-city-${city}`}>{city}</span>
-        {inx < cityList.length - 1 && (
-          <MdOutlineKeyboardDoubleArrowRight className="text-[#1d1d1da3]" />
-        )}
-      </p>
-    ));
-  };
-
-  const ScrollElementIntoView = (element: HTMLElement) => {
-    if (BusInfoParentRef.current && element) {
-      const containerTop = BusInfoParentRef.current.getBoundingClientRect().top;
-      const elementTop = element.getBoundingClientRect().top;
-
-      const scrollOffset =
-        elementTop - containerTop + BusInfoParentRef.current.scrollTop - 40;
-
-      BusInfoParentRef.current.scrollTo({
-        top: scrollOffset,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Review and Ratings
-  let reviewStarts: { star: number; percentage: number }[] = [
-    { star: 5, percentage: 52 },
-    { star: 4, percentage: 16 },
-    { star: 3, percentage: 9 },
-    { star: 2, percentage: 7 },
-    { star: 1, percentage: 16 },
-  ];
+    console.log("viewDrawer: ", viewDrawer);
+  }, [viewDrawer]);
   return (
     <>
       <Drawer
@@ -383,6 +277,8 @@ const BookTicketDrawer = ({
               <div className="hidden md:block w-1/2 rounded-2xl overflow-y-scroll hideScrollBar">
                 <BusAndRouteInfo />
               </div>
+
+              <SwipeDrawer />
             </div>
           )}
 
@@ -409,8 +305,6 @@ const BookTicketDrawer = ({
           )}
         </div>
       </Drawer>
-
-      <SwipeDrawer />
     </>
   );
 };

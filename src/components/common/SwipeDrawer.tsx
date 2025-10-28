@@ -6,29 +6,33 @@ const SwipeDrawer = () => {
   let [open, setOpen] = useState(false);
   return (
     <div
-      className={`md:hidden absolute bottom-0 left-0 right-0 z-[999] bg-white ${
+      className={`md:hidden fixed bottom-0 left-0 right-0 z-[999] bg-white ${
         open
           ? "h-screen overflow-scroll"
           : "h-[128px] overflow-hidden rounded-xl"
-      }`}
+      } duration-300`}
       onClick={() => {
         setOpen(true);
       }}
     >
-      <div className="py-3 flex justify-center">
-        <p className="h-1 w-9 bg-[#b0b0b0] rounded-s-full rounded-e-full"></p>
-      </div>
-
-      <div className="pt-4 px-4 flex justify-center">
-        <button
-          type="button"
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          <IoIosArrowDown />
-        </button>
-      </div>
+      {open ? (
+        <div className="">
+          <button
+            type="button"
+            className="p-4"
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+              event.stopPropagation();
+              setOpen(false);
+            }}
+          >
+            <IoIosArrowDown />
+          </button>
+        </div>
+      ) : (
+        <div className="py-3 flex justify-center">
+          <p className="h-1 w-9 bg-[#b0b0b0] rounded-s-full rounded-e-full"></p>
+        </div>
+      )}
 
       <BusAndRouteInfo />
     </div>

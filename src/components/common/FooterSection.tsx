@@ -155,7 +155,7 @@ const FooterSection = () => {
   return (
     <div
       className={`myContainer py-7 bg-[#f2f2f8] ${
-        currentLocation !== "/search" ? "pb-[74px] lg:pb-0" : "pb-7"
+        currentLocation !== "/search" ? "pb-[128px] md:pb-0" : "pb-7"
       } `}
     >
       {/* Popular Routes */}
