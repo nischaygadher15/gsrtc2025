@@ -6,9 +6,9 @@ const SwipeDrawer = () => {
   let [open, setOpen] = useState(false);
   return (
     <div
-      className={`md:hidden fixed bottom-0 left-0 right-0 z-[999] bg-white ${
+      className={`md:hidden fixed top-[calc(100%-128px)] bottom-0 left-0 right-0 z-[999] bg-white ${
         open
-          ? "h-screen overflow-scroll"
+          ? "!top-0 h-screen overflow-scroll"
           : "h-[128px] overflow-hidden rounded-xl"
       } duration-300`}
       onClick={() => {
