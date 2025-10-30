@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import bus_offer_test from "@/assets/images/bus-offer-test.png";
 import { FaStar } from "react-icons/fa";
@@ -20,10 +20,14 @@ import { FaDog } from "react-icons/fa6";
 import { TbBottleOff } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa";
 
-const BusAndRouteInfo = () => {
+const BusAndRouteInfo = ({
+  parentRef,
+}: {
+  parentRef: RefObject<HTMLDivElement | null>;
+}) => {
   const [activeTabBusInfo, setActiveTabBusInfo] = useState<number>(0);
   const [BusPhotosCarouselRef] = useEmblaCarousel({ dragFree: true });
-  const BusInfoParentRef = useRef<HTMLDivElement | null>(null);
+  const BusInfoParentRef = parentRef;
   const BusInfoSectionsRef = useRef<HTMLDivElement | null>(null);
 
   const busPhotos: string[] = ["o1", "o1", "o1", "o1", "o1"];
@@ -44,11 +48,12 @@ const BusAndRouteInfo = () => {
     Array.from(BusInfoSectionsRef.current.children).map((section, inx) => {
       let observer = new IntersectionObserver(
         (entries) => {
-          console.log("intersecting divs", entries);
+          // console.log("intersecting divs", entries);
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              console.log("Div is intersecting", inx, entry);
-              setActiveTabBusInfo(inx);
+              // console.log("Div is intersecting", inx, entry);
+              if (inx < 7) setActiveTabBusInfo(inx);
+              else setActiveTabBusInfo(6);
             }
           });
         },
@@ -115,6 +120,7 @@ const BusAndRouteInfo = () => {
 
       const scrollOffset =
         elementTop - containerTop + BusInfoParentRef.current.scrollTop - 40;
+      console.log("scrollOffset: ", scrollOffset);
 
       BusInfoParentRef.current.scrollTo({
         top: scrollOffset,
@@ -133,7 +139,7 @@ const BusAndRouteInfo = () => {
   ];
 
   return (
-    <div className="w-full bg-white" ref={BusInfoParentRef}>
+    <div className="w-full bg-white">
       {/* Header */}
       <div className="p-4 mb-4 flex items-start">
         <div className="flex-1 flex flex-col">

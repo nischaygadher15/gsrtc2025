@@ -89,6 +89,7 @@ const BookTicketDrawer = ({
       sleeper: bookedSleeperByMale,
     },
   ];
+  const BusInfoParentRef = useRef<HTMLDivElement | null>(null);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -274,8 +275,11 @@ const BookTicketDrawer = ({
               </div>
 
               {/* Bus and route information */}
-              <div className="hidden md:block w-1/2 rounded-2xl overflow-y-scroll hideScrollBar">
-                <BusAndRouteInfo />
+              <div
+                className="hidden md:block w-1/2 rounded-2xl overflow-y-scroll hideScrollBar"
+                ref={BusInfoParentRef}
+              >
+                <BusAndRouteInfo parentRef={BusInfoParentRef} />
               </div>
 
               <SwipeDrawer />
