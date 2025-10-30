@@ -25,9 +25,11 @@ const BusAndRouteInfo = ({
 }: {
   parentRef: RefObject<HTMLDivElement | null>;
 }) => {
+  const [windowSize, setWindowSize] = useState<number>(0);
   const [activeTabBusInfo, setActiveTabBusInfo] = useState<number>(0);
   const [BusPhotosCarouselRef] = useEmblaCarousel({ dragFree: true });
   const BusInfoParentRef = parentRef;
+  const BusInfoParentRef2 = useRef<HTMLDivElement | null>(null);
   const BusInfoSectionsRef = useRef<HTMLDivElement | null>(null);
 
   const busPhotos: string[] = ["o1", "o1", "o1", "o1", "o1"];
@@ -38,6 +40,22 @@ const BusAndRouteInfo = ({
   ) => {
     setActiveTabBusInfo(newValue);
   };
+
+  // Window size listener
+  useEffect(() => {
+    const listenWindowSize = (): void => {
+      console.log("window.innerWidth: ", window.innerWidth);
+      setWindowSize(window.innerWidth);
+    };
+
+    listenWindowSize();
+
+    window.addEventListener("resize", listenWindowSize);
+
+    return () => {
+      window.removeEventListener("resize", listenWindowSize);
+    };
+  }, []);
 
   // Intersection Observer
   useEffect(() => {
@@ -57,7 +75,7 @@ const BusAndRouteInfo = ({
             }
           });
         },
-        { threshold: 0.2 }
+        { threshold: 0.3 }
       );
 
       observer.observe(section);
@@ -113,14 +131,22 @@ const BusAndRouteInfo = ({
     ));
   };
 
-  const ScrollElementIntoView = (element: HTMLElement) => {
-    if (BusInfoParentRef.current && element) {
-      const containerTop = BusInfoParentRef.current.getBoundingClientRect().top;
+  const ScrollElementIntoView = (elementName: string) => {
+    if (BusInfoParentRef.current && elementName) {
+      const container = BusInfoParentRef.current;
+      const element = BusInfoParentRef.current.querySelector(
+        elementName
+      ) as HTMLElement;
       const elementTop = element.getBoundingClientRect().top;
+      const containerTop = BusInfoParentRef.current.getBoundingClientRect().top;
 
+      // for screen width => 768px
       const scrollOffset =
-        elementTop - containerTop + BusInfoParentRef.current.scrollTop - 40;
-      console.log("scrollOffset: ", scrollOffset);
+        windowSize < 768
+          ? element.offsetTop - 40
+          : elementTop - containerTop + container.scrollTop - 40;
+
+      // if (element) console.log(`element: ${scrollOffset}`);
 
       BusInfoParentRef.current.scrollTo({
         top: scrollOffset,
@@ -139,7 +165,7 @@ const BusAndRouteInfo = ({
   ];
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white" ref={BusInfoParentRef2}>
       {/* Header */}
       <div className="p-4 mb-4 flex items-start">
         <div className="flex-1 flex flex-col">
@@ -207,8 +233,7 @@ const BusAndRouteInfo = ({
               event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => {
               event.preventDefault();
-              let element = document.getElementById("busRoute");
-              if (element) ScrollElementIntoView(element);
+              ScrollElementIntoView("#busRoute");
             }}
             label="Bus route"
             disableRipple
@@ -228,8 +253,7 @@ const BusAndRouteInfo = ({
               event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => {
               event.preventDefault();
-              let element = document.getElementById("boardingPoint");
-              if (element) ScrollElementIntoView(element);
+              ScrollElementIntoView("#boardingPoint");
             }}
             label="Boarding point"
             disableRipple
@@ -249,8 +273,7 @@ const BusAndRouteInfo = ({
               event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => {
               event.preventDefault();
-              let element = document.getElementById("droppingPoint");
-              if (element) ScrollElementIntoView(element);
+              ScrollElementIntoView("#droppingPoint");
             }}
             label="Dropping point"
             disableRipple
@@ -270,8 +293,7 @@ const BusAndRouteInfo = ({
               event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => {
               event.preventDefault();
-              let element = document.getElementById("restStop");
-              if (element) ScrollElementIntoView(element);
+              ScrollElementIntoView("#restStop");
             }}
             label="Rest stop"
             disableRipple
@@ -291,8 +313,7 @@ const BusAndRouteInfo = ({
               event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => {
               event.preventDefault();
-              let element = document.getElementById("amenities");
-              if (element) ScrollElementIntoView(element);
+              ScrollElementIntoView("#amenities");
             }}
             label="Amenities"
             disableRipple
@@ -312,8 +333,7 @@ const BusAndRouteInfo = ({
               event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => {
               event.preventDefault();
-              let element = document.getElementById("reviewsRating");
-              if (element) ScrollElementIntoView(element);
+              ScrollElementIntoView("#reviewsRating");
             }}
             label="Rating and reviews"
             disableRipple
@@ -333,8 +353,7 @@ const BusAndRouteInfo = ({
               event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => {
               event.preventDefault();
-              let element = document.getElementById("bookingPolicy");
-              if (element) ScrollElementIntoView(element);
+              ScrollElementIntoView("#bookingPolicy");
             }}
             label="Booking policy"
             disableRipple

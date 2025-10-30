@@ -9,7 +9,7 @@ const SwipeDrawer = () => {
     <div
       className={`md:hidden fixed top-[calc(100%-128px)] bottom-0 left-0 right-0 z-[999] bg-white ${
         open
-          ? "!top-0 h-screen overflow-scroll"
+          ? "!top-0 min-h-screen overflow-y-scroll hideScrollBar"
           : "h-[128px] overflow-hidden rounded-xl"
       } duration-300`}
       onClick={() => {
