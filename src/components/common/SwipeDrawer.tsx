@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import BusAndRouteInfo from "./BusAndRouteInfo";
 import { IoIosArrowDown } from "react-icons/io";
 
 const SwipeDrawer = () => {
   let [open, setOpen] = useState(false);
+  const BusInfoParentRef = useRef<HTMLDivElement | null>(null);
   return (
     <div
       className={`md:hidden fixed top-[calc(100%-128px)] bottom-0 left-0 right-0 z-[999] bg-white ${
@@ -14,6 +15,7 @@ const SwipeDrawer = () => {
       onClick={() => {
         setOpen(true);
       }}
+      ref={BusInfoParentRef}
     >
       {open ? (
         <div className="">
@@ -34,7 +36,7 @@ const SwipeDrawer = () => {
         </div>
       )}
 
-      <BusAndRouteInfo />
+      <BusAndRouteInfo parentRef={BusInfoParentRef} />
     </div>
   );
 };
