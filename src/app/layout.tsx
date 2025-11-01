@@ -3,7 +3,7 @@ import "./globals.css";
 import DefaultNavbar from "../components/common/DefaultNavbar";
 import FooterSection from "@/components/common/FooterSection";
 import FooterNavbar from "@/components/common/FooterNavbar";
-import { usePathname } from "next/navigation";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   icons: {
@@ -26,6 +26,7 @@ export default function RootLayout({
       <body>
         <DefaultNavbar />
         {children}
+        <Analytics />
         <FooterSection />
         <FooterNavbar />
       </body>
