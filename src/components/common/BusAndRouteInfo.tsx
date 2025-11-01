@@ -479,6 +479,7 @@ const BusAndRouteInfo = ({
             View all boarding points
           </button>
         </div>
+
         {/* Dropping points */}
         <div
           id="droppingPoint"
@@ -503,6 +504,7 @@ const BusAndRouteInfo = ({
             View all dropping points
           </button>
         </div>
+
         {/* Rest stops */}
         <div id="restStop" className="px-4 py-6 border-b border-b-gray-200">
           <div className="mb-4">
@@ -542,6 +544,7 @@ const BusAndRouteInfo = ({
                       This bus has no rest stop
                     </p> */}
         </div>
+
         {/* Amenities */}
         <div id="amenities" className="px-4 py-6 border-b border-b-gray-200">
           <div className="mb-4">
@@ -563,6 +566,7 @@ const BusAndRouteInfo = ({
             </li>
           </ul>
         </div>
+
         {/* Rate  and Review */}
         <div
           className="px-4 py-6 border-b border-b-gray-200"
@@ -668,6 +672,7 @@ const BusAndRouteInfo = ({
             Read all 8 reviews
           </button>
         </div>
+
         {/* Cancellation policy */}
         <div
           className="px-4 py-6 border-b border-b-gray-200"
@@ -723,6 +728,7 @@ const BusAndRouteInfo = ({
             </p>
           </div>
         </div>
+
         {/* Date change policy */}
         <div className="px-4 py-6 border-b border-b-gray-200">
           <p className="font-bold text-xl mb-4">Cancellation policy</p>
@@ -742,6 +748,7 @@ const BusAndRouteInfo = ({
             </tbody>
           </table>
         </div>
+
         {/* Other policies */}
         <div className="px-4 py-6 border-b border-b-gray-200">
           <p className="font-bold text-xl mb-4">Other policies</p>

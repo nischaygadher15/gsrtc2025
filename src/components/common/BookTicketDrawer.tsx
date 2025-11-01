@@ -2,11 +2,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { GrLinkNext } from "react-icons/gr";
-import useEmblaCarousel from "embla-carousel-react";
-import bus_offer_test from "@/assets/images/bus-offer-test.png";
-import { FaStar } from "react-icons/fa";
-import { PiPlugCharging } from "react-icons/pi";
-import { LuDot } from "react-icons/lu";
 import Drawer from "@mui/material/Drawer";
 import { IoMdClose } from "react-icons/io";
 import Tabs from "@mui/material/Tabs";
@@ -26,19 +21,12 @@ import seaterSelected from "@/assets/SeatTypes/imgi_19_seater_selected.svg";
 import seaterFemale from "@/assets/SeatTypes/imgi_21_seater_fem.svg";
 import bookedSeaterByMale from "@/assets/SeatTypes/imgi_25_seat-male-blocked.webp";
 import bookedSeaterByFemale from "@/assets/SeatTypes/imgi_56_seat-fem-blocked.webp";
-import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
-import BusStationTimeline from "@/components/common/BusStationTimeline";
-import { FaThumbsUp } from "react-icons/fa";
-import { FaThumbsDown } from "react-icons/fa";
-import { TbBulb } from "react-icons/tb";
-import LinearProgress from "@mui/material/LinearProgress";
-import { FaChild } from "react-icons/fa6";
-import { TbLuggage } from "react-icons/tb";
-import { FaDog } from "react-icons/fa6";
-import { TbBottleOff } from "react-icons/tb";
-import { FaRegClock } from "react-icons/fa";
 import SwipeDrawer from "./SwipeDrawer";
 import BusAndRouteInfo from "./BusAndRouteInfo";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const BookTicketDrawer = ({
   data,
@@ -130,7 +118,7 @@ const BookTicketDrawer = ({
         }}
       >
         <div
-          className="max-h-[100vh] lg:max-h-[95vh] rounded-2xl flex flex-col"
+          className="min-h-[100vh] max-h-[100vh] lg:max-h-[95vh] lg:min-h-[95vh] rounded-2xl flex flex-col"
           id="drawerContainer"
         >
           {/* Header */}
@@ -292,8 +280,51 @@ const BookTicketDrawer = ({
               role="tabpanel"
               id="TabPanel-boardDropPoints"
               aria-labelledby="Tab-boardDropPoints"
+              className="flex-1 w-full min-h-full max-h-full bg-[#f2f2f8] flex flex-col md:flex-row md:justify-center gap-5 px-7 lg:px-0 py-5"
             >
-              Boarding / Dropping points
+              <div className="w-full md:w-1/2 lg:w-[400px] xl:w-[500px]">
+                <Accordion defaultExpanded>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="boardingPoint-panel-content"
+                    id="boardingPoint-panel-header"
+                  >
+                    <div className="">
+                      <p className="font-bold">Boarding points</p>
+                      <p className="text-[#1d1d1da3] text-sm">
+                        Select Boarding Point
+                      </p>
+                    </div>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Suspendisse malesuada lacus ex, sit amet blandit leo
+                    lobortis eget.
+                  </AccordionDetails>
+                </Accordion>
+              </div>
+
+              <div className="w-full md:w-1/2 lg:w-[400px] xl:w-[500px]">
+                <Accordion defaultExpanded>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="droppingPoint-panel-content"
+                    id="droppingPoint-panel-header"
+                  >
+                    <div className="">
+                      <p className="font-bold">Dropping points</p>
+                      <p className="text-[#1d1d1da3] text-sm">
+                        Select Dropping Point
+                      </p>
+                    </div>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Suspendisse malesuada lacus ex, sit amet blandit leo
+                    lobortis eget.
+                  </AccordionDetails>
+                </Accordion>
+              </div>
             </div>
           )}
 
