@@ -19,6 +19,7 @@ import { TbLuggage } from "react-icons/tb";
 import { FaDog } from "react-icons/fa6";
 import { TbBottleOff } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa";
+import { IoMdArrowBack } from "react-icons/io";
 
 const BusAndRouteInfo = ({
   parentRef,
@@ -164,8 +165,38 @@ const BusAndRouteInfo = ({
     { star: 1, percentage: 16 },
   ];
 
+  //Boarding and dropping full view drawer
+  const boardDropDrawer = useRef<HTMLDivElement | null>(null);
+  const [boardDropFullView, setBoardDropFullView] = useState<boolean>(false);
+  const [boardDropSwitch, setBoardDropSwitch] = useState<number>(0);
+
+  const openBoradingDroppingFullView = () => {
+    if (BusInfoParentRef2.current) {
+      BusInfoParentRef2.current.scrollIntoView({ behavior: "instant" });
+    }
+    if (BusInfoSectionsRef.current) {
+      BusInfoSectionsRef.current.style.height = "0px";
+      BusInfoSectionsRef.current.style.overflow = "hidden";
+    }
+    setBoardDropFullView(true);
+  };
+
+  const closeBoradingDroppingFullView = () => {
+    if (BusInfoSectionsRef.current) {
+      BusInfoSectionsRef.current.removeAttribute("style");
+    }
+    setBoardDropFullView(false);
+  };
+
+  const handleBoardDropSwitch = (
+    event: React.SyntheticEvent,
+    newValue: string
+  ) => {
+    setBoardDropSwitch(parseInt(newValue) ?? 0);
+  };
+
   return (
-    <div className="w-full bg-white" ref={BusInfoParentRef2}>
+    <div className="relative w-full bg-white" ref={BusInfoParentRef2}>
       {/* Header */}
       <div className="p-4 mb-4 flex items-start">
         <div className="flex-1 flex flex-col">
@@ -395,8 +426,14 @@ const BusAndRouteInfo = ({
 
           {/* Boarding point timeline */}
           <BusStationTimeline />
+          <button
+            type="button"
+            className="w-full rounded-s-full rounded-e-full py-3 text-center font-semibold bg-primary/10 hover:bg-primary/20 cursor-pointer text-sm"
+            onClick={openBoradingDroppingFullView}
+          >
+            View all boarding points
+          </button>
         </div>
-
         {/* Dropping points */}
         <div
           id="droppingPoint"
@@ -409,8 +446,15 @@ const BusAndRouteInfo = ({
 
           {/* Dropping point timeline */}
           <BusStationTimeline />
-        </div>
 
+          <button
+            type="button"
+            className="w-full rounded-s-full rounded-e-full py-3 text-center font-semibold bg-primary/10 hover:bg-primary/20 cursor-pointer text-sm"
+            onClick={openBoradingDroppingFullView}
+          >
+            View all boarding points
+          </button>
+        </div>
         {/* Rest stops */}
         <div id="restStop" className="px-4 py-6 border-b border-b-gray-200">
           <div className="mb-4">
@@ -450,7 +494,6 @@ const BusAndRouteInfo = ({
                       This bus has no rest stop
                     </p> */}
         </div>
-
         {/* Amenities */}
         <div id="amenities" className="px-4 py-6 border-b border-b-gray-200">
           <div className="mb-4">
@@ -472,7 +515,6 @@ const BusAndRouteInfo = ({
             </li>
           </ul>
         </div>
-
         {/* Rate  and Review */}
         <div
           className="px-4 py-6 border-b border-b-gray-200"
@@ -578,7 +620,6 @@ const BusAndRouteInfo = ({
             Read all 8 reviews
           </button>
         </div>
-
         {/* Cancellation policy */}
         <div
           className="px-4 py-6 border-b border-b-gray-200"
@@ -634,7 +675,6 @@ const BusAndRouteInfo = ({
             </p>
           </div>
         </div>
-
         {/* Date change policy */}
         <div className="px-4 py-6 border-b border-b-gray-200">
           <p className="font-bold text-xl mb-4">Cancellation policy</p>
@@ -654,7 +694,6 @@ const BusAndRouteInfo = ({
             </tbody>
           </table>
         </div>
-
         {/* Other policies */}
         <div className="px-4 py-6 border-b border-b-gray-200">
           <p className="font-bold text-xl mb-4">Other policies</p>
@@ -725,6 +764,85 @@ const BusAndRouteInfo = ({
           </ul>
         </div>
       </div>
+
+      {/* Boarding and Dropping points full screen view */}
+      {boardDropFullView && (
+        <div
+          className={`min-w-full inline absolute top-0 left-0 right-0 z-[999] bg-white`}
+          ref={boardDropDrawer}
+        >
+          <div className="sticky top-0 bg-white">
+            {/* Header */}
+            <div className="w-full border-slate-200 min-h-16 max-h-16 p-4 flex justify-start items-center gap-x-2">
+              <div>
+                <button
+                  type="button"
+                  onClick={closeBoradingDroppingFullView}
+                  className="p-2 ps-0 cursor-pointer"
+                >
+                  <IoMdArrowBack className="text-2xl" />
+                </button>
+              </div>
+              <div>
+                <p className="flex items-center font-semibold gap-x-2 text-sm md:text-base">
+                  Boarding and Dropping points
+                </p>
+              </div>
+            </div>
+
+            <Tabs
+              value={boardDropSwitch}
+              onChange={handleBoardDropSwitch}
+              aria-label="BoardingDroppingTabs"
+            >
+              <Tab
+                label="Boarding point"
+                onClick={() => {
+                  if (boardDropDrawer.current) {
+                    boardDropDrawer.current.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }
+                }}
+              />
+              <Tab
+                label="Dropping point"
+                onClick={() => {
+                  if (boardDropDrawer.current) {
+                    boardDropDrawer.current.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }
+                }}
+              />
+            </Tabs>
+          </div>
+
+          {boardDropSwitch == 0 && (
+            <div className="px-4 py-6 border-b border-b-gray-200">
+              <div className="mb-4">
+                <p className="font-bold text-xl">Boarding Points</p>
+                <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
+              </div>
+
+              {/* Boarding point timeline */}
+              <BusStationTimeline />
+            </div>
+          )}
+
+          {boardDropSwitch == 1 && (
+            <div className="px-4 py-6 border-b border-b-gray-200">
+              <div className="mb-4">
+                <p className="font-bold text-xl">Dropping Points</p>
+                <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
+              </div>
+
+              {/* Dropping point timeline */}
+              <BusStationTimeline />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

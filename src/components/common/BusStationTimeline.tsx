@@ -71,12 +71,6 @@ const BusStationTimeline = () => {
           </div>
         </li>
       </ul>
-      <button
-        type="button"
-        className="w-full rounded-s-full rounded-e-full py-3 text-center font-semibold bg-primary/10 hover:bg-primary/20 cursor-pointer text-sm"
-      >
-        View all boarding points
-      </button>
     </div>
   );
 };
