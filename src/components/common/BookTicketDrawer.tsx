@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { GrLinkNext } from "react-icons/gr";
 import Drawer from "@mui/material/Drawer";
 import { IoMdClose } from "react-icons/io";
@@ -35,13 +35,14 @@ const BookTicketDrawer = ({
 }: {
   data: {
     viewDrawer: boolean;
+    activeTab: number;
+    setActiveTab: Dispatch<SetStateAction<number>>;
     closeViewDrawer: () => void;
-    openViewDrawer: () => void;
   };
 }) => {
-  let { viewDrawer, closeViewDrawer, openViewDrawer } = data;
+  let { viewDrawer, closeViewDrawer, activeTab, setActiveTab } = data;
   const [windowSize, setWindowSize] = useState<number>(0);
-  const [activeTab, setActiveTab] = useState<number>(0);
+  // const [activeTab, setActiveTab] = useState<number>(0);
   const knowYourSeatType = [
     {
       seatType: "Available",
@@ -135,9 +136,6 @@ const BookTicketDrawer = ({
     };
   }, []);
 
-  useEffect(() => {
-    console.log("viewDrawer: ", viewDrawer);
-  }, [viewDrawer]);
   return (
     <Drawer
       anchor={"bottom"}
@@ -315,7 +313,7 @@ const BookTicketDrawer = ({
             role="tabpanel"
             id="TabPanel-boardDropPoints"
             aria-labelledby="Tab-boardDropPoints"
-            className="flex-1 w-full min-h-full overflow-y-hidden max-h-full bg-[#f2f2f8] flex flex-col md:flex-row md:justify-center gap-5 px-7 lg:px-0 py-5"
+            className="flex-1 w-full min-h-full overflow-y-auto hideScrollBar max-h-full bg-[#f2f2f8] flex flex-col md:flex-row md:justify-center gap-5 px-7 lg:px-0 py-5"
           >
             <div className="w-full md:w-1/2 lg:w-[400px] xl:w-[500px]">
               <Accordion defaultExpanded>

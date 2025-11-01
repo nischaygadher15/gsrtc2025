@@ -753,11 +753,14 @@ const SearchBus = () => {
 
   // Bus ticket booking drawer
   let [viewDrawer, setViewDrawer] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<number>(0);
   const openViewDrawer = (): void => {
     setViewDrawer(true);
   };
 
   const closeViewDrawer = (): void => {
+    setActiveTab(0);
+    console.log("helooooooooo");
     setViewDrawer(false);
   };
 
@@ -1305,7 +1308,8 @@ const SearchBus = () => {
               <BookTicketDrawer
                 data={{
                   viewDrawer,
-                  openViewDrawer,
+                  activeTab,
+                  setActiveTab,
                   closeViewDrawer,
                 }}
               />
