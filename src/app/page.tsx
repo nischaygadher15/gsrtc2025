@@ -306,7 +306,7 @@ export default function Home() {
     setLoading(true);
     setTimeout(() => {
       router.push("/search");
-    }, 3000);
+    }, 1500);
   };
 
   // watching all search buses inputs
