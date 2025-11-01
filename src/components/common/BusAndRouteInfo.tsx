@@ -9,7 +9,9 @@ import { LuDot } from "react-icons/lu";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
-import BusStationTimeline from "@/components/common/BusStationTimeline";
+import BusStationTimeline, {
+  TimelineType,
+} from "@/components/common/BusStationTimeline";
 import { FaThumbsUp } from "react-icons/fa";
 import { FaThumbsDown } from "react-icons/fa";
 import { TbBulb } from "react-icons/tb";
@@ -170,15 +172,20 @@ const BusAndRouteInfo = ({
   const [boardDropFullView, setBoardDropFullView] = useState<boolean>(false);
   const [boardDropSwitch, setBoardDropSwitch] = useState<number>(0);
 
-  const openBoradingDroppingFullView = () => {
+  const openBoradingDroppingFullView = (index: number) => {
     if (BusInfoParentRef2.current) {
       BusInfoParentRef2.current.scrollIntoView({ behavior: "instant" });
     }
+
     if (BusInfoSectionsRef.current) {
       BusInfoSectionsRef.current.style.height = "0px";
       BusInfoSectionsRef.current.style.overflow = "hidden";
     }
+
     setBoardDropFullView(true);
+
+    if (index < 2) setBoardDropSwitch(index);
+    else setBoardDropSwitch(0);
   };
 
   const closeBoradingDroppingFullView = () => {
@@ -194,6 +201,41 @@ const BusAndRouteInfo = ({
   ) => {
     setBoardDropSwitch(parseInt(newValue) ?? 0);
   };
+
+  let BusTimeLine: TimelineType[] = [
+    {
+      leftPart: ["05:15", "15 Nov"],
+      rightPart: ["Sanathal Circle", "Sanathal Circle"],
+    },
+    {
+      leftPart: ["05:20", "15 Nov"],
+      rightPart: ["Ujala circle", "Ujala Circle"],
+    },
+    {
+      leftPart: ["05:25", "15 Nov"],
+      rightPart: ["Iskon Cross Road", "Iskon Cross Road"],
+    },
+    {
+      leftPart: ["05:15", "15 Nov"],
+      rightPart: ["Sanathal Circle", "Sanathal Circle"],
+    },
+    {
+      leftPart: ["05:20", "15 Nov"],
+      rightPart: ["Ujala circle", "Ujala Circle"],
+    },
+    {
+      leftPart: ["05:25", "15 Nov"],
+      rightPart: ["Iskon Cross Road", "Iskon Cross Road"],
+    },
+    {
+      leftPart: ["05:20", "15 Nov"],
+      rightPart: ["Ujala circle", "Ujala Circle"],
+    },
+    {
+      leftPart: ["05:25", "15 Nov"],
+      rightPart: ["Iskon Cross Road", "Iskon Cross Road"],
+    },
+  ];
 
   return (
     <div className="relative w-full bg-white" ref={BusInfoParentRef2}>
@@ -425,11 +467,14 @@ const BusAndRouteInfo = ({
           </div>
 
           {/* Boarding point timeline */}
-          <BusStationTimeline />
+          <BusStationTimeline
+            timeLineView={"half"}
+            timeLineList={BusTimeLine}
+          />
           <button
             type="button"
             className="w-full rounded-s-full rounded-e-full py-3 text-center font-semibold bg-primary/10 hover:bg-primary/20 cursor-pointer text-sm"
-            onClick={openBoradingDroppingFullView}
+            onClick={() => openBoradingDroppingFullView(0)}
           >
             View all boarding points
           </button>
@@ -445,14 +490,17 @@ const BusAndRouteInfo = ({
           </div>
 
           {/* Dropping point timeline */}
-          <BusStationTimeline />
+          <BusStationTimeline
+            timeLineView={"half"}
+            timeLineList={BusTimeLine}
+          />
 
           <button
             type="button"
             className="w-full rounded-s-full rounded-e-full py-3 text-center font-semibold bg-primary/10 hover:bg-primary/20 cursor-pointer text-sm"
-            onClick={openBoradingDroppingFullView}
+            onClick={() => openBoradingDroppingFullView(1)}
           >
-            View all boarding points
+            View all dropping points
           </button>
         </div>
         {/* Rest stops */}
@@ -768,7 +816,7 @@ const BusAndRouteInfo = ({
       {/* Boarding and Dropping points full screen view */}
       {boardDropFullView && (
         <div
-          className={`min-w-full inline absolute top-0 left-0 right-0 z-[999] bg-white`}
+          className={`min-w-full inline fixed md:absolute top-0 left-0 right-0 z-[999] bg-white`}
           ref={boardDropDrawer}
         >
           <div className="sticky top-0 bg-white">
@@ -793,7 +841,23 @@ const BusAndRouteInfo = ({
             <Tabs
               value={boardDropSwitch}
               onChange={handleBoardDropSwitch}
+              variant="fullWidth"
               aria-label="BoardingDroppingTabs"
+              sx={{
+                "&.MuiTabs-root": {
+                  borderBottom: "1px solid #e2e8f0",
+                  color: "black !important",
+                  fontSize: "14px",
+                  fontWeight: "500 !important",
+                  textTransform: "none !important",
+                },
+                "& .MuiTabs-indicator": {
+                  backgroundColor: "#173c62",
+                },
+                "& .Mui-selected": {
+                  color: "black !important",
+                },
+              }}
             >
               <Tab
                 label="Boarding point"
@@ -819,26 +883,32 @@ const BusAndRouteInfo = ({
           </div>
 
           {boardDropSwitch == 0 && (
-            <div className="px-4 py-6 border-b border-b-gray-200">
+            <div className="px-4 py-6">
               <div className="mb-4">
                 <p className="font-bold text-xl">Boarding Points</p>
                 <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
               </div>
 
               {/* Boarding point timeline */}
-              <BusStationTimeline />
+              <BusStationTimeline
+                timeLineView={"full"}
+                timeLineList={BusTimeLine}
+              />
             </div>
           )}
 
           {boardDropSwitch == 1 && (
-            <div className="px-4 py-6 border-b border-b-gray-200">
+            <div className="px-4 py-6">
               <div className="mb-4">
                 <p className="font-bold text-xl">Dropping Points</p>
                 <p className="text-sm text-[#1d1d1da3]">Jamnagar</p>
               </div>
 
               {/* Dropping point timeline */}
-              <BusStationTimeline />
+              <BusStationTimeline
+                timeLineView={"full"}
+                timeLineList={BusTimeLine}
+              />
             </div>
           )}
         </div>
