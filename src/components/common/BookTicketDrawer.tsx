@@ -152,7 +152,7 @@ const BookTicketDrawer = ({
       }}
     >
       <div
-        className="relative min-h-[100vh] max-h-[100vh] lg:max-h-[95vh] lg:min-h-[95vh] rounded-2xl flex flex-col pb-[70px]"
+        className="relative min-h-[100vh] max-h-[100vh] lg:max-h-[95vh] lg:min-h-[95vh] rounded-2xl flex flex-col pb-[97px] sm:pb-[70px]"
         id="drawerContainer"
       >
         {/* Header */}
@@ -176,69 +176,71 @@ const BookTicketDrawer = ({
         </div>
 
         {/* Drawer Main Tabs */}
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          variant={windowSize < 640 ? "scrollable" : "standard"}
-          centered={windowSize > 640 ? true : false}
-          // allowScrollButtonsMobile
-          // scrollButtons
-          sx={{
-            "&.MuiTabs-root": {
-              borderTop: "1px solid #e2e8f0",
-              borderBottom: "1px solid #e2e8f0",
-            },
-            "& .MuiTabs-indicator": {
-              backgroundColor: "#173c62",
-            },
-          }}
-        >
-          <Tab
-            id="Tab-selectSeat"
-            aria-controls="TabPanel-selectSeat"
-            disableRipple
-            label="1. Select seats"
+        <div>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant={windowSize < 640 ? "scrollable" : "standard"}
+            centered={windowSize > 640 ? true : false}
+            allowScrollButtonsMobile
+            scrollButtons
             sx={{
-              "&.MuiTab-root": {
-                fontWeight: "bold",
-                textTransform: "capitalize",
+              "&.MuiTabs-root": {
+                borderTop: "1px solid #e2e8f0",
+                borderBottom: "1px solid #e2e8f0",
               },
-              "&.Mui-selected": {
-                color: "#173c62",
+              "& .MuiTabs-indicator": {
+                backgroundColor: "#173c62",
               },
             }}
-          />
-          <Tab
-            id="Tab-boardDropPoints"
-            aria-controls="TabPanel-boardDropPoints"
-            label="2. Board/Drop point"
-            disableRipple
-            sx={{
-              "&.MuiTab-root": {
-                fontWeight: "bold",
-                textTransform: "capitalize",
-              },
-              "&.Mui-selected": {
-                color: "#173c62",
-              },
-            }}
-          />
-          <Tab
-            id="Tab-passengerInfo"
-            aria-controls="TabPanel-passengerInfo"
-            label="3. Passenger Info"
-            disableRipple
-            sx={{
-              "&.MuiTab-root": {
-                fontWeight: "bold",
-                textTransform: "capitalize",
-              },
-              "&.Mui-selected": {
-                color: "#173c62",
-              },
-            }}
-          />
-        </Tabs>
+          >
+            <Tab
+              id="Tab-selectSeat"
+              aria-controls="TabPanel-selectSeat"
+              disableRipple
+              label="1. Select seats"
+              sx={{
+                "&.MuiTab-root": {
+                  fontWeight: "bold",
+                  textTransform: "capitalize",
+                },
+                "&.Mui-selected": {
+                  color: "#173c62",
+                },
+              }}
+            />
+            <Tab
+              id="Tab-boardDropPoints"
+              aria-controls="TabPanel-boardDropPoints"
+              label="2. Board/Drop point"
+              disableRipple
+              sx={{
+                "&.MuiTab-root": {
+                  fontWeight: "bold",
+                  textTransform: "capitalize",
+                },
+                "&.Mui-selected": {
+                  color: "#173c62",
+                },
+              }}
+            />
+            <Tab
+              id="Tab-passengerInfo"
+              aria-controls="TabPanel-passengerInfo"
+              label="3. Passenger Info"
+              disableRipple
+              sx={{
+                "&.MuiTab-root": {
+                  fontWeight: "bold",
+                  textTransform: "capitalize",
+                },
+                "&.Mui-selected": {
+                  color: "#173c62",
+                },
+              }}
+            />
+          </Tabs>
+        </div>
 
         {/* Tab content: Select Seat */}
         {activeTab === 0 && (
@@ -314,9 +316,9 @@ const BookTicketDrawer = ({
             role="tabpanel"
             id="TabPanel-boardDropPoints"
             aria-labelledby="Tab-boardDropPoints"
-            className="relative flex-1 w-full min-h-full overflow-y-scroll md:overflow-hidden max-h-full bg-[#f2f2f8] flex flex-col md:flex-row md:justify-center gap-5 px-7 lg:px-0 py-5"
+            className="relative flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8] flex flex-col md:flex-row md:justify-center gap-5 px-7 lg:px-0 py-5"
           >
-            <div className="w-full min-h-full md:max-h-full md:w-1/2 overflow-y-auto hideScrollBar lg:w-[400px] xl:w-[500px]">
+            <div className="w-full h-auto md:w-1/2 lg:w-[400px] xl:w-[500px]">
               <Accordion defaultExpanded>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -337,7 +339,7 @@ const BookTicketDrawer = ({
               </Accordion>
             </div>
 
-            <div className="w-full min-h-full md:w-1/2 lg:w-[400px] xl:w-[500px] overflow-y-auto hideScrollBar">
+            <div className="w-full h-auto md:w-1/2 lg:w-[400px] xl:w-[500px]">
               <Accordion defaultExpanded>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -371,7 +373,7 @@ const BookTicketDrawer = ({
         )}
 
         {/* Button for seat amount and booking button */}
-        {/* <div className="z-[1000] absolute bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300">
+        <div className="z-[1000] absolute bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300">
           <div className="flex justify-between items-center gap-x-7">
             <p className="text-sm font-semibold">1 seat</p>
             <button
@@ -387,7 +389,7 @@ const BookTicketDrawer = ({
           <div>
             <button
               type="button"
-              className="w-full sm:w-auto py-2 sm:py-3 px-10 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
               bg-primary outline-none"
               onClick={() => {
                 setActiveTab((prev) => {
@@ -401,7 +403,7 @@ const BookTicketDrawer = ({
               {activeTab === 2 && "Continue booking"}
             </button>
           </div>
-        </div> */}
+        </div>
       </div>
     </Drawer>
   );
