@@ -30,6 +30,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { TimelineType } from "./BusStationTimeline";
 import BoardingDroppingTimeline from "./BoardingDroppingTimeline";
 import { FaPlus } from "react-icons/fa6";
+import TextField from "@mui/material/TextField";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 const BookTicketDrawer = ({
   data,
@@ -373,11 +375,93 @@ const BookTicketDrawer = ({
               <div className="w-3/5">
                 {/* Contact details form */}
                 <form className="w-full p-4 rounded-2xl shadow-md bg-white">
-                  <div>
+                  <div className="mb-3">
                     <p className="text-xl font-bold">Contact details</p>
                     <p className="text-sm text-[#1d1d1da3]">
                       Ticket details will be sent to
                     </p>
+                  </div>
+
+                  {/* Phone no. */}
+                  <div className="flex mb-4">
+                    <button
+                      type="button"
+                      className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                    >
+                      <p className="text-xs text-[#1d1d1da3]">Country Code</p>
+                      <p className="flex items-center gap-x-1 font-semibold">
+                        <span>+91 (IND)</span>
+                        <IoMdArrowDropdown className="text-xl" />
+                      </p>
+                    </button>
+                    <div className="flex-1 border rounded-se-lg rounded-ee-lg">
+                      <TextField
+                        type="number"
+                        id="contact-info-phone"
+                        label="Phone*"
+                        placeholder="Enter phone no."
+                        variant="filled"
+                        error={true}
+                        sx={{
+                          width: "100%",
+                          "& .MuiFilledInput-root": {
+                            fontWeight: "700 !important",
+                            backgroundColor: "white !important",
+                            borderTopLeftRadius: "0px",
+                            borderTopRightRadius: "8px",
+                            borderBottomRightRadius: "8px",
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "#1d1d1da3 !important",
+                          },
+                          "& ::before": {
+                            display: "none",
+                          },
+                          "& ::after": {
+                            display: "none",
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="mb-4 border rounded-lg">
+                    <TextField
+                      type="text"
+                      id="contact-info-phone"
+                      label="Email ID"
+                      variant="filled"
+                      placeholder="Enter email id"
+                      sx={{
+                        width: "100%",
+                        "& .MuiFilledInput-root": {
+                          fontWeight: "700 !important",
+                          backgroundColor: "white !important",
+                          borderRadius: "8px !important",
+                        },
+                        "& .MuiInputLabel-root": {
+                          color: "#1d1d1da3 !important",
+                        },
+                        "& ::before": {
+                          display: "none",
+                        },
+                        "& ::after": {
+                          display: "none",
+                        },
+                      }}
+                    />
+                  </div>
+
+                  {/* Residence */}
+                  <div className="flex border rounded-lg justify-between items-center px-3 py-2">
+                    <div>
+                      <p className="text-sm text-[#1d1d1da3]">
+                        State of Residence*
+                      </p>
+                      <p className="font-semibold">Gujarat</p>
+                    </div>
+                    <IoMdArrowDropdown />
                   </div>
                 </form>
 
@@ -414,7 +498,7 @@ const BookTicketDrawer = ({
                   </p>
                 </div>
               </div>
-              <div className="w-2/5"></div>
+              <div className="w-2/5 hidden md:block"></div>
             </div>
             {/* Button for seat amount and booking button */}
             <div className="z-[1000] absolute bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300">
