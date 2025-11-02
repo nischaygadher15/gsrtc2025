@@ -32,6 +32,14 @@ import BoardingDroppingTimeline from "./BoardingDroppingTimeline";
 import { FaPlus } from "react-icons/fa6";
 import TextField from "@mui/material/TextField";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { FaWhatsapp } from "react-icons/fa";
+import Switch from "@mui/material/Switch";
+import { FaCircleUser } from "react-icons/fa6";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 const BookTicketDrawer = ({
   data,
@@ -45,7 +53,6 @@ const BookTicketDrawer = ({
 }) => {
   let { viewDrawer, closeViewDrawer, activeTab, setActiveTab } = data;
   const [windowSize, setWindowSize] = useState<number>(0);
-  // const [activeTab, setActiveTab] = useState<number>(0);
   const knowYourSeatType = [
     {
       seatType: "Available",
@@ -118,6 +125,9 @@ const BookTicketDrawer = ({
       rightPart: ["Iskon Cross Road", "Iskon Cross Road"],
     },
   ];
+  const [passengerGender, setPassengerGender] = useState<"female" | "male">(
+    "female"
+  );
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -139,6 +149,11 @@ const BookTicketDrawer = ({
     };
   }, []);
 
+  // Passenger Gender
+  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassengerGender((event.target.value as "female") || "male");
+  };
+
   return (
     <Drawer
       anchor={"bottom"}
@@ -154,7 +169,9 @@ const BookTicketDrawer = ({
       }}
     >
       <div
-        className="relative min-h-[100vh] max-h-[100vh] lg:max-h-[95vh] lg:min-h-[95vh] rounded-2xl flex flex-col pb-[97px] sm:pb-[70px]"
+        className={`relative min-h-[100vh] max-h-[100vh] lg:max-h-[95vh] lg:min-h-[95vh] rounded-2xl flex flex-col ${
+          activeTab === 2 ? "" : "pb-[97px] sm:pb-[70px]"
+        }`}
         id="drawerContainer"
       >
         {/* Header */}
@@ -371,8 +388,8 @@ const BookTicketDrawer = ({
             aria-labelledby="Tab-passengerInfo"
             className="flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8]"
           >
-            <div className="w-full h-full py-5 px-[75px] flex gap-4">
-              <div className="w-3/5">
+            <div className="w-full h-full py-5 px-4 md:px-[75px] flex gap-4">
+              <div className="w-full md:w-3/5 flex flex-col gap-y-5">
                 {/* Contact details form */}
                 <form className="w-full p-4 rounded-2xl shadow-md bg-white">
                   <div className="mb-3">
@@ -429,7 +446,7 @@ const BookTicketDrawer = ({
                   <div className="mb-4 border rounded-lg">
                     <TextField
                       type="text"
-                      id="contact-info-phone"
+                      id="contact-info-email-id"
                       label="Email ID"
                       variant="filled"
                       placeholder="Enter email id"
@@ -454,33 +471,451 @@ const BookTicketDrawer = ({
                   </div>
 
                   {/* Residence */}
-                  <div className="flex border rounded-lg justify-between items-center px-3 py-2">
+                  <div className="flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5">
                     <div>
                       <p className="text-sm text-[#1d1d1da3]">
                         State of Residence*
                       </p>
-                      <p className="font-semibold">Gujarat</p>
+                      <p className="font-semibold opacity-0">Gujarat</p>
                     </div>
-                    <IoMdArrowDropdown />
+                    <IoMdArrowDropdown className="text-lg" />
+                  </div>
+
+                  {/* WhatsApp commumication */}
+                  <div className="flex justify-between">
+                    <div className="flex items-center gap-3">
+                      <FaWhatsapp className="text-[#25d366] text-4xl" />
+                      <span className="text-sm">
+                        Send booking details and trip updates on WhatsApp
+                      </span>
+                    </div>
+                    <Switch
+                      defaultChecked
+                      sx={{
+                        "& .Mui-checked": {
+                          color: "#173c62 !important",
+                        },
+                        "& .MuiSwitch-track": {
+                          backgroundColor: "#173c62 !important",
+                        },
+                      }}
+                    />
                   </div>
                 </form>
 
                 {/* Passengers details */}
-                <div>
-                  <p className="text-xl font-bold">Passenger details</p>
+                <div className="w-full p-4 rounded-2xl shadow-md bg-white">
+                  <p className="text-xl font-bold mb-4">Passenger details</p>
+
                   {/* List for passenger info. from accordian */}
                   <ul>
                     <li>
-                      <Accordion>
+                      <Accordion
+                        defaultExpanded
+                        sx={{
+                          "&.MuiAccordion-root": {
+                            boxShadow: "none !important",
+                          },
+                          "& .MuiAccordionSummary-root": {
+                            padding: "0px !important",
+                          },
+                        }}
+                      >
                         <AccordionSummary
                           expandIcon={<ExpandMoreIcon />}
                           aria-controls="panel1-content"
                           id="panel1-header"
                         >
-                          Passenger 1
+                          <div className="flex items-center gap-4">
+                            <FaCircleUser className="text-4xl" />
+                            <div>
+                              <p className="font-bold">Passenger 1</p>
+                              <p className="text-sm text-[#1d1d1da3]">
+                                Male seat · Seat H, Upper Deck
+                              </p>
+                            </div>
+                          </div>
                         </AccordionSummary>
-                        <AccordionDetails>
-                          <form></form>
+                        <AccordionDetails className="!p-0">
+                          <form>
+                            {/* Name */}
+                            <div className="mb-4 border rounded-lg">
+                              <TextField
+                                type="text"
+                                id="passenger-info-name"
+                                label="Name*"
+                                variant="filled"
+                                placeholder="Enter name"
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+
+                            {/* Age */}
+                            <div className="mb-4 border rounded-lg">
+                              <TextField
+                                type="text"
+                                id="passenger-info-age"
+                                label="Age*"
+                                variant="filled"
+                                placeholder="Enter age"
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+
+                            {/* Gender */}
+                            <div className="">
+                              <p className="text-[#1d1d1da3] mb-1">Gender*</p>
+                              <div className="flex gap-x-2">
+                                {/* Female */}
+                                <label
+                                  htmlFor="passengerGenderFemale"
+                                  className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between"
+                                >
+                                  <p className="font-semibold">Female</p>
+                                  <Radio
+                                    id="passengerGenderFemale"
+                                    sx={{
+                                      color: "#173c62",
+                                      "&.Mui-checked": {
+                                        color: "#173c62",
+                                      },
+                                    }}
+                                    checked={passengerGender === "female"}
+                                    onChange={handleGenderChange}
+                                    value="female"
+                                    name="passenger-gender"
+                                  />
+                                </label>
+
+                                {/* Male */}
+                                <label
+                                  htmlFor="passengerGenderMale"
+                                  className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between"
+                                >
+                                  <p className="font-semibold">Male</p>
+                                  <Radio
+                                    id="passengerGenderMale"
+                                    sx={{
+                                      color: "#173c62",
+                                      "&.Mui-checked": {
+                                        color: "#173c62",
+                                      },
+                                    }}
+                                    checked={passengerGender === "male"}
+                                    onChange={handleGenderChange}
+                                    value="male"
+                                    name="passenger-gender"
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                          </form>
+                        </AccordionDetails>
+                      </Accordion>
+                    </li>
+
+                    <li>
+                      <Accordion
+                        defaultExpanded
+                        sx={{
+                          "&.MuiAccordion-root": {
+                            boxShadow: "none !important",
+                          },
+                          "& .MuiAccordionSummary-root": {
+                            padding: "0px !important",
+                          },
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1-content"
+                          id="panel1-header"
+                        >
+                          <div className="flex items-center gap-4">
+                            <FaCircleUser className="text-4xl" />
+                            <div>
+                              <p className="font-bold">Passenger 1</p>
+                              <p className="text-sm text-[#1d1d1da3]">
+                                Male seat · Seat H, Upper Deck
+                              </p>
+                            </div>
+                          </div>
+                        </AccordionSummary>
+                        <AccordionDetails className="!p-0">
+                          <form>
+                            {/* Name */}
+                            <div className="mb-4 border rounded-lg">
+                              <TextField
+                                type="text"
+                                id="passenger-info-name"
+                                label="Name*"
+                                variant="filled"
+                                placeholder="Enter name"
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+
+                            {/* Age */}
+                            <div className="mb-4 border rounded-lg">
+                              <TextField
+                                type="text"
+                                id="passenger-info-age"
+                                label="Age*"
+                                variant="filled"
+                                placeholder="Enter age"
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+
+                            {/* Gender */}
+                            <div className="">
+                              <p className="text-[#1d1d1da3] mb-1">Gender*</p>
+                              <div className="flex gap-x-2">
+                                {/* Female */}
+                                <label
+                                  htmlFor="passengerGenderFemale"
+                                  className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between"
+                                >
+                                  <p className="font-semibold">Female</p>
+                                  <Radio
+                                    id="passengerGenderFemale"
+                                    sx={{
+                                      color: "#173c62",
+                                      "&.Mui-checked": {
+                                        color: "#173c62",
+                                      },
+                                    }}
+                                    checked={passengerGender === "female"}
+                                    onChange={handleGenderChange}
+                                    value="female"
+                                    name="passenger-gender"
+                                  />
+                                </label>
+
+                                {/* Male */}
+                                <label
+                                  htmlFor="passengerGenderMale"
+                                  className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between"
+                                >
+                                  <p className="font-semibold">Male</p>
+                                  <Radio
+                                    id="passengerGenderMale"
+                                    sx={{
+                                      color: "#173c62",
+                                      "&.Mui-checked": {
+                                        color: "#173c62",
+                                      },
+                                    }}
+                                    checked={passengerGender === "male"}
+                                    onChange={handleGenderChange}
+                                    value="male"
+                                    name="passenger-gender"
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                          </form>
+                        </AccordionDetails>
+                      </Accordion>
+                    </li>
+
+                    <li>
+                      <Accordion
+                        defaultExpanded
+                        sx={{
+                          "&.MuiAccordion-root": {
+                            boxShadow: "none !important",
+                          },
+                          "& .MuiAccordionSummary-root": {
+                            padding: "0px !important",
+                          },
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1-content"
+                          id="panel1-header"
+                        >
+                          <div className="flex items-center gap-4">
+                            <FaCircleUser className="text-4xl" />
+                            <div>
+                              <p className="font-bold">Passenger 1</p>
+                              <p className="text-sm text-[#1d1d1da3]">
+                                Male seat · Seat H, Upper Deck
+                              </p>
+                            </div>
+                          </div>
+                        </AccordionSummary>
+                        <AccordionDetails className="!p-0">
+                          <form>
+                            {/* Name */}
+                            <div className="mb-4 border rounded-lg">
+                              <TextField
+                                type="text"
+                                id="passenger-info-name"
+                                label="Name*"
+                                variant="filled"
+                                placeholder="Enter name"
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+
+                            {/* Age */}
+                            <div className="mb-4 border rounded-lg">
+                              <TextField
+                                type="text"
+                                id="passenger-info-age"
+                                label="Age*"
+                                variant="filled"
+                                placeholder="Enter age"
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+
+                            {/* Gender */}
+                            <div className="">
+                              <p className="text-[#1d1d1da3] mb-1">Gender*</p>
+                              <div className="flex gap-x-2">
+                                {/* Female */}
+                                <label
+                                  htmlFor="passengerGenderFemale"
+                                  className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between"
+                                >
+                                  <p className="font-semibold">Female</p>
+                                  <Radio
+                                    id="passengerGenderFemale"
+                                    sx={{
+                                      color: "#173c62",
+                                      "&.Mui-checked": {
+                                        color: "#173c62",
+                                      },
+                                    }}
+                                    checked={passengerGender === "female"}
+                                    onChange={handleGenderChange}
+                                    value="female"
+                                    name="passenger-gender"
+                                  />
+                                </label>
+
+                                {/* Male */}
+                                <label
+                                  htmlFor="passengerGenderMale"
+                                  className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between"
+                                >
+                                  <p className="font-semibold">Male</p>
+                                  <Radio
+                                    id="passengerGenderMale"
+                                    sx={{
+                                      color: "#173c62",
+                                      "&.Mui-checked": {
+                                        color: "#173c62",
+                                      },
+                                    }}
+                                    checked={passengerGender === "male"}
+                                    onChange={handleGenderChange}
+                                    value="male"
+                                    name="passenger-gender"
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                          </form>
                         </AccordionDetails>
                       </Accordion>
                     </li>
@@ -488,20 +923,32 @@ const BookTicketDrawer = ({
                 </div>
 
                 {/* GSRTC travel insurance */}
-                <form></form>
+                {/* <form></form> */}
 
-                <div>
-                  <p>By clicking 'Continue booking', I accept</p>
-                  <p>
-                    <a href="">Terms & conditions</a>
-                    <a href="">Privacy policy</a>
+                {/* Term and conditions */}
+                <div className="mb-5">
+                  <p className="text-center text-sm mb-4">
+                    By clicking 'Continue booking', I accept
+                  </p>
+                  <p className="text-sm flex justify-center items-center gap-x-7">
+                    <a href="#" className="underline font-bold text-blue-700">
+                      Terms & conditions
+                    </a>
+                    <a href="#" className="underline font-bold text-blue-700">
+                      Privacy policy
+                    </a>
                   </p>
                 </div>
               </div>
               <div className="w-2/5 hidden md:block"></div>
             </div>
+
             {/* Button for seat amount and booking button */}
-            <div className="z-[1000] absolute bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300">
+            <div
+              className={`z-[1000] ${
+                activeTab === 2 ? "" : "absolute bottom-0 left-0 right-0"
+              }  duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+            >
               <div className="flex justify-between items-center gap-x-7">
                 <p className="text-sm font-semibold">1 seat</p>
                 <button
@@ -526,9 +973,11 @@ const BookTicketDrawer = ({
                     });
                   }}
                 >
-                  {activeTab === 0 && "Select boarding & dropping points"}
-                  {activeTab === 1 && "Fill passenger details"}
-                  {activeTab === 2 && "Continue booking"}
+                  {(activeTab as number) === 0
+                    ? "Select boarding & dropping points"
+                    : (activeTab as number) === 1
+                    ? "Fill passenger details"
+                    : "Continue booking"}
                 </button>
               </div>
             </div>
