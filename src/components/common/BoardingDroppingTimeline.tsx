@@ -13,10 +13,20 @@ const BoardingDroppingTimeline = ({
       <table className="w-full mb-6">
         <tbody>
           {timeLineList &&
-            timeLineList.map((place, inx) => (
+            timeLineList.map((place, inx, Arr) => (
               <tr
                 key={`timeLineList-place-${inx}`}
-                className="flex items-center border-b border-b-[#1d1d1da3]"
+                className={`flex items-center ${
+                  inx == 0
+                    ? "border-b border-t border-b-slate-300 border-t-slate-300"
+                    : inx == Arr.length - 1
+                    ? ""
+                    : "border-b border-b-slate-300"
+                }`}
+                onClick={(event) => {
+                  let radioBtn = event.currentTarget.querySelector("input");
+                  console.log(radioBtn?.value, radioBtn?.checked);
+                }}
               >
                 <td>
                   <div className="px-4 py-3">
@@ -41,7 +51,11 @@ const BoardingDroppingTimeline = ({
                 </td>
 
                 <td className="p-2.5">
-                  <Radio onChange={handleStopChange} value="b" />
+                  <Radio
+                    onChange={handleStopChange}
+                    value={place.rightPart[0]}
+                    id={`boardingPoint-${place.rightPart[0]}`}
+                  />
                 </td>
               </tr>
             ))}
