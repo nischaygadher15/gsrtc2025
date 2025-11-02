@@ -945,9 +945,7 @@ const BookTicketDrawer = ({
 
             {/* Button for seat amount and booking button */}
             <div
-              className={`z-[1000] ${
-                activeTab === 2 ? "" : "absolute bottom-0 left-0 right-0"
-              }  duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+              className={`z-[1000] duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
             >
               <div className="flex justify-between items-center gap-x-7">
                 <p className="text-sm font-semibold">1 seat</p>
@@ -983,6 +981,45 @@ const BookTicketDrawer = ({
             </div>
           </div>
         )}
+
+        {/* Button for seat amount and booking button */}
+        <div
+          className={`z-[1000] ${
+            activeTab === 2 ? "hidden" : "absolute bottom-0 left-0 right-0"
+          }  duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+        >
+          <div className="flex justify-between items-center gap-x-7">
+            <p className="text-sm font-semibold">1 seat</p>
+            <button
+              type="button"
+              className="flex items-center gap-x-2 cursor-pointer"
+            >
+              <span className="font-bold text-2xl">&#8377;{500}</span>
+              <span className="border-2 border-slate-500 rounded">
+                <FaPlus className="text-slate-500 text-sm" />
+              </span>
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              bg-primary outline-none"
+              onClick={() => {
+                setActiveTab((prev) => {
+                  if (prev < 2) return prev + 1;
+                  else return 0;
+                });
+              }}
+            >
+              {(activeTab as number) === 0
+                ? "Select boarding & dropping points"
+                : (activeTab as number) === 1
+                ? "Fill passenger details"
+                : "Continue booking"}
+            </button>
+          </div>
+        </div>
       </div>
     </Drawer>
   );
