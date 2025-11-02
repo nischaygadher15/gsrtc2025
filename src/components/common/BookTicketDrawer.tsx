@@ -367,43 +367,89 @@ const BookTicketDrawer = ({
             role="tabpanel"
             id="TabPanel-passengerInfo"
             aria-labelledby="Tab-passengerInfo"
+            className="flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8]"
           >
-            Passanger Information
+            <div className="w-full h-full py-5 px-[75px] flex gap-4">
+              <div className="w-3/5">
+                {/* Contact details form */}
+                <form className="w-full p-4 rounded-2xl shadow-md bg-white">
+                  <div>
+                    <p className="text-xl font-bold">Contact details</p>
+                    <p className="text-sm text-[#1d1d1da3]">
+                      Ticket details will be sent to
+                    </p>
+                  </div>
+                </form>
+
+                {/* Passengers details */}
+                <div>
+                  <p className="text-xl font-bold">Passenger details</p>
+                  {/* List for passenger info. from accordian */}
+                  <ul>
+                    <li>
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1-content"
+                          id="panel1-header"
+                        >
+                          Passenger 1
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <form></form>
+                        </AccordionDetails>
+                      </Accordion>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* GSRTC travel insurance */}
+                <form></form>
+
+                <div>
+                  <p>By clicking 'Continue booking', I accept</p>
+                  <p>
+                    <a href="">Terms & conditions</a>
+                    <a href="">Privacy policy</a>
+                  </p>
+                </div>
+              </div>
+              <div className="w-2/5"></div>
+            </div>
+            {/* Button for seat amount and booking button */}
+            <div className="z-[1000] absolute bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300">
+              <div className="flex justify-between items-center gap-x-7">
+                <p className="text-sm font-semibold">1 seat</p>
+                <button
+                  type="button"
+                  className="flex items-center gap-x-2 cursor-pointer"
+                >
+                  <span className="font-bold text-2xl">&#8377;{500}</span>
+                  <span className="border-2 border-slate-500 rounded">
+                    <FaPlus className="text-slate-500 text-sm" />
+                  </span>
+                </button>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              bg-primary outline-none"
+                  onClick={() => {
+                    setActiveTab((prev) => {
+                      if (prev < 2) return prev + 1;
+                      else return 0;
+                    });
+                  }}
+                >
+                  {activeTab === 0 && "Select boarding & dropping points"}
+                  {activeTab === 1 && "Fill passenger details"}
+                  {activeTab === 2 && "Continue booking"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
-
-        {/* Button for seat amount and booking button */}
-        <div className="z-[1000] absolute bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300">
-          <div className="flex justify-between items-center gap-x-7">
-            <p className="text-sm font-semibold">1 seat</p>
-            <button
-              type="button"
-              className="flex items-center gap-x-2 cursor-pointer"
-            >
-              <span className="font-bold text-2xl">&#8377;{500}</span>
-              <span className="border-2 border-slate-500 rounded">
-                <FaPlus className="text-slate-500 text-sm" />
-              </span>
-            </button>
-          </div>
-          <div>
-            <button
-              type="button"
-              className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
-              bg-primary outline-none"
-              onClick={() => {
-                setActiveTab((prev) => {
-                  if (prev < 2) return prev + 1;
-                  else return 0;
-                });
-              }}
-            >
-              {activeTab === 0 && "Select boarding & dropping points"}
-              {activeTab === 1 && "Fill passenger details"}
-              {activeTab === 2 && "Continue booking"}
-            </button>
-          </div>
-        </div>
       </div>
     </Drawer>
   );
