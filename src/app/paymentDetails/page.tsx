@@ -1,13 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import LocalActivityIcon from "@mui/icons-material/LocalActivity";
+import { GrTicket } from "react-icons/gr";
 import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import { MdOutlineQrCodeScanner } from "react-icons/md";
+import { Radio } from "@mui/material";
+import { RiErrorWarningLine } from "react-icons/ri";
+import Image from "next/image";
+import disabledQRCode from "@/assets/images/qr-disabled.svg";
+import { ImSpinner8 } from "react-icons/im";
 
 const PaymentPage = () => {
+  const [loading, setLoading] = useState(false);
   // Trip summary
   const [sourcePlace, setSourcePlace] = useState({
     leftPart: ["21:45", "19 Nov"],
@@ -19,22 +27,46 @@ const PaymentPage = () => {
     rightPart: ["Jamnagar", "Sat rasta"],
   });
 
+  const [payByQRCode, setPayByQRCode] = useState(false);
+
+  const handlePayByQRCode = () => {
+    console.log("payByQRCode:", payByQRCode);
+    setPayByQRCode(!payByQRCode);
+  };
+
+  useEffect(() => {
+    console.log("payByQRCode:", payByQRCode);
+  }, [payByQRCode]);
+
+  const generateQRCode = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  };
+
   const [travelTime, setTravelTime] = useState("7h 25min");
   return (
     <div>
       <div className="w-full h-full py-5 px-4 md:px-[75px] flex gap-4 bg-[#f2f2f8]">
-        <div className="w-full min-h-full bg-white md:w-3/5 flex flex-col gap-y-5">
+        <div className="w-full min-h-full  md:w-3/5 flex flex-col gap-y-5">
           {/* Coupon code */}
           <div>
-            <Accordion defaultExpanded>
+            <Accordion
+              sx={{
+                "&.MuiAccordion-root": {
+                  borderRadius: "16px",
+                },
+              }}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
                 id={`payment-coupon-code`}
               >
-                <div className="flex items-center gap-4">
-                  <LocalActivityIcon sx={{ fontSize: 24 }} />
-                  <p className="font-medium text-sm">Have coupon code</p>
+                <div className="py-1 flex items-center gap-4">
+                  <GrTicket className="text-xl" />
+                  <p className="font-semibold text-sm">Have a coupon code</p>
                 </div>
               </AccordionSummary>
               <AccordionDetails>
@@ -44,6 +76,20 @@ const PaymentPage = () => {
                     // id="passenger-info-name"
                     label="Coupon code"
                     variant="filled"
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <button
+                              type="submit"
+                              className="rounded-s-full rounded-e-full p-3 text-center font-semibold bg-primary/10 hover:bg-primary/20 cursor-pointer text-sm text-black"
+                            >
+                              Apply
+                            </button>
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
                     placeholder="Enter coupon code"
                     sx={{
                       width: "100%",
@@ -66,6 +112,98 @@ const PaymentPage = () => {
                 </form>
               </AccordionDetails>
             </Accordion>
+          </div>
+
+          {/* UPI payment */}
+          <div className="shadow-md rounded-2xl bg-white p-5">
+            <p className="font-bold mb-5">UPI</p>
+
+            {/* Pay through QR code */}
+            <div>
+              <Accordion
+                sx={{
+                  "&.MuiAccordion-root": {
+                    boxShadow: "none",
+                  },
+                }}
+              >
+                <AccordionSummary
+                  aria-controls="panel1-content"
+                  id="payByQRCodeAccordian"
+                  className="!p-0"
+                  onClick={handlePayByQRCode}
+                >
+                  <div className="w-full flex justify-between items-center cursor-pointer">
+                    <div className="flex items-center gap-4">
+                      <MdOutlineQrCodeScanner className="text-2xl" />
+                      <p className="font-semibold text-base">
+                        Pay through QR code
+                      </p>
+                    </div>
+                    <div>
+                      <Radio
+                        checked={payByQRCode}
+                        // onClick={handlePayByQRCode}
+                        id={`payByQRCode-radio`}
+                        sx={{
+                          color: "#173c62",
+                          "&.Mui-checked": {
+                            color: "#173c62",
+                          },
+                        }}
+                      />
+                    </div>
+                  </div>
+                </AccordionSummary>
+                <AccordionDetails className="!p-0">
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-14">
+                    <p className="flex items-center gap-x-2 bg-primary/10 px-2 py-1.5 rounded-lg">
+                      <RiErrorWarningLine className="text-xl" />
+                      <span className="text-xs font-medium">
+                        Offer code / wallet amount can only be applied before
+                        generating QR code
+                      </span>
+                    </p>
+                    <button
+                      type="submit"
+                      className="rounded-s-full rounded-e-full p-3 text-center font-semibold bg-primary/10 hover:bg-primary/20 cursor-pointer text-sm text-black"
+                    >
+                      Cancel QR Code
+                    </button>
+                  </div>
+
+                  {/* QR Code */}
+                  <div>
+                    <div></div>
+                    <div className="relative flex justify-center">
+                      <Image
+                        src={disabledQRCode}
+                        alt="Disabled QR Code"
+                        width={250}
+                        height={250}
+                      />
+                      <button
+                        type="button"
+                        className={`min-w-[320px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-s-full rounded-e-full ${
+                          loading ? "bg-[#7d7d7d]" : "bg-primary"
+                        } text-white font-semibold flex items-center justify-center gap-x-2 cursor-pointer outline-none`}
+                        onClick={generateQRCode}
+                      >
+                        <span>
+                          {!loading
+                            ? "Generate QR code & pay"
+                            : "Generating..."}
+                        </span>
+                        {loading && (
+                          <ImSpinner8 className="text-2xl text-white  animate-spin" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
+            </div>
           </div>
         </div>
 

@@ -55,6 +55,12 @@ const BoardingDroppingTimeline = ({
                     onChange={handleStopChange}
                     value={place.rightPart[0]}
                     id={`boardingPoint-${place.rightPart[0]}`}
+                    sx={{
+                      color: "#173c62",
+                      "&.Mui-checked": {
+                        color: "#173c62",
+                      },
+                    }}
                   />
                 </td>
               </tr>
