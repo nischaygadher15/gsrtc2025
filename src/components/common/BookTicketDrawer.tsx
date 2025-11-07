@@ -36,6 +36,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import Switch from "@mui/material/Switch";
 import { FaCircleUser } from "react-icons/fa6";
 import Radio from "@mui/material/Radio";
+import { redirect, useRouter } from "next/navigation";
 
 const BookTicketDrawer = ({
   data,
@@ -853,9 +854,12 @@ const BookTicketDrawer = ({
                   className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
               bg-primary outline-none"
                   onClick={() => {
+                    if (activeTab == 2) {
+                      redirect("/paymentDetails");
+                    }
                     setActiveTab((prev) => {
                       if (prev < 2) return prev + 1;
-                      else return 0;
+                      else return prev;
                     });
                   }}
                 >
