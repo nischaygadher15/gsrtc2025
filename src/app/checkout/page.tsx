@@ -269,7 +269,7 @@ const CheckoutPage = () => {
                       <IoMdArrowDropdown className="text-lg" />
                     </div>
 
-                    {/* WhatsApp commumication */}
+                    {/* WhatsApp commumication2 */}
                     <div className="flex justify-between">
                       <div className="flex items-center gap-3">
                         <FaWhatsapp className="text-[#25d366] text-4xl" />
