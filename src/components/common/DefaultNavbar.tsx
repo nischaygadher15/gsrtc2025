@@ -59,7 +59,7 @@ const DefaultNavbar = () => {
     >
       <Image
         src={navbarLogo}
-        className="w-[300px] h-[50px] lg:w-[385px] lg:h-[64px]"
+        className="max-w-full w-[300px] h-[50px] lg:w-[385px] lg:h-[64px]"
         alt="GSRTC Navbar LOGO"
       />
 

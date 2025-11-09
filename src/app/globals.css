@@ -3,7 +3,11 @@
 @import "tailwindcss";
 
 @theme {
+  /* Colors */
   --color-primary: #173c62;
+
+  /* Breakpoints */
+  --breakpoint-xs: 300px;
 }
 
 body {
