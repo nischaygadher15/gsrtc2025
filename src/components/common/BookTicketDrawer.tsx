@@ -37,6 +37,8 @@ import Switch from "@mui/material/Switch";
 import { FaCircleUser } from "react-icons/fa6";
 import Radio from "@mui/material/Radio";
 import { redirect, useRouter } from "next/navigation";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const BookTicketDrawer = ({
   data,
@@ -192,6 +194,64 @@ const BookTicketDrawer = ({
   });
 
   const [travelTime, setTravelTime] = useState("7h 25min");
+
+  interface StateInfoType {
+    id: number;
+    state: string;
+    code: string;
+  }
+
+  const indiaStatesAndUTs: StateInfoType[] = [
+    { id: 0, state: "Andhra Pradesh", code: "AP" },
+    { id: 1, state: "Arunachal Pradesh", code: "AR" },
+    { id: 2, state: "Assam", code: "AS" },
+    { id: 3, state: "Bihar", code: "BR" },
+    { id: 4, state: "Chhattisgarh", code: "CG" },
+    { id: 5, state: "Goa", code: "GA" },
+    { id: 6, state: "Gujarat", code: "GJ" },
+    { id: 7, state: "Haryana", code: "HR" },
+    { id: 8, state: "Himachal Pradesh", code: "HP" },
+    { id: 9, state: "Jharkhand", code: "JH" },
+    { id: 10, state: "Karnataka", code: "KA" },
+    { id: 11, state: "Kerala", code: "KL" },
+    { id: 12, state: "Madhya Pradesh", code: "MP" },
+    { id: 13, state: "Maharashtra", code: "MH" },
+    { id: 14, state: "Manipur", code: "MN" },
+    { id: 15, state: "Meghalaya", code: "ML" },
+    { id: 16, state: "Mizoram", code: "MZ" },
+    { id: 17, state: "Nagaland", code: "NL" },
+    { id: 18, state: "Odisha", code: "OD" },
+    { id: 19, state: "Punjab", code: "PB" },
+    { id: 20, state: "Rajasthan", code: "RJ" },
+    { id: 21, state: "Sikkim", code: "SK" },
+    { id: 22, state: "Tamil Nadu", code: "TN" },
+    { id: 23, state: "Telangana", code: "TS" },
+    { id: 24, state: "Tripura", code: "TR" },
+    { id: 25, state: "Uttar Pradesh", code: "UP" },
+    { id: 26, state: "Uttarakhand", code: "UK" },
+    { id: 27, state: "West Bengal", code: "WB" },
+    // Union Territories
+    { id: 28, state: "Andaman and Nicobar Islands", code: "AN" },
+    { id: 29, state: "Chandigarh", code: "CH" },
+    { id: 30, state: "Dadra and Nagar Haveli and Daman and Diu", code: "DN" },
+    { id: 31, state: "Delhi", code: "DL" },
+    { id: 32, state: "Jammu and Kashmir", code: "JK" },
+    { id: 33, state: "Ladakh", code: "LA" },
+    { id: 34, state: "Lakshadweep", code: "LD" },
+    { id: 35, state: "Puducherry", code: "PY" },
+  ];
+
+  //Contact Info: State
+  const [contactInfoState, setContactInfoState] = useState<boolean>(false);
+  const [filteredStatesList, setFilteredStatesList] =
+    useState<StateInfoType[]>(indiaStatesAndUTs);
+
+  const SearchStatesList = (code: string, contList: StateInfoType[]) => {
+    const filtered: StateInfoType[] = contList.filter((states) =>
+      states.code.toLocaleLowerCase().includes(code.toLocaleLowerCase())
+    );
+    setFilteredStatesList(filtered);
+  };
 
   return (
     <Drawer
@@ -437,7 +497,6 @@ const BookTicketDrawer = ({
                       Ticket details will be sent to
                     </p>
                   </div>
-
                   {/* Phone no. */}
                   <div className="flex mb-4">
                     <button
@@ -452,7 +511,7 @@ const BookTicketDrawer = ({
                     </button>
                     <div className="flex-1 border rounded-se-lg rounded-ee-lg">
                       <TextField
-                        type="number"
+                        type="text"
                         id="contact-info-phone"
                         label="Phone*"
                         placeholder="Enter phone no."
@@ -480,7 +539,6 @@ const BookTicketDrawer = ({
                       />
                     </div>
                   </div>
-
                   {/* Email */}
                   <div className="mb-4 border rounded-lg">
                     <TextField
@@ -508,23 +566,87 @@ const BookTicketDrawer = ({
                       }}
                     />
                   </div>
-
-                  {/* Residence */}
-                  <div className="flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5">
-                    <div>
-                      <p className="text-sm text-[#1d1d1da3]">
+                  {/* State */}
+                  <button
+                    type="button"
+                    className="w-full flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5"
+                    onClick={() => {
+                      setContactInfoState(true);
+                    }}
+                  >
+                    <div className="w-full">
+                      <p className="text-sm text-left text-[#1d1d1da3]">
                         State of Residence*
                       </p>
-                      {/* <p className="font-semibold opacity-0"></p> */}
+
                       <input
                         type="text"
                         disabled
                         placeholder="Select state"
-                        className="placeholder:font-bold"
+                        className="w-full placeholder:font-bold"
                       />
                     </div>
                     <IoMdArrowDropdown className="text-lg" />
-                  </div>
+                  </button>
+
+                  {/* State Dialog */}
+                  <Dialog
+                    onClose={() => setContactInfoState(false)}
+                    open={contactInfoState}
+                  >
+                    <div className="w-lg py-4">
+                      <div className="border-b-2 border-b-slate-300 px-4">
+                        <div className="flex justify-between items-center mb-7">
+                          <p className="font-bold">Select state of residence</p>
+                          <button
+                            type="button"
+                            className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
+                            onClick={() => setContactInfoState(false)}
+                          >
+                            <IoMdClose className="text-2xl" />
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          className="py-4 px-5 mb-4 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
+                          placeholder="Search for state"
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            SearchStatesList(
+                              e.currentTarget.value,
+                              indiaStatesAndUTs
+                            )
+                          }
+                        />
+                      </div>
+
+                      <ul>
+                        {filteredStatesList &&
+                          filteredStatesList.map((st, inx, stArr) => (
+                            <li key={`state-code-${st.id}`}>
+                              <label
+                                htmlFor={`state-code-${st.id}`}
+                                className={`flex items-center gap-x-4 cursor-pointer py-4 ${
+                                  inx !== stArr.length - 1
+                                    ? "border-b border-b-slate-200"
+                                    : ""
+                                }`}
+                              >
+                                {st.state}
+                              </label>
+                            </li>
+                          ))}
+
+                        {filteredStatesList &&
+                          filteredStatesList.length <= 0 && (
+                            <li>
+                              <p className="pb-4 text-center text-[#1d1d1da3]">
+                                No state found
+                              </p>
+                            </li>
+                          )}
+                      </ul>
+                    </div>
+                  </Dialog>
 
                   {/* WhatsApp commumication */}
                   <div className="flex justify-between">
