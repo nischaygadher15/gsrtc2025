@@ -33,7 +33,7 @@ interface PassengerInfo {
 
 const CheckoutPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [cancelPayDialog, setCancelPayDialog] = useState<boolean>(true);
+  const [cancelPayDialog, setCancelPayDialog] = useState<boolean>(false);
   const passengers: PassengerInfo[] = [
     {
       name: "Ram",
