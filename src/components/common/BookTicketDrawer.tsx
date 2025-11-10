@@ -160,7 +160,7 @@ const BookTicketDrawer = ({
   // Window size listener
   useEffect(() => {
     const listenWindowSize = () => {
-      console.log(window.innerWidth);
+      // console.log(window.innerWidth);
       setWindowSize(window.innerWidth);
     };
 
@@ -269,8 +269,8 @@ const BookTicketDrawer = ({
       slotProps={{
         paper: {
           sx: {
-            borderTopLeftRadius: window.innerWidth > 1024 ? 16 : 0,
-            borderTopRightRadius: window.innerWidth > 1024 ? 16 : 0,
+            borderTopLeftRadius: windowSize > 1024 ? 16 : 0,
+            borderTopRightRadius: windowSize > 1024 ? 16 : 0,
           },
         },
       }}
