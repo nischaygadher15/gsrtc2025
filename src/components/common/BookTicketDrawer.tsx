@@ -600,7 +600,7 @@ const BookTicketDrawer = ({
 
                     {/* State Dialog */}
                     <Dialog
-                      fullScreen
+                      fullScreen={windowSize > 640 ? false : true}
                       onClose={closeStateDialog}
                       open={contactInfoState}
                       sx={{

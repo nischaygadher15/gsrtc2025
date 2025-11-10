@@ -33,6 +33,7 @@ interface PassengerInfo {
 
 const CheckoutPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [windowSize, setWindowSize] = useState<number>(0);
   const [cancelPayDialog, setCancelPayDialog] = useState<boolean>(false);
   const passengers: PassengerInfo[] = [
     {
@@ -59,10 +60,21 @@ const CheckoutPage = () => {
   ]);
   const [contactInfoEdit, setContactInfoEdit] = useState<boolean>(false);
 
-  useEffect(
-    () => console.log("passengerInfo: ", passengerInfo),
-    [passengerInfo]
-  );
+  // Window size listener
+  useEffect(() => {
+    const listenWindowSize = () => {
+      // console.log(window.innerWidth);
+      setWindowSize(window.innerWidth);
+    };
+
+    listenWindowSize();
+
+    window.addEventListener("resize", listenWindowSize);
+
+    return () => {
+      window.removeEventListener("resize", listenWindowSize);
+    };
+  }, []);
 
   // Passenger Gender
   const handleGenderChange = (
@@ -317,6 +329,102 @@ const CheckoutPage = () => {
                         </div>
                         <IoMdArrowDropdown className="text-lg" />
                       </button>
+
+                      {/* State Dialog */}
+                      <Dialog
+                        fullScreen={windowSize > 640 ? false : true}
+                        onClose={closeStateDialog}
+                        open={contactInfoState}
+                        sx={{
+                          "& .MuiDialog-paper": {
+                            overflow: "hidden",
+                            borderRadius: "16px",
+                          },
+                        }}
+                      >
+                        <div className="relative w-full sm:w-lg overflow-y-auto hideScrollBar">
+                          <div className="sticky top-0 left-0 right-0 bg-white z-[1000] shadow-sm p-4">
+                            <div className="flex justify-between items-center mb-7">
+                              <p className="font-bold">
+                                Select state of residence
+                              </p>
+                              <button
+                                type="button"
+                                className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
+                                onClick={closeStateDialog}
+                              >
+                                <IoMdClose className="text-2xl" />
+                              </button>
+                            </div>
+                            <input
+                              type="text"
+                              className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
+                              placeholder="Search for state"
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) =>
+                                SearchStatesList(
+                                  e.currentTarget.value,
+                                  indiaStatesAndUTs
+                                )
+                              }
+                            />
+                          </div>
+                          <RadioGroup name="radio-buttons-state">
+                            <ul className="">
+                              {filteredStatesList &&
+                                filteredStatesList.map((st, inx, stArr) => (
+                                  <li key={`state-code-${st.id}`}>
+                                    <label
+                                      htmlFor={`state-options-${st.id}`}
+                                      className={`flex justify-between items-center font-medium cursor-pointer px-4 py-2.5 ${
+                                        inx !== stArr.length - 1
+                                          ? "border-b border-b-slate-200"
+                                          : ""
+                                      }`}
+                                    >
+                                      <span>{st.state}</span>
+                                      <Radio
+                                        id={`state-options-${st.id}`}
+                                        onClick={closeStateDialog}
+                                        onChange={(
+                                          event: React.ChangeEvent<HTMLInputElement>
+                                        ) => {
+                                          setStateName(() => {
+                                            let index =
+                                              indiaStatesAndUTs.findIndex(
+                                                (state) =>
+                                                  state.code ==
+                                                  event.target.value
+                                              );
+                                            return indiaStatesAndUTs[index]
+                                              .state;
+                                          });
+                                        }}
+                                        value={st.code}
+                                        sx={{
+                                          color: "#173c62",
+                                          "&.Mui-checked": {
+                                            color: "#173c62",
+                                          },
+                                        }}
+                                      />
+                                    </label>
+                                  </li>
+                                ))}
+
+                              {filteredStatesList &&
+                                filteredStatesList.length <= 0 && (
+                                  <li>
+                                    <p className="px-4 py-5 text-center font-semibold">
+                                      No state found
+                                    </p>
+                                  </li>
+                                )}
+                            </ul>
+                          </RadioGroup>
+                        </div>
+                      </Dialog>
 
                       {/* WhatsApp commumication 2 */}
                       <div className="flex justify-between mb-4">
