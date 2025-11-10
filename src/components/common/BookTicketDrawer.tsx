@@ -195,6 +195,7 @@ const BookTicketDrawer = ({
 
   const [travelTime, setTravelTime] = useState("7h 25min");
 
+  //Contact Info: State
   interface StateInfoType {
     id: number;
     state: string;
@@ -240,8 +241,6 @@ const BookTicketDrawer = ({
     { id: 34, state: "Lakshadweep", code: "LD" },
     { id: 35, state: "Puducherry", code: "PY" },
   ];
-
-  //Contact Info: State
   const [contactInfoState, setContactInfoState] = useState<boolean>(false);
   const [stateName, setStateName] = useState<string>("Select state");
   const [filteredStatesList, setFilteredStatesList] =
@@ -606,7 +605,7 @@ const BookTicketDrawer = ({
                       sx={{
                         "& .MuiDialog-paper": {
                           overflow: "hidden",
-                          borderRadius: "16px",
+                          borderRadius: windowSize > 640 ? "16px" : "0px",
                         },
                       }}
                     >

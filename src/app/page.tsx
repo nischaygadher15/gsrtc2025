@@ -38,6 +38,7 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImSpinner8 } from "react-icons/im";
 import { useRouter } from "next/navigation";
+import BusLoader from "./loader";
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -301,12 +302,15 @@ export default function Home() {
   });
 
   //Handle submit on SearchBuses
-  const onSearchBuses = (data: SearchBusDataType) => {
+  const onSearchBuses = async (data: SearchBusDataType) => {
     console.log("Form data: ", data);
     setLoading(true);
-    setTimeout(() => {
-      router.push("/search");
-    }, 700);
+    await new Promise((resolve) => {
+      resolve(router.push("/search"));
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
+    });
   };
 
   // watching all search buses inputs
@@ -316,6 +320,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <BusLoader loading={loading} />
+
       {/* Home page hero section Carousel */}
       <div className="hidden md:block !overflow-hidden" ref={heroCarouselRef}>
         <div className="flex">
@@ -698,11 +704,7 @@ export default function Home() {
               loading ? "bg-[#7d7d7d]" : "bg-primary"
             } text-white font-semibold flex items-center justify-center gap-x-2 cursor-pointer outline-none`}
           >
-            {!loading ? (
-              <FiSearch className="text-2xl" />
-            ) : (
-              <ImSpinner8 className="text-2xl text-white  animate-spin" />
-            )}
+            <FiSearch className="text-2xl" />
             <span>Search buses</span>
           </button>
         </div>

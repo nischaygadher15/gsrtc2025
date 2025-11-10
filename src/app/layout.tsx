@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-white z-0">
         <DefaultNavbar />
         {children}
         <Analytics />

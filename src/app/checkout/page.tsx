@@ -12,6 +12,7 @@ import {
   FormControlLabel,
   FormGroup,
   Radio,
+  RadioGroup,
   Switch,
 } from "@mui/material";
 import Image from "next/image";
@@ -19,7 +20,7 @@ import Dialog from "@mui/material/Dialog";
 import Link from "next/link";
 import ackoInsurance from "@/assets/images/imgi_5_ic_insurance_acko.png";
 import { FaCircleCheck, FaCircleUser } from "react-icons/fa6";
-import { IoMdArrowDropdown } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdClose } from "react-icons/io";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 
@@ -88,6 +89,72 @@ const CheckoutPage = () => {
   //Close cancel payment dialog
   const closeCancelPayment = () => {
     setCancelPayDialog(false);
+  };
+
+  //Residence State
+
+  interface StateInfoType {
+    id: number;
+    state: string;
+    code: string;
+  }
+
+  const indiaStatesAndUTs: StateInfoType[] = [
+    { id: 0, state: "Andhra Pradesh", code: "AP" },
+    { id: 1, state: "Arunachal Pradesh", code: "AR" },
+    { id: 2, state: "Assam", code: "AS" },
+    { id: 3, state: "Bihar", code: "BR" },
+    { id: 4, state: "Chhattisgarh", code: "CG" },
+    { id: 5, state: "Goa", code: "GA" },
+    { id: 6, state: "Gujarat", code: "GJ" },
+    { id: 7, state: "Haryana", code: "HR" },
+    { id: 8, state: "Himachal Pradesh", code: "HP" },
+    { id: 9, state: "Jharkhand", code: "JH" },
+    { id: 10, state: "Karnataka", code: "KA" },
+    { id: 11, state: "Kerala", code: "KL" },
+    { id: 12, state: "Madhya Pradesh", code: "MP" },
+    { id: 13, state: "Maharashtra", code: "MH" },
+    { id: 14, state: "Manipur", code: "MN" },
+    { id: 15, state: "Meghalaya", code: "ML" },
+    { id: 16, state: "Mizoram", code: "MZ" },
+    { id: 17, state: "Nagaland", code: "NL" },
+    { id: 18, state: "Odisha", code: "OD" },
+    { id: 19, state: "Punjab", code: "PB" },
+    { id: 20, state: "Rajasthan", code: "RJ" },
+    { id: 21, state: "Sikkim", code: "SK" },
+    { id: 22, state: "Tamil Nadu", code: "TN" },
+    { id: 23, state: "Telangana", code: "TS" },
+    { id: 24, state: "Tripura", code: "TR" },
+    { id: 25, state: "Uttar Pradesh", code: "UP" },
+    { id: 26, state: "Uttarakhand", code: "UK" },
+    { id: 27, state: "West Bengal", code: "WB" },
+    // Union Territories
+    { id: 28, state: "Andaman and Nicobar Islands", code: "AN" },
+    { id: 29, state: "Chandigarh", code: "CH" },
+    { id: 30, state: "Dadra and Nagar Haveli and Daman and Diu", code: "DN" },
+    { id: 31, state: "Delhi", code: "DL" },
+    { id: 32, state: "Jammu and Kashmir", code: "JK" },
+    { id: 33, state: "Ladakh", code: "LA" },
+    { id: 34, state: "Lakshadweep", code: "LD" },
+    { id: 35, state: "Puducherry", code: "PY" },
+  ];
+  const [contactInfoState, setContactInfoState] = useState<boolean>(false);
+  const [stateName, setStateName] = useState<string>("Select state");
+  const [filteredStatesList, setFilteredStatesList] =
+    useState<StateInfoType[]>(indiaStatesAndUTs);
+
+  const closeStateDialog = () => {
+    setContactInfoState(false);
+    setFilteredStatesList(indiaStatesAndUTs);
+  };
+
+  const SearchStatesList = (text: string, contList: StateInfoType[]) => {
+    const filtered: StateInfoType[] = contList.filter(
+      (states) =>
+        states.state.toLocaleLowerCase().includes(text.toLocaleLowerCase()) ||
+        states.code.toLocaleLowerCase().includes(text.toLocaleLowerCase())
+    );
+    setFilteredStatesList(filtered);
   };
 
   return (
@@ -307,30 +374,29 @@ const CheckoutPage = () => {
                         />
                       </div>
 
-                      {/* Residence */}
+                      {/* Residence State */}
                       <button
                         type="button"
                         disabled={!contactInfoEdit}
                         className={`w-full flex disabled:bg-[#e0e0e0] border rounded-lg justify-between items-center px-3 py-2 ${
                           contactInfoEdit ? "cursor-pointer" : ""
                         } mb-5`}
+                        onClick={() => {
+                          setContactInfoState(true);
+                        }}
                       >
                         <div className="flex-1 flex flex-col items-start">
                           <p className="text-sm text-[#1d1d1da3]">
                             State of Residence*
                           </p>
-                          {/* <p className="font-semibold opacity-0"></p> */}
-                          <input
-                            type="text"
-                            disabled
-                            placeholder="Select state"
-                            className="placeholder:font-bold"
-                          />
+                          <p className="text-left text-[#1d1d1da3] font-bold">
+                            {stateName}
+                          </p>
                         </div>
                         <IoMdArrowDropdown className="text-lg" />
                       </button>
 
-                      {/* State Dialog */}
+                      {/* Residence State Dialog */}
                       <Dialog
                         fullScreen={windowSize > 640 ? false : true}
                         onClose={closeStateDialog}
@@ -338,7 +404,7 @@ const CheckoutPage = () => {
                         sx={{
                           "& .MuiDialog-paper": {
                             overflow: "hidden",
-                            borderRadius: "16px",
+                            borderRadius: windowSize > 640 ? "16px" : "0px",
                           },
                         }}
                       >
