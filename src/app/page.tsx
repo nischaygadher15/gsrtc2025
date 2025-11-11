@@ -36,13 +36,31 @@ import { FaUsers } from "react-icons/fa6";
 import NumberFormater from "@/utils/common/numberFormater";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImSpinner8 } from "react-icons/im";
 import { useRouter } from "next/navigation";
 import BusLoader from "./loader";
+import Dialog from "@mui/material/Dialog";
+import { IoMdClose } from "react-icons/io";
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
+  const [windowSize, setWindowSize] = useState<number>(0);
   const router = useRouter();
+
+  // Window size listener
+  useEffect(() => {
+    const listenWindowSize = () => {
+      // console.log(window.innerWidth);
+      setWindowSize(window.innerWidth);
+    };
+
+    listenWindowSize();
+
+    window.addEventListener("resize", listenWindowSize);
+
+    return () => {
+      window.removeEventListener("resize", listenWindowSize);
+    };
+  }, []);
 
   //Hero section carousel
   const [heroCarouselRef] = useEmblaCarousel({ loop: true, dragFree: true }, [
@@ -188,6 +206,7 @@ export default function Home() {
 
   // Source popover
   const [fromPlace, setFromPlace] = useState<HTMLElement | null>(null);
+  const [fromPlaceDialog, setFromPlaceDialog] = useState<boolean>(false);
   const fromPlacePopInputRef = useRef<HTMLInputElement | null>(null);
 
   const openFormPopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -371,7 +390,8 @@ export default function Home() {
                   type="button"
                   className="w-full p-2.5 md:p-3.5 border border-b-0 lg:border-b-[1px] rounded-se-2xl md:rounded-se-none rounded-ss-2xl lg:rounded-s-2xl border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
                   onClick={(e) => {
-                    openFormPopover(e);
+                    if (windowSize > 768) openFormPopover(e);
+                    else setFromPlaceDialog(true);
                   }}
                 >
                   <HailOutlinedIcon sx={{ fontSize: 30 }} />
@@ -388,73 +408,138 @@ export default function Home() {
                     {errors.boardingPoint.message}
                   </small>
                 )}
-                <Popover
-                  open={Boolean(fromPlace)}
-                  anchorEl={fromPlace}
-                  onClose={closeFromPopover}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  slotProps={{
-                    paper: {
-                      style: {
-                        width: 386,
-                        background: "transparent",
-                        borderRadius: 16,
-                        maxHeight: "calc(100% - 140px)",
-                        overflow: "hidden",
+
+                {windowSize > 768 && (
+                  <Popover
+                    open={Boolean(fromPlace)}
+                    anchorEl={fromPlace}
+                    onClose={closeFromPopover}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    slotProps={{
+                      paper: {
+                        style: {
+                          width: 386,
+                          background: "transparent",
+                          borderRadius: 16,
+                          maxHeight: "calc(100% - 140px)",
+                          overflow: "hidden",
+                        },
                       },
-                    },
-                  }}
-                >
-                  <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
-                    <div className="!bg-slate-200/50 flex flex-col gap-y-2">
-                      <div className="p-4 bg-white flex items-center gap-x-2">
-                        <HailOutlinedIcon sx={{ fontSize: 30 }} />
-                        <div>
-                          <p className="text-left text-xs text-gray-500">
-                            From
-                          </p>
-                          <input
-                            type="text"
-                            {...register("boardingPoint")}
-                            ref={fromPlacePopInputRef}
-                            className="text-left font-bold outline-none"
-                            placeholder="Enter Boarding point"
-                          />
+                    }}
+                  >
+                    <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
+                      <div className="!bg-slate-200/50 flex flex-col gap-y-2">
+                        <div className="p-4 bg-white flex items-center gap-x-2">
+                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                          <div>
+                            <p className="text-left text-xs text-gray-500">
+                              From
+                            </p>
+                            <input
+                              type="text"
+                              {...register("boardingPoint")}
+                              ref={fromPlacePopInputRef}
+                              className="text-left font-bold outline-none"
+                              placeholder="Enter Boarding point"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col !bg-white p-4">
+                          <p className="font-semibold">Recent Searches</p>
+                        </div>
+
+                        <div className="!bg-white">
+                          <p className="font-semibold p-4">Popular cities</p>
+                          <ul className="flex flex-col ">
+                            {boardingPoints &&
+                              boardingPoints.length > 0 &&
+                              boardingPoints.map((bpc) => (
+                                <li key={`boardingPoint-${bpc}`}>
+                                  <button
+                                    type="button"
+                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                    onClick={() => {
+                                      setValue("boardingPoint", bpc);
+                                      if (bpc) clearErrors("boardingPoint");
+                                      closeFromPopover();
+                                    }}
+                                  >
+                                    {bpc}
+                                  </button>
+                                </li>
+                              ))}
+                          </ul>
                         </div>
                       </div>
+                    </div>
+                  </Popover>
+                )}
 
-                      <div className="flex flex-col !bg-white p-4">
-                        <p className="font-semibold">Recent Searches</p>
-                      </div>
+                {windowSize <= 768 && (
+                  <Dialog
+                    fullScreen
+                    open={fromPlaceDialog}
+                    onClose={() => setFromPlaceDialog(false)}
+                  >
+                    <div className="w-full h-full hideScrollBar overflow-y-scroll">
+                      <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
+                        <div className="sticky top-0 shadow-md left-0 right-0 p-4 bg-white flex items-center gap-x-2">
+                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                          <div className="relative flex-1">
+                            <p className="text-left text-xs text-gray-500">
+                              From
+                            </p>
+                            <input
+                              type="text"
+                              {...register("boardingPoint")}
+                              ref={fromPlacePopInputRef}
+                              className="text-left font-bold outline-none"
+                              placeholder="Enter Boarding point"
+                            />
+                            <button
+                              type="button"
+                              className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
+                              onClick={() => setFromPlaceDialog(false)}
+                            >
+                              <IoMdClose className="text-2xl" />
+                            </button>
+                          </div>
+                        </div>
 
-                      <div className="!bg-white">
-                        <p className="font-semibold p-4">Popular cities</p>
-                        <ul className="flex flex-col ">
-                          {boardingPoints &&
-                            boardingPoints.length > 0 &&
-                            boardingPoints.map((bpc) => (
-                              <li key={`boardingPoint-${bpc}`}>
-                                <button
-                                  type="button"
-                                  className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
-                                  onClick={() => {
-                                    setValue("boardingPoint", bpc);
-                                    if (bpc) clearErrors("boardingPoint");
-                                    closeFromPopover();
-                                  }}
-                                >
-                                  {bpc}
-                                </button>
-                              </li>
-                            ))}
-                        </ul>
+                        <div className="flex flex-col !bg-white p-4">
+                          <p className="font-semibold">Recent Searches</p>
+                        </div>
+
+                        <div className="!bg-white">
+                          <p className="font-semibold p-4">Popular cities</p>
+                          <ul className="flex flex-col ">
+                            {boardingPoints &&
+                              boardingPoints.length > 0 &&
+                              boardingPoints.map((bpc) => (
+                                <li key={`boardingPoint-${bpc}`}>
+                                  <button
+                                    type="button"
+                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                    onClick={() => {
+                                      setValue("boardingPoint", bpc);
+                                      if (bpc) clearErrors("boardingPoint");
+                                      setFromPlaceDialog(false);
+                                    }}
+                                  >
+                                    {bpc}
+                                  </button>
+                                </li>
+                              ))}
+                          </ul>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Popover>
+                  </Dialog>
+                )}
               </div>
 
               {/* Destination place */}

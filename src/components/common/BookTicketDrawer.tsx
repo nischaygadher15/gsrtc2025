@@ -276,295 +276,264 @@ const BookTicketDrawer = ({
     >
       <div
         className={`relative min-h-[100vh] max-h-[100vh] lg:max-h-[95vh] lg:min-h-[95vh] rounded-2xl flex flex-col ${
-          activeTab === 2 ? "" : "pb-[97px] sm:pb-[70px]"
+          activeTab === 2 ? "" : ""
         }`}
         id="drawerContainer"
       >
-        {/* Header */}
-        <div className="w-full border-slate-200 min-h-20 max-h-20 p-4 flex justify-start items-center gap-x-2">
-          <div>
-            <button
-              type="button"
-              onClick={closeViewDrawer}
-              className="px-3 py-2 rounded-s-full rounded-e-full bg-white hover:bg-[#f2f2f8] cursor-pointer"
-            >
-              <IoMdClose className="text-2xl" />
-            </button>
-          </div>
-          <div>
-            <p className="flex items-center font-semibold gap-x-2 text-sm md:text-base">
-              <span>Ahmedabad</span>
-              <GrLinkNext className="text-[#1d1d1da3]" />
-              <span>Jamnagar</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Drawer Main Tabs */}
-        <div>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            variant={windowSize < 640 ? "scrollable" : "standard"}
-            centered={windowSize > 640 ? true : false}
-            allowScrollButtonsMobile
-            scrollButtons
-            sx={{
-              "&.MuiTabs-root": {
-                borderTop: "1px solid #e2e8f0",
-                borderBottom: "1px solid #e2e8f0",
-              },
-              "& .MuiTabs-indicator": {
-                backgroundColor: "#173c62",
-              },
-            }}
-          >
-            <Tab
-              id="Tab-selectSeat"
-              aria-controls="TabPanel-selectSeat"
-              disableRipple
-              label="1. Select seats"
-              sx={{
-                "&.MuiTab-root": {
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                },
-                "&.Mui-selected": {
-                  color: "#173c62",
-                },
-              }}
-            />
-            <Tab
-              id="Tab-boardDropPoints"
-              aria-controls="TabPanel-boardDropPoints"
-              label="2. Board/Drop point"
-              disableRipple
-              sx={{
-                "&.MuiTab-root": {
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                },
-                "&.Mui-selected": {
-                  color: "#173c62",
-                },
-              }}
-            />
-            <Tab
-              id="Tab-passengerInfo"
-              aria-controls="TabPanel-passengerInfo"
-              label="3. Passenger Info"
-              disableRipple
-              sx={{
-                "&.MuiTab-root": {
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                },
-                "&.Mui-selected": {
-                  color: "#173c62",
-                },
-              }}
-            />
-          </Tabs>
-        </div>
-
-        <div className="relative">
-          {/* Tab content: Select Seat */}
-          {activeTab === 0 && (
-            <div
-              role="tabpanel"
-              id="TabPanel-selectSeat"
-              aria-labelledby="Tab-selectSeat"
-              className="w-full min-h-full max-h-full overflow-y-hidden bg-[#f2f2f8] pt-6 px-4 sm:px-6 lg:px-12 flex gap-x-7"
-            >
-              {/* Seats */}
-              <div className="w-full md:w-1/2 overflow-y-scroll hideScrollBar">
-                {/* Bus deck */}
-                <SleeperBus />
-
-                {/* Seat types information */}
-                <div>
-                  <p className="font-bold text-center mt-7 mb-5">
-                    Know your seat types
-                  </p>
-
-                  <table
-                    id="knowYourSeatTypes"
-                    className="w-full bg-transparent mb-7"
-                  >
-                    <thead>
-                      <tr>
-                        <th className="w-1/2">Seat Types</th>
-                        <th className="w-1/4">Seater</th>
-                        <th className="w-1/4">Sleeper</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {knowYourSeatType &&
-                        knowYourSeatType.map((trow, inx) => (
-                          <tr key={`knowYourSeatType-row-${inx}`}>
-                            <td>{trow.seatType}</td>
-                            <td>
-                              <Image
-                                src={trow.seater}
-                                className="max-w-[30px] mx-auto"
-                                alt="SeaterSeatPhoto"
-                              />
-                            </td>
-                            <td>
-                              <Image
-                                src={trow.sleeper}
-                                className="mx-auto"
-                                alt="SleeperSeatPhoto"
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Bus and route information */}
-              <div
-                className="hidden md:block w-1/2 rounded-2xl overflow-y-scroll hideScrollBar"
-                ref={BusInfoParentRef}
+        <div className="z-[1000] sticky top-0 left-0 right-0">
+          {/* Header */}
+          <div className="w-full border-slate-200 min-h-20 max-h-20 p-4 flex justify-start items-center gap-x-2">
+            <div>
+              <button
+                type="button"
+                onClick={closeViewDrawer}
+                className="px-3 py-2 rounded-s-full rounded-e-full bg-white hover:bg-[#f2f2f8] cursor-pointer"
               >
-                <BusAndRouteInfo parentRef={BusInfoParentRef} />
-              </div>
-
-              <SwipeDrawer />
+                <IoMdClose className="text-2xl" />
+              </button>
             </div>
-          )}
+            <div>
+              <p className="flex items-center font-semibold gap-x-2 text-sm md:text-base">
+                <span>Ahmedabad</span>
+                <GrLinkNext className="text-[#1d1d1da3]" />
+                <span>Jamnagar</span>
+              </p>
+            </div>
+          </div>
 
-          {/* Boarding/Dropping points */}
-          {activeTab === 1 && (
-            <div
-              role="tabpanel"
-              id="TabPanel-boardDropPoints"
-              aria-labelledby="Tab-boardDropPoints"
-              className="relative flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8] flex flex-col md:flex-row md:justify-center gap-5 px-7 lg:px-0 py-5"
+          {/* Drawer Main Tabs */}
+          <div>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              variant={windowSize < 640 ? "scrollable" : "standard"}
+              centered={windowSize > 640 ? true : false}
+              allowScrollButtonsMobile
+              scrollButtons
+              sx={{
+                "&.MuiTabs-root": {
+                  borderTop: "1px solid #e2e8f0",
+                  borderBottom: "1px solid #e2e8f0",
+                },
+                "& .MuiTabs-indicator": {
+                  backgroundColor: "#173c62",
+                },
+              }}
             >
-              <div className="w-full h-auto md:w-1/2 lg:w-[400px] xl:w-[500px]">
-                <Accordion defaultExpanded>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="boardingPoint-panel-content"
-                    id="boardingPoint-panel-header"
-                    className="!rounded-ss-2xl !rounded-se-2xl"
-                  >
-                    <div className="">
-                      <p className="font-bold">Boarding points</p>
-                      <p className="text-[#1d1d1da3] text-sm">
-                        Select Boarding Point
-                      </p>
-                    </div>
-                  </AccordionSummary>
-                  <AccordionDetails className="!p-0">
-                    <BoardingDroppingTimeline
-                      timeLineList={BusBoardingPoints}
-                    />
-                  </AccordionDetails>
-                </Accordion>
-              </div>
+              <Tab
+                id="Tab-selectSeat"
+                aria-controls="TabPanel-selectSeat"
+                disableRipple
+                label="1. Select seats"
+                sx={{
+                  "&.MuiTab-root": {
+                    fontWeight: "bold",
+                    textTransform: "capitalize",
+                  },
+                  "&.Mui-selected": {
+                    color: "#173c62",
+                  },
+                }}
+              />
+              <Tab
+                id="Tab-boardDropPoints"
+                aria-controls="TabPanel-boardDropPoints"
+                label="2. Board/Drop point"
+                disableRipple
+                sx={{
+                  "&.MuiTab-root": {
+                    fontWeight: "bold",
+                    textTransform: "capitalize",
+                  },
+                  "&.Mui-selected": {
+                    color: "#173c62",
+                  },
+                }}
+              />
+              <Tab
+                id="Tab-passengerInfo"
+                aria-controls="TabPanel-passengerInfo"
+                label="3. Passenger Info"
+                disableRipple
+                sx={{
+                  "&.MuiTab-root": {
+                    fontWeight: "bold",
+                    textTransform: "capitalize",
+                  },
+                  "&.Mui-selected": {
+                    color: "#173c62",
+                  },
+                }}
+              />
+            </Tabs>
+          </div>
+        </div>
 
-              <div className="w-full h-auto md:w-1/2 lg:w-[400px] xl:w-[500px]">
-                <Accordion defaultExpanded>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="droppingPoint-panel-content"
-                    id="droppingPoint-panel-header"
-                  >
-                    <div className="">
-                      <p className="font-bold">Dropping points</p>
-                      <p className="text-[#1d1d1da3] text-sm">
-                        Select Dropping Point
-                      </p>
-                    </div>
-                  </AccordionSummary>
-                  <AccordionDetails className="!p-0">
-                    <BoardingDroppingTimeline
-                      timeLineList={BusBoardingPoints}
-                    />
-                  </AccordionDetails>
-                </Accordion>
+        {/* Tab content: Select Seat */}
+        {activeTab === 0 && (
+          <div
+            role="tabpanel"
+            id="TabPanel-selectSeat"
+            aria-labelledby="Tab-selectSeat"
+            className="w-full min-h-full max-h-full overflow-y-hidden bg-[#f2f2f8] pt-6 px-4 sm:px-6 lg:px-12 flex gap-x-7"
+          >
+            {/* Seats */}
+            <div className="w-full md:w-1/2 overflow-y-scroll hideScrollBar">
+              {/* Bus deck */}
+              <SleeperBus />
+
+              {/* Seat types information */}
+              <div>
+                <p className="font-bold text-center mt-7 mb-5">
+                  Know your seat types
+                </p>
+
+                <table
+                  id="knowYourSeatTypes"
+                  className="w-full bg-transparent mb-7"
+                >
+                  <thead>
+                    <tr>
+                      <th className="w-1/2">Seat Types</th>
+                      <th className="w-1/4">Seater</th>
+                      <th className="w-1/4">Sleeper</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {knowYourSeatType &&
+                      knowYourSeatType.map((trow, inx) => (
+                        <tr key={`knowYourSeatType-row-${inx}`}>
+                          <td>{trow.seatType}</td>
+                          <td>
+                            <Image
+                              src={trow.seater}
+                              className="max-w-[30px] mx-auto"
+                              alt="SeaterSeatPhoto"
+                            />
+                          </td>
+                          <td>
+                            <Image
+                              src={trow.sleeper}
+                              className="mx-auto"
+                              alt="SleeperSeatPhoto"
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-          )}
 
-          {/* Passenger Information */}
-          {activeTab === 2 && (
+            {/* Bus and route information */}
             <div
-              role="tabpanel"
-              id="TabPanel-passengerInfo"
-              aria-labelledby="Tab-passengerInfo"
-              className="flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8]"
+              className="hidden md:block w-1/2 rounded-2xl overflow-y-scroll hideScrollBar"
+              ref={BusInfoParentRef}
             >
-              <div className="w-full h-full py-5 px-4 md:px-[75px] flex gap-4">
-                <div className="w-full md:w-3/5 flex flex-col gap-y-5">
-                  {/* Contact details form */}
-                  <form className="w-full p-4 rounded-2xl shadow-md bg-white">
-                    <div className="mb-3">
-                      <p className="text-xl font-bold">Contact details</p>
-                      <p className="text-sm text-[#1d1d1da3]">
-                        Ticket details will be sent to
+              <BusAndRouteInfo parentRef={BusInfoParentRef} />
+            </div>
+
+            <SwipeDrawer />
+          </div>
+        )}
+
+        {/* Boarding/Dropping points */}
+        {activeTab === 1 && (
+          <div
+            role="tabpanel"
+            id="TabPanel-boardDropPoints"
+            aria-labelledby="Tab-boardDropPoints"
+            className="relative flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8] flex flex-col md:flex-row md:justify-center gap-5 px-7 lg:px-0 py-5"
+          >
+            <div className="w-full h-auto md:w-1/2 lg:w-[400px] xl:w-[500px]">
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="boardingPoint-panel-content"
+                  id="boardingPoint-panel-header"
+                  className="!rounded-ss-2xl !rounded-se-2xl"
+                >
+                  <div className="">
+                    <p className="font-bold">Boarding points</p>
+                    <p className="text-[#1d1d1da3] text-sm">
+                      Select Boarding Point
+                    </p>
+                  </div>
+                </AccordionSummary>
+                <AccordionDetails className="!p-0">
+                  <BoardingDroppingTimeline timeLineList={BusBoardingPoints} />
+                </AccordionDetails>
+              </Accordion>
+            </div>
+
+            <div className="w-full h-auto md:w-1/2 lg:w-[400px] xl:w-[500px]">
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="droppingPoint-panel-content"
+                  id="droppingPoint-panel-header"
+                >
+                  <div className="">
+                    <p className="font-bold">Dropping points</p>
+                    <p className="text-[#1d1d1da3] text-sm">
+                      Select Dropping Point
+                    </p>
+                  </div>
+                </AccordionSummary>
+                <AccordionDetails className="!p-0">
+                  <BoardingDroppingTimeline timeLineList={BusBoardingPoints} />
+                </AccordionDetails>
+              </Accordion>
+            </div>
+          </div>
+        )}
+
+        {/* Passenger Information */}
+        {activeTab === 2 && (
+          <div
+            role="tabpanel"
+            id="TabPanel-passengerInfo"
+            aria-labelledby="Tab-passengerInfo"
+            className="flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8]"
+          >
+            <div className="w-full h-full py-5 px-4 md:px-[75px] flex gap-4">
+              <div className="w-full md:w-3/5 flex flex-col gap-y-5">
+                {/* Contact details form */}
+                <form className="w-full p-4 rounded-2xl shadow-md bg-white">
+                  <div className="mb-3">
+                    <p className="text-xl font-bold">Contact details</p>
+                    <p className="text-sm text-[#1d1d1da3]">
+                      Ticket details will be sent to
+                    </p>
+                  </div>
+                  {/* Phone no. */}
+                  <div className="flex mb-4">
+                    <button
+                      type="button"
+                      className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                    >
+                      <p className="text-xs text-[#1d1d1da3]">Country Code</p>
+                      <p className="flex items-center gap-x-1 font-semibold">
+                        <span>+91 (IND)</span>
+                        <IoMdArrowDropdown className="text-xl" />
                       </p>
-                    </div>
-                    {/* Phone no. */}
-                    <div className="flex mb-4">
-                      <button
-                        type="button"
-                        className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
-                      >
-                        <p className="text-xs text-[#1d1d1da3]">Country Code</p>
-                        <p className="flex items-center gap-x-1 font-semibold">
-                          <span>+91 (IND)</span>
-                          <IoMdArrowDropdown className="text-xl" />
-                        </p>
-                      </button>
-                      <div className="flex-1 border rounded-se-lg rounded-ee-lg">
-                        <TextField
-                          type="text"
-                          id="contact-info-phone"
-                          label="Phone*"
-                          placeholder="Enter phone no."
-                          variant="filled"
-                          error={true}
-                          sx={{
-                            width: "100%",
-                            "& .MuiFilledInput-root": {
-                              fontWeight: "700 !important",
-                              backgroundColor: "white !important",
-                              borderTopLeftRadius: "0px",
-                              borderTopRightRadius: "8px",
-                              borderBottomRightRadius: "8px",
-                            },
-                            "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3 !important",
-                            },
-                            "& ::before": {
-                              display: "none",
-                            },
-                            "& ::after": {
-                              display: "none",
-                            },
-                          }}
-                        />
-                      </div>
-                    </div>
-                    {/* Email */}
-                    <div className="mb-4 border rounded-lg">
+                    </button>
+                    <div className="flex-1 border rounded-se-lg rounded-ee-lg">
                       <TextField
                         type="text"
-                        id="contact-info-email-id"
-                        label="Email ID"
+                        id="contact-info-phone"
+                        label="Phone*"
+                        placeholder="Enter phone no."
                         variant="filled"
-                        placeholder="Enter email id"
+                        error={true}
                         sx={{
                           width: "100%",
                           "& .MuiFilledInput-root": {
                             fontWeight: "700 !important",
                             backgroundColor: "white !important",
-                            borderRadius: "8px !important",
+                            borderTopLeftRadius: "0px",
+                            borderTopRightRadius: "8px",
+                            borderBottomRightRadius: "8px",
                           },
                           "& .MuiInputLabel-root": {
                             color: "#1d1d1da3 !important",
@@ -578,498 +547,519 @@ const BookTicketDrawer = ({
                         }}
                       />
                     </div>
-                    {/* State */}
-                    <button
-                      type="button"
-                      className="w-full flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5"
-                      onClick={() => {
-                        setContactInfoState(true);
-                      }}
-                    >
-                      <div className="w-full">
-                        <p className="text-sm text-left text-[#1d1d1da3]">
-                          State of Residence*
-                        </p>
-                        <p className="text-left text-[#1d1d1da3] font-bold">
-                          {stateName}
-                        </p>
-                      </div>
-                      <IoMdArrowDropdown className="text-lg" />
-                    </button>
-
-                    {/* State Dialog */}
-                    <Dialog
-                      fullScreen={windowSize > 640 ? false : true}
-                      onClose={closeStateDialog}
-                      open={contactInfoState}
+                  </div>
+                  {/* Email */}
+                  <div className="mb-4 border rounded-lg">
+                    <TextField
+                      type="text"
+                      id="contact-info-email-id"
+                      label="Email ID"
+                      variant="filled"
+                      placeholder="Enter email id"
                       sx={{
-                        "& .MuiDialog-paper": {
-                          overflow: "hidden",
-                          borderRadius: windowSize > 640 ? "16px" : "0px",
+                        width: "100%",
+                        "& .MuiFilledInput-root": {
+                          fontWeight: "700 !important",
+                          backgroundColor: "white !important",
+                          borderRadius: "8px !important",
+                        },
+                        "& .MuiInputLabel-root": {
+                          color: "#1d1d1da3 !important",
+                        },
+                        "& ::before": {
+                          display: "none",
+                        },
+                        "& ::after": {
+                          display: "none",
                         },
                       }}
-                    >
-                      <div className="relative w-full sm:w-lg overflow-y-auto hideScrollBar">
-                        <div className="sticky top-0 left-0 right-0 bg-white z-[1000] shadow-sm p-4">
-                          <div className="flex justify-between items-center mb-7">
-                            <p className="font-bold">
-                              Select state of residence
-                            </p>
-                            <button
-                              type="button"
-                              className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
-                              onClick={closeStateDialog}
-                            >
-                              <IoMdClose className="text-2xl" />
-                            </button>
-                          </div>
-                          <input
-                            type="text"
-                            className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
-                            placeholder="Search for state"
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) =>
-                              SearchStatesList(
-                                e.currentTarget.value,
-                                indiaStatesAndUTs
-                              )
-                            }
-                          />
-                        </div>
-                        <RadioGroup name="radio-buttons-state">
-                          <ul className="">
-                            {filteredStatesList &&
-                              filteredStatesList.map((st, inx, stArr) => (
-                                <li key={`state-code-${st.id}`}>
-                                  <label
-                                    htmlFor={`state-options-${st.id}`}
-                                    className={`flex justify-between items-center font-medium cursor-pointer px-4 py-2.5 ${
-                                      inx !== stArr.length - 1
-                                        ? "border-b border-b-slate-200"
-                                        : ""
-                                    }`}
-                                  >
-                                    <span>{st.state}</span>
-                                    <Radio
-                                      id={`state-options-${st.id}`}
-                                      onClick={closeStateDialog}
-                                      onChange={(
-                                        event: React.ChangeEvent<HTMLInputElement>
-                                      ) => {
-                                        setStateName(() => {
-                                          let index =
-                                            indiaStatesAndUTs.findIndex(
-                                              (state) =>
-                                                state.code == event.target.value
-                                            );
-                                          return indiaStatesAndUTs[index].state;
-                                        });
-                                      }}
-                                      value={st.code}
-                                      sx={{
-                                        color: "#173c62",
-                                        "&.Mui-checked": {
-                                          color: "#173c62",
-                                        },
-                                      }}
-                                    />
-                                  </label>
-                                </li>
-                              ))}
-
-                            {filteredStatesList &&
-                              filteredStatesList.length <= 0 && (
-                                <li>
-                                  <p className="px-4 py-5 text-center font-semibold">
-                                    No state found
-                                  </p>
-                                </li>
-                              )}
-                          </ul>
-                        </RadioGroup>
-                      </div>
-                    </Dialog>
-
-                    {/* WhatsApp commumication */}
-                    <div className="flex justify-between">
-                      <div className="flex items-center gap-3">
-                        <FaWhatsapp className="text-[#25d366] text-4xl" />
-                        <span className="text-sm">
-                          Send booking details and trip updates on WhatsApp
-                        </span>
-                      </div>
-                      <Switch
-                        defaultChecked
-                        sx={{
-                          "& .Mui-checked": {
-                            color: "#173c62 !important",
-                          },
-                          "& .MuiSwitch-track": {
-                            backgroundColor: "#173c62 !important",
-                          },
-                        }}
-                      />
-                    </div>
-                  </form>
-
-                  {/* Passengers details */}
-                  <div className="w-full p-4 rounded-2xl shadow-md bg-white">
-                    <p className="text-xl font-bold mb-4">Passenger details</p>
-
-                    {/* List for passenger info. from accordian */}
-                    <ul>
-                      {passengers &&
-                        passengers.map((passenger, inx) => (
-                          <li key={`passengerInfo-${inx}`}>
-                            <Accordion
-                              defaultExpanded
-                              sx={{
-                                "&.MuiAccordion-root": {
-                                  boxShadow: "none !important",
-                                },
-                                "& .MuiAccordionSummary-root": {
-                                  padding: "0px !important",
-                                },
-                              }}
-                            >
-                              <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1-content"
-                                id={`pasenger-accordian-${inx}`}
-                              >
-                                <div className="flex items-center gap-4">
-                                  <FaCircleUser className="text-4xl" />
-                                  <div>
-                                    <p className="font-bold">
-                                      Passenger {inx + 1}
-                                    </p>
-                                    <p className="text-sm text-[#1d1d1da3]">
-                                      Male seat · Seat H, Upper Deck
-                                    </p>
-                                  </div>
-                                </div>
-                              </AccordionSummary>
-                              <AccordionDetails className="!p-0">
-                                <form>
-                                  {/* Name */}
-                                  <div className="mb-4 border rounded-lg">
-                                    <TextField
-                                      type="text"
-                                      // id="passenger-info-name"
-                                      label="Name*"
-                                      variant="filled"
-                                      placeholder="Enter name"
-                                      sx={{
-                                        width: "100%",
-                                        "& .MuiFilledInput-root": {
-                                          fontWeight: "700 !important",
-                                          backgroundColor: "white !important",
-                                          borderRadius: "8px !important",
-                                        },
-                                        "& .MuiInputLabel-root": {
-                                          color: "#1d1d1da3 !important",
-                                        },
-                                        "& ::before": {
-                                          display: "none",
-                                        },
-                                        "& ::after": {
-                                          display: "none",
-                                        },
-                                      }}
-                                    />
-                                  </div>
-
-                                  {/* Age */}
-                                  <div className="mb-4 border rounded-lg">
-                                    <TextField
-                                      type="text"
-                                      // id="passenger-info-age"
-                                      label="Age*"
-                                      variant="filled"
-                                      placeholder="Enter age"
-                                      sx={{
-                                        width: "100%",
-                                        "& .MuiFilledInput-root": {
-                                          fontWeight: "700 !important",
-                                          backgroundColor: "white !important",
-                                          borderRadius: "8px !important",
-                                        },
-                                        "& .MuiInputLabel-root": {
-                                          color: "#1d1d1da3 !important",
-                                        },
-                                        "& ::before": {
-                                          display: "none",
-                                        },
-                                        "& ::after": {
-                                          display: "none",
-                                        },
-                                      }}
-                                    />
-                                  </div>
-
-                                  {/* Gender */}
-                                  <div className="">
-                                    <p className="text-[#1d1d1da3] mb-1">
-                                      Gender*
-                                    </p>
-                                    <div className="flex gap-x-2">
-                                      {/* Female */}
-                                      <label
-                                        htmlFor={`passengerGenderFemale-${inx}`}
-                                        className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between cursor-pointer"
-                                      >
-                                        <p className="font-semibold">Female</p>
-                                        <Radio
-                                          id={`passengerGenderFemale-${inx}`}
-                                          sx={{
-                                            color: "#173c62",
-                                            "&.Mui-checked": {
-                                              color: "#173c62",
-                                            },
-                                          }}
-                                          checked={
-                                            passengerInfo[inx].gender ===
-                                            "female"
-                                          }
-                                          onChange={(
-                                            event: React.ChangeEvent<HTMLInputElement>
-                                          ) => handleGenderChange(event, inx)}
-                                          value="female"
-                                          name={`passenger-gender-${inx}`}
-                                        />
-                                      </label>
-
-                                      {/* Male */}
-                                      <label
-                                        htmlFor={`passengerGenderMale-${inx}`}
-                                        className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between cursor-pointer"
-                                      >
-                                        <p className="font-semibold">Male</p>
-                                        <Radio
-                                          id={`passengerGenderMale-${inx}`}
-                                          sx={{
-                                            color: "#173c62",
-                                            "&.Mui-checked": {
-                                              color: "#173c62",
-                                            },
-                                          }}
-                                          checked={
-                                            passengerInfo[inx].gender === "male"
-                                          }
-                                          onChange={(
-                                            event: React.ChangeEvent<HTMLInputElement>
-                                          ) => handleGenderChange(event, inx)}
-                                          value="male"
-                                          name={`passenger-gender-${inx}`}
-                                        />
-                                      </label>
-                                    </div>
-                                  </div>
-                                </form>
-                              </AccordionDetails>
-                            </Accordion>
-                          </li>
-                        ))}
-                    </ul>
+                    />
                   </div>
-
-                  {/* Term and conditions */}
-                  <div className="mb-5">
-                    <p className="text-center text-sm mb-4">
-                      By clicking 'Continue booking', I accept
-                    </p>
-                    <p className="text-sm flex justify-center items-center gap-x-7">
-                      <a href="#" className="underline font-bold text-blue-700">
-                        Terms & conditions
-                      </a>
-                      <a href="#" className="underline font-bold text-blue-700">
-                        Privacy policy
-                      </a>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="w-2/5 hidden md:block">
-                  {/* Trip summary */}
-                  <div className="bg-white p-5 rounded-2xl shadow-md">
-                    <div className="mb-4">
-                      <p className="font-bold text-lg">
-                        Shree Pramukhraj Travels
-                      </p>
-                      <p className="text-sm text-[#1d1d1da3]">
-                        1 · NON A/C Sleeper (2+1)
-                      </p>
-                    </div>
-
-                    <div className="border-b border-b-slate-200">
-                      <table className="mb-6">
-                        <tbody>
-                          {/* Source place */}
-                          <tr>
-                            <td>
-                              <div className="pe-3 py-3">
-                                <p className="font-bold text-base text-left">
-                                  {sourcePlace.leftPart[0]}
-                                </p>
-                                <p className="font-medium text-xs text-left">
-                                  {sourcePlace.leftPart[1]}
-                                </p>
-                              </div>
-                            </td>
-                            <td className="bg-[#e6e6e6]">
-                              <div className="min-w-2 max-w-2 min-h-2 max-h-2 rounded-full bg-[#4b4b4b]"></div>
-                            </td>
-                            <td>
-                              <div className="px-4 py-3">
-                                <p className="font-bold text-base text-left">
-                                  {sourcePlace.rightPart[0]}
-                                </p>
-                                <p className="font-medium text-xs text-left">
-                                  {sourcePlace.rightPart[1]}
-                                </p>
-                              </div>
-                            </td>
-                          </tr>
-
-                          {/* Trip duration */}
-                          <tr>
-                            <td>
-                              <p className="pe-3 py-3 text-xs text-left text-[#1d1d1da3]">
-                                {travelTime}
-                              </p>
-                            </td>
-                            <td className="bg-[#e6e6e6]"></td>
-                            <td></td>
-                          </tr>
-
-                          {/* destination place */}
-                          <tr>
-                            <td>
-                              <div className="pe-3 py-3">
-                                <p className="font-bold text-base text-left">
-                                  {destPlace.leftPart[0]}
-                                </p>
-                                <p className="font-medium text-xs text-left">
-                                  {destPlace.leftPart[1]}
-                                </p>
-                              </div>
-                            </td>
-                            <td className="bg-[#e6e6e6]">
-                              <div className="min-w-2 max-w-2 min-h-2 max-h-2 rounded-full bg-[#4b4b4b]"></div>
-                            </td>
-                            <td>
-                              <div className="px-4 py-3">
-                                <p className="font-bold text-base text-left">
-                                  {destPlace.rightPart[0]}
-                                </p>
-                                <p className="font-medium text-xs text-left">
-                                  {destPlace.rightPart[1]}
-                                </p>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <div className="py-4">
-                      <p className="font-bold">Seat details</p>
-                      <p className="text-sm text-[#1d1d1da3] mb-3">4</p>
-                      <ul className="w-full flex flex-wrap gap-2">
-                        <li>
-                          <p className="px-1.5 py-1 text-xs rounded-md bg-[#e2eee3]">
-                            6 · Upper deck
-                          </p>
-                        </li>
-                        <li>
-                          <p className="px-1.5 py-1 text-xs rounded-md bg-[#e2eee3]">
-                            6 · Upper deck
-                          </p>
-                        </li>
-                        <li>
-                          <p className="px-1.5 py-1 text-xs rounded-md bg-[#e2eee3]">
-                            6 · Upper deck
-                          </p>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Button for seat amount and booking button */}
-              <div
-                className={`z-[1000] duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
-              >
-                <div className="flex justify-between items-center gap-x-7">
-                  <p className="text-sm font-semibold">1 seat</p>
+                  {/* State */}
                   <button
                     type="button"
-                    className="flex items-center gap-x-2 cursor-pointer"
-                  >
-                    <span className="font-bold text-2xl">&#8377;{500}</span>
-                    <span className="border-2 border-slate-500 rounded">
-                      <FaPlus className="text-slate-500 text-sm" />
-                    </span>
-                  </button>
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
-              bg-primary outline-none"
+                    className="w-full flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5"
                     onClick={() => {
-                      redirect("/checkout");
+                      setContactInfoState(true);
                     }}
                   >
-                    Continue to checkout
+                    <div className="w-full">
+                      <p className="text-sm text-left text-[#1d1d1da3]">
+                        State of Residence*
+                      </p>
+                      <p className="text-left text-[#1d1d1da3] font-bold">
+                        {stateName}
+                      </p>
+                    </div>
+                    <IoMdArrowDropdown className="text-lg" />
                   </button>
+
+                  {/* State Dialog */}
+                  <Dialog
+                    fullScreen={windowSize > 640 ? false : true}
+                    onClose={closeStateDialog}
+                    open={contactInfoState}
+                    sx={{
+                      "& .MuiDialog-paper": {
+                        overflow: "hidden",
+                        borderRadius: windowSize > 640 ? "16px" : "0px",
+                      },
+                    }}
+                  >
+                    <div className="relative w-full sm:w-lg overflow-y-auto hideScrollBar">
+                      <div className="sticky top-0 left-0 right-0 bg-white z-[1000] shadow-sm p-4">
+                        <div className="flex justify-between items-center mb-7">
+                          <p className="font-bold">Select state of residence</p>
+                          <button
+                            type="button"
+                            className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
+                            onClick={closeStateDialog}
+                          >
+                            <IoMdClose className="text-2xl" />
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
+                          placeholder="Search for state"
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            SearchStatesList(
+                              e.currentTarget.value,
+                              indiaStatesAndUTs
+                            )
+                          }
+                        />
+                      </div>
+                      <RadioGroup name="radio-buttons-state">
+                        <ul className="">
+                          {filteredStatesList &&
+                            filteredStatesList.map((st, inx, stArr) => (
+                              <li key={`state-code-${st.id}`}>
+                                <label
+                                  htmlFor={`state-options-${st.id}`}
+                                  className={`flex justify-between items-center font-medium cursor-pointer px-4 py-2.5 ${
+                                    inx !== stArr.length - 1
+                                      ? "border-b border-b-slate-200"
+                                      : ""
+                                  }`}
+                                >
+                                  <span>{st.state}</span>
+                                  <Radio
+                                    id={`state-options-${st.id}`}
+                                    onClick={closeStateDialog}
+                                    onChange={(
+                                      event: React.ChangeEvent<HTMLInputElement>
+                                    ) => {
+                                      setStateName(() => {
+                                        let index = indiaStatesAndUTs.findIndex(
+                                          (state) =>
+                                            state.code == event.target.value
+                                        );
+                                        return indiaStatesAndUTs[index].state;
+                                      });
+                                    }}
+                                    value={st.code}
+                                    sx={{
+                                      color: "#173c62",
+                                      "&.Mui-checked": {
+                                        color: "#173c62",
+                                      },
+                                    }}
+                                  />
+                                </label>
+                              </li>
+                            ))}
+
+                          {filteredStatesList &&
+                            filteredStatesList.length <= 0 && (
+                              <li>
+                                <p className="px-4 py-5 text-center font-semibold">
+                                  No state found
+                                </p>
+                              </li>
+                            )}
+                        </ul>
+                      </RadioGroup>
+                    </div>
+                  </Dialog>
+
+                  {/* WhatsApp commumication */}
+                  <div className="flex justify-between">
+                    <div className="flex items-center gap-3">
+                      <FaWhatsapp className="text-[#25d366] text-4xl" />
+                      <span className="text-sm">
+                        Send booking details and trip updates on WhatsApp
+                      </span>
+                    </div>
+                    <Switch
+                      defaultChecked
+                      sx={{
+                        "& .Mui-checked": {
+                          color: "#173c62 !important",
+                        },
+                        "& .MuiSwitch-track": {
+                          backgroundColor: "#173c62 !important",
+                        },
+                      }}
+                    />
+                  </div>
+                </form>
+
+                {/* Passengers details */}
+                <div className="w-full p-4 rounded-2xl shadow-md bg-white">
+                  <p className="text-xl font-bold mb-4">Passenger details</p>
+
+                  {/* List for passenger info. from accordian */}
+                  <ul>
+                    {passengers &&
+                      passengers.map((passenger, inx) => (
+                        <li key={`passengerInfo-${inx}`}>
+                          <Accordion
+                            defaultExpanded
+                            sx={{
+                              "&.MuiAccordion-root": {
+                                boxShadow: "none !important",
+                              },
+                              "& .MuiAccordionSummary-root": {
+                                padding: "0px !important",
+                              },
+                            }}
+                          >
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls="panel1-content"
+                              id={`pasenger-accordian-${inx}`}
+                            >
+                              <div className="flex items-center gap-4">
+                                <FaCircleUser className="text-4xl" />
+                                <div>
+                                  <p className="font-bold">
+                                    Passenger {inx + 1}
+                                  </p>
+                                  <p className="text-sm text-[#1d1d1da3]">
+                                    Male seat · Seat H, Upper Deck
+                                  </p>
+                                </div>
+                              </div>
+                            </AccordionSummary>
+                            <AccordionDetails className="!p-0">
+                              <form>
+                                {/* Name */}
+                                <div className="mb-4 border rounded-lg">
+                                  <TextField
+                                    type="text"
+                                    // id="passenger-info-name"
+                                    label="Name*"
+                                    variant="filled"
+                                    placeholder="Enter name"
+                                    sx={{
+                                      width: "100%",
+                                      "& .MuiFilledInput-root": {
+                                        fontWeight: "700 !important",
+                                        backgroundColor: "white !important",
+                                        borderRadius: "8px !important",
+                                      },
+                                      "& .MuiInputLabel-root": {
+                                        color: "#1d1d1da3 !important",
+                                      },
+                                      "& ::before": {
+                                        display: "none",
+                                      },
+                                      "& ::after": {
+                                        display: "none",
+                                      },
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Age */}
+                                <div className="mb-4 border rounded-lg">
+                                  <TextField
+                                    type="text"
+                                    // id="passenger-info-age"
+                                    label="Age*"
+                                    variant="filled"
+                                    placeholder="Enter age"
+                                    sx={{
+                                      width: "100%",
+                                      "& .MuiFilledInput-root": {
+                                        fontWeight: "700 !important",
+                                        backgroundColor: "white !important",
+                                        borderRadius: "8px !important",
+                                      },
+                                      "& .MuiInputLabel-root": {
+                                        color: "#1d1d1da3 !important",
+                                      },
+                                      "& ::before": {
+                                        display: "none",
+                                      },
+                                      "& ::after": {
+                                        display: "none",
+                                      },
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Gender */}
+                                <div className="">
+                                  <p className="text-[#1d1d1da3] mb-1">
+                                    Gender*
+                                  </p>
+                                  <div className="flex gap-x-2">
+                                    {/* Female */}
+                                    <label
+                                      htmlFor={`passengerGenderFemale-${inx}`}
+                                      className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between cursor-pointer"
+                                    >
+                                      <p className="font-semibold">Female</p>
+                                      <Radio
+                                        id={`passengerGenderFemale-${inx}`}
+                                        sx={{
+                                          color: "#173c62",
+                                          "&.Mui-checked": {
+                                            color: "#173c62",
+                                          },
+                                        }}
+                                        checked={
+                                          passengerInfo[inx].gender === "female"
+                                        }
+                                        onChange={(
+                                          event: React.ChangeEvent<HTMLInputElement>
+                                        ) => handleGenderChange(event, inx)}
+                                        value="female"
+                                        name={`passenger-gender-${inx}`}
+                                      />
+                                    </label>
+
+                                    {/* Male */}
+                                    <label
+                                      htmlFor={`passengerGenderMale-${inx}`}
+                                      className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between cursor-pointer"
+                                    >
+                                      <p className="font-semibold">Male</p>
+                                      <Radio
+                                        id={`passengerGenderMale-${inx}`}
+                                        sx={{
+                                          color: "#173c62",
+                                          "&.Mui-checked": {
+                                            color: "#173c62",
+                                          },
+                                        }}
+                                        checked={
+                                          passengerInfo[inx].gender === "male"
+                                        }
+                                        onChange={(
+                                          event: React.ChangeEvent<HTMLInputElement>
+                                        ) => handleGenderChange(event, inx)}
+                                        value="male"
+                                        name={`passenger-gender-${inx}`}
+                                      />
+                                    </label>
+                                  </div>
+                                </div>
+                              </form>
+                            </AccordionDetails>
+                          </Accordion>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+
+                {/* Term and conditions */}
+                <div className="mb-5">
+                  <p className="text-center text-sm mb-4">
+                    By clicking 'Continue booking', I accept
+                  </p>
+                  <p className="text-sm flex justify-center items-center gap-x-7">
+                    <a href="#" className="underline font-bold text-blue-700">
+                      Terms & conditions
+                    </a>
+                    <a href="#" className="underline font-bold text-blue-700">
+                      Privacy policy
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-2/5 hidden md:block">
+                {/* Trip summary */}
+                <div className="bg-white p-5 rounded-2xl shadow-md">
+                  <div className="mb-4">
+                    <p className="font-bold text-lg">
+                      Shree Pramukhraj Travels
+                    </p>
+                    <p className="text-sm text-[#1d1d1da3]">
+                      1 · NON A/C Sleeper (2+1)
+                    </p>
+                  </div>
+
+                  <div className="border-b border-b-slate-200">
+                    <table className="mb-6">
+                      <tbody>
+                        {/* Source place */}
+                        <tr>
+                          <td>
+                            <div className="pe-3 py-3">
+                              <p className="font-bold text-base text-left">
+                                {sourcePlace.leftPart[0]}
+                              </p>
+                              <p className="font-medium text-xs text-left">
+                                {sourcePlace.leftPart[1]}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="bg-[#e6e6e6]">
+                            <div className="min-w-2 max-w-2 min-h-2 max-h-2 rounded-full bg-[#4b4b4b]"></div>
+                          </td>
+                          <td>
+                            <div className="px-4 py-3">
+                              <p className="font-bold text-base text-left">
+                                {sourcePlace.rightPart[0]}
+                              </p>
+                              <p className="font-medium text-xs text-left">
+                                {sourcePlace.rightPart[1]}
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Trip duration */}
+                        <tr>
+                          <td>
+                            <p className="pe-3 py-3 text-xs text-left text-[#1d1d1da3]">
+                              {travelTime}
+                            </p>
+                          </td>
+                          <td className="bg-[#e6e6e6]"></td>
+                          <td></td>
+                        </tr>
+
+                        {/* destination place */}
+                        <tr>
+                          <td>
+                            <div className="pe-3 py-3">
+                              <p className="font-bold text-base text-left">
+                                {destPlace.leftPart[0]}
+                              </p>
+                              <p className="font-medium text-xs text-left">
+                                {destPlace.leftPart[1]}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="bg-[#e6e6e6]">
+                            <div className="min-w-2 max-w-2 min-h-2 max-h-2 rounded-full bg-[#4b4b4b]"></div>
+                          </td>
+                          <td>
+                            <div className="px-4 py-3">
+                              <p className="font-bold text-base text-left">
+                                {destPlace.rightPart[0]}
+                              </p>
+                              <p className="font-medium text-xs text-left">
+                                {destPlace.rightPart[1]}
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="py-4">
+                    <p className="font-bold">Seat details</p>
+                    <p className="text-sm text-[#1d1d1da3] mb-3">4</p>
+                    <ul className="w-full flex flex-wrap gap-2">
+                      <li>
+                        <p className="px-1.5 py-1 text-xs rounded-md bg-[#e2eee3]">
+                          6 · Upper deck
+                        </p>
+                      </li>
+                      <li>
+                        <p className="px-1.5 py-1 text-xs rounded-md bg-[#e2eee3]">
+                          6 · Upper deck
+                        </p>
+                      </li>
+                      <li>
+                        <p className="px-1.5 py-1 text-xs rounded-md bg-[#e2eee3]">
+                          6 · Upper deck
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Button for seat amount and booking button */}
-          <div
-            className={`z-[1000] ${
-              activeTab === 2 ? "hidden" : "sticky bottom-0 left-0 right-0"
-            }  duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 pt-1 pb-2.5 sm:py-4 border-t border-t-slate-300`}
-          >
-            <div className="flex justify-between items-center gap-x-7">
-              <p className="text-sm font-semibold">1 seat</p>
-              <button
-                type="button"
-                className="flex items-center gap-x-2 cursor-pointer"
-              >
-                <span className="font-bold text-2xl">&#8377;{500}</span>
-                <span className="border-2 border-slate-500 rounded">
-                  <FaPlus className="text-slate-500 text-sm" />
-                </span>
-              </button>
-            </div>
-            <div>
-              <button
-                type="button"
-                className="w-full min-w-[340px] sm:w-auto py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+            {/* Button for seat amount and booking button */}
+            <div
+              className={`z-[1000] duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+            >
+              <div className="flex justify-between items-center gap-x-7">
+                <p className="text-sm font-semibold">1 seat</p>
+                <button
+                  type="button"
+                  className="flex items-center gap-x-2 cursor-pointer"
+                >
+                  <span className="font-bold text-2xl">&#8377;{500}</span>
+                  <span className="border-2 border-slate-500 rounded">
+                    <FaPlus className="text-slate-500 text-sm" />
+                  </span>
+                </button>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
               bg-primary outline-none"
-                onClick={() => {
-                  if (activeTab == 2) {
-                    redirect("/paymentDetails");
-                  }
-                  setActiveTab((prev) => {
-                    if (prev < 2) return prev + 1;
-                    else return prev;
-                  });
-                }}
-              >
-                {(activeTab as number) === 0
-                  ? "Select boarding & dropping points"
-                  : (activeTab as number) === 1
-                  ? "Fill passenger details"
-                  : "Continue booking"}
-              </button>
+                  onClick={() => {
+                    redirect("/checkout");
+                  }}
+                >
+                  Continue to checkout
+                </button>
+              </div>
             </div>
+          </div>
+        )}
+
+        {/* Button for seat amount and booking button */}
+        <div
+          className={`z-[1000] ${
+            activeTab === 2 ? "hidden" : "sticky bottom-0 left-0 right-0"
+          }  duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 pt-1 pb-2.5 sm:py-4 border-t border-t-slate-300`}
+        >
+          <div className="flex justify-between items-center gap-x-7">
+            <p className="text-sm font-semibold">1 seat</p>
+            <button
+              type="button"
+              className="flex items-center gap-x-2 cursor-pointer"
+            >
+              <span className="font-bold text-2xl">&#8377;{500}</span>
+              <span className="border-2 border-slate-500 rounded">
+                <FaPlus className="text-slate-500 text-sm" />
+              </span>
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              className="w-full min-w-[340px] sm:w-auto py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              bg-primary outline-none"
+              onClick={() => {
+                if (activeTab == 2) {
+                  redirect("/paymentDetails");
+                }
+                setActiveTab((prev) => {
+                  if (prev < 2) return prev + 1;
+                  else return prev;
+                });
+              }}
+            >
+              {(activeTab as number) === 0
+                ? "Select boarding & dropping points"
+                : (activeTab as number) === 1
+                ? "Fill passenger details"
+                : "Continue booking"}
+            </button>
           </div>
         </div>
       </div>
