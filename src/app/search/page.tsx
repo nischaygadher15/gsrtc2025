@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 import { DateFormater, getDayOfWeek } from "@/utils/common/dateFormater";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImSpinner8 } from "react-icons/im";
-import { IoMdArrowBack } from "react-icons/io";
+import { IoMdArrowBack, IoMdClose } from "react-icons/io";
 import { GrLinkNext } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 import useEmblaCarousel from "embla-carousel-react";
@@ -50,7 +50,25 @@ import SwipeDrawer from "@/components/common/SwipeDrawer";
 
 const SearchBus = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [windowSize, setWindowSize] = useState<number>(0);
   const router = useRouter();
+
+  // Window size listener
+  useEffect(() => {
+    const listenWindowSize = () => {
+      // console.log(window.innerWidth);
+      setWindowSize(window.innerWidth);
+    };
+
+    listenWindowSize();
+
+    window.addEventListener("resize", listenWindowSize);
+
+    return () => {
+      window.removeEventListener("resize", listenWindowSize);
+    };
+  }, []);
+
   //Arrays
   const boardingPoints: string[] = [
     "Ahmedabad",
@@ -148,6 +166,9 @@ const SearchBus = () => {
     null
   );
   const [dateDialog, setDateDialog] = useState<boolean>(false);
+  const [jorneyDateBtn, setJourneyDateBtn] = useState<Date>(
+    new Date(Date.now())
+  );
 
   const openJourneyDatePopover = (event: React.MouseEvent<HTMLElement>) => {
     setJourneyDatePop(event.currentTarget);
@@ -209,6 +230,11 @@ const SearchBus = () => {
   const jDate = watch("journeyDate");
   const bPoint = watch("boardingPoint");
   const dPoint = watch("destinationPoint");
+
+  useEffect(() => {
+    // console.log("jDate: ", jorneyDateBtn);
+    if (jorneyDateBtn) setValue("journeyDate", jorneyDateBtn);
+  }, [jorneyDateBtn]);
 
   //Offer carousel
   const [offersCarouselRef] = useEmblaCarousel({ dragFree: true });
@@ -796,33 +822,67 @@ const SearchBus = () => {
             className="lg:hidden flex flex-col"
             onClick={handleDateDialog}
           >
-            <span
-              className="bg-[#fed9d5] hover:bg-[#f8d3cf] font-bold p-2 rounded-s-full  text-xs md:text-sm rounded-e-full cursor-pointer"
-              onClick={() => {
-                setValue("journeyDate", new Date(Date.now()));
-              }}
-            >
-              {jDate ? DateFormater(jDate).split(",")[0] : "-"}
+            <span className="bg-[#fed9d5] hover:bg-[#f8d3cf] font-bold p-2 rounded-s-full  text-xs md:text-sm rounded-e-full cursor-pointer">
+              {jorneyDateBtn && DateFormater(jorneyDateBtn).split(",")[0]}
             </span>
             <span className=" text-xs md:text-sm text-center text-[#1d1d1da3]">
-              {jDate ? getDayOfWeek(jDate) : "-"}
+              {jorneyDateBtn && getDayOfWeek(jorneyDateBtn)}
             </span>
           </button>
 
-          <Drawer anchor="bottom" onClose={closeDateDialog} open={dateDialog}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateCalendar
-                sx={{ margin: 0, minWidth: "100%" }}
-                value={dayjs(jDate)}
-                onChange={(date) => {
-                  if (date) {
-                    console.log("jDate: ", jDate);
-                    setValue("journeyDate", date.toDate());
-                  }
-                  closeDateDialog();
-                }}
-              />
-            </LocalizationProvider>
+          <Drawer anchor="top" onClose={closeDateDialog} open={dateDialog}>
+            <div className="w-screen h-screen">
+              <div className="text-right p-4">
+                <button
+                  type="button"
+                  className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
+                  onClick={closeDateDialog}
+                >
+                  <IoMdClose className="text-2xl" />
+                </button>
+              </div>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateCalendar
+                  defaultValue={dayjs(new Date())}
+                  sx={{
+                    margin: 0,
+                    minWidth: "100%",
+                    "& .MuiPickersDay-root": {
+                      width: windowSize > 400 ? 50 : 36,
+                      height: windowSize > 400 ? 50 : 36,
+                      fontSize: 16,
+                    },
+                    "& .MuiDayCalendar-weekDayLabel": {
+                      width: windowSize > 400 ? 50 : 36,
+                      height: windowSize > 400 ? 50 : 36,
+                      fontSize: 16,
+                    },
+                    "& .MuiPickersCalendarHeader-label": {
+                      fontSize: 16,
+                    },
+                    "& .MuiPickersArrowSwitcher-button": {
+                      fontSize: windowSize > 400 ? 30 : 24,
+                    },
+                    "& .MuiYearCalendar-root": {
+                      width: "100%",
+                      minHeight: "100%",
+                      padding: "0px 20px",
+                    },
+                    "&.MuiDateCalendar-root": {
+                      maxHeight: "100%",
+                      height: "100%",
+                    },
+                  }}
+                  value={dayjs(jDate)}
+                  onChange={(date) => {
+                    if (date) {
+                      setJourneyDateBtn(date.toDate());
+                    }
+                    closeDateDialog();
+                  }}
+                />
+              </LocalizationProvider>
+            </div>
           </Drawer>
         </div>
       </div>

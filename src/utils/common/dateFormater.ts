@@ -24,7 +24,8 @@ export const DateFormater = (date: Date) => {
 
 // Get day of week
 export const getDayOfWeek = (date: Date) => {
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  console.log("date: ", date);
+  const daysOfWeek = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat", ];
   return daysOfWeek[date.getDay()];
 };
 

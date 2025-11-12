@@ -280,7 +280,7 @@ const BookTicketDrawer = ({
         }`}
         id="drawerContainer"
       >
-        <div className="z-[1000] sticky top-0 left-0 right-0">
+        <div className="z-[999] sticky top-0 left-0 right-0">
           {/* Header */}
           <div className="w-full border-slate-200 min-h-20 max-h-20 p-4 flex justify-start items-center gap-x-2">
             <div>
@@ -496,8 +496,8 @@ const BookTicketDrawer = ({
             aria-labelledby="Tab-passengerInfo"
             className="flex-1 overflow-y-scroll hideScrollBar bg-[#f2f2f8]"
           >
-            <div className="w-full h-full py-5 px-4 md:px-[75px] flex gap-4">
-              <div className="w-full md:w-3/5 flex flex-col gap-y-5">
+            <div className="py-5 px-4 md:px-[32px] xl:px-[75px] flex flex-col md:flex-row gap-4">
+              <div className="order-2 md:order-1 w-full md:w-3/5 flex flex-col gap-y-5">
                 {/* Contact details form */}
                 <form className="w-full p-4 rounded-2xl shadow-md bg-white">
                   <div className="mb-3">
@@ -575,6 +575,7 @@ const BookTicketDrawer = ({
                       }}
                     />
                   </div>
+
                   {/* State */}
                   <button
                     type="button"
@@ -587,9 +588,7 @@ const BookTicketDrawer = ({
                       <p className="text-sm text-left text-[#1d1d1da3]">
                         State of Residence*
                       </p>
-                      <p className="text-left text-[#1d1d1da3] font-bold">
-                        {stateName}
-                      </p>
+                      <p className="text-left font-bold">{stateName}</p>
                     </div>
                     <IoMdArrowDropdown className="text-lg" />
                   </button>
@@ -881,7 +880,7 @@ const BookTicketDrawer = ({
                 </div>
               </div>
 
-              <div className="w-2/5 hidden md:block">
+              <div className="order-1 md:order-2 w-full md:w-2/5">
                 {/* Trip summary */}
                 <div className="bg-white p-5 rounded-2xl shadow-md">
                   <div className="mb-4">
@@ -991,7 +990,7 @@ const BookTicketDrawer = ({
 
             {/* Button for seat amount and booking button */}
             <div
-              className={`z-[1000] duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+              className={`duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
             >
               <div className="flex justify-between items-center gap-x-7">
                 <p className="text-sm font-semibold">1 seat</p>
@@ -1005,10 +1004,11 @@ const BookTicketDrawer = ({
                   </span>
                 </button>
               </div>
+
               <div>
                 <button
                   type="button"
-                  className="w-full min-w-[340px] sm:w-auto py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+                  className="w-full sm:min-w-[340px] py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
               bg-primary outline-none"
                   onClick={() => {
                     redirect("/checkout");
