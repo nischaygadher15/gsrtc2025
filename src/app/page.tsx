@@ -243,6 +243,7 @@ export default function Home() {
 
   // destination place popover
   const [destPlace, setDestPlace] = useState<HTMLElement | null>(null);
+  const [destPlaceDialog, setDestPlaceDialog] = useState<boolean>(false);
   const destPlacePopInput = useRef<HTMLInputElement | null>(null);
 
   const openDestPopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -336,6 +337,7 @@ export default function Home() {
   const jDate = watch("journeyDate");
   const bPoint = watch("boardingPoint");
   const dPoint = watch("destinationPoint");
+  const [journeyDate, setJourneyDate] = useState<boolean>(false);
 
   return (
     <div className="min-h-screen">
@@ -548,8 +550,8 @@ export default function Home() {
                   type="button"
                   className="w-full p-2.5 md:p-3.5 border-s md:border-s-0 border-e lg:border-e-0 border-t border-b-none lg:border-b md:rounded-se-2xl lg:rounded-se-none border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
                   onClick={(e) => {
-                    openDestPopover(e);
-                    // console.log(e.currentTarget.getBoundingClientRect());
+                    if (windowSize > 768) openDestPopover(e);
+                    else setDestPlaceDialog(true);
                   }}
                 >
                   <LocationOnOutlinedIcon sx={{ fontSize: 30 }} />
@@ -566,71 +568,138 @@ export default function Home() {
                     {errors.destinationPoint.message}
                   </small>
                 )}
-                <Popover
-                  open={Boolean(destPlace)}
-                  anchorEl={destPlace}
-                  onClose={closeDestPopover}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  slotProps={{
-                    paper: {
-                      style: {
-                        width: 386,
-                        background: "transparent",
-                        borderRadius: 16,
-                        maxHeight: "calc(100% - 140px)",
-                        overflow: "hidden",
+
+                {windowSize > 768 && (
+                  <Popover
+                    open={Boolean(destPlace)}
+                    anchorEl={destPlace}
+                    onClose={closeDestPopover}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    slotProps={{
+                      paper: {
+                        style: {
+                          width: 386,
+                          background: "transparent",
+                          borderRadius: 16,
+                          maxHeight: "calc(100% - 140px)",
+                          overflow: "hidden",
+                        },
                       },
-                    },
-                  }}
-                >
-                  <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
-                    <div className="!bg-slate-200/50 flex flex-col gap-y-2">
-                      <div className="p-4 bg-white flex items-center gap-x-2">
-                        <HailOutlinedIcon sx={{ fontSize: 30 }} />
-                        <div>
-                          <p className="text-left text-xs text-gray-500">To</p>
-                          <input
-                            type="text"
-                            {...register("destinationPoint")}
-                            ref={destPlacePopInput}
-                            className="text-left font-bold outline-none"
-                            placeholder="Enter Destination point"
-                          />
+                    }}
+                  >
+                    <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
+                      <div className="!bg-slate-200/50 flex flex-col gap-y-2">
+                        <div className="p-4 bg-white flex items-center gap-x-2">
+                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                          <div>
+                            <p className="text-left text-xs text-gray-500">
+                              To
+                            </p>
+                            <input
+                              type="text"
+                              {...register("destinationPoint")}
+                              ref={destPlacePopInput}
+                              className="text-left font-bold outline-none"
+                              placeholder="Enter Destination point"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col !bg-white p-4">
+                          <p className="font-semibold">Recent Searches</p>
+                        </div>
+
+                        <div className="!bg-white">
+                          <p className="font-semibold p-4">Popular cities</p>
+                          <ul className="flex flex-col ">
+                            {boardingPoints &&
+                              boardingPoints.length > 0 &&
+                              boardingPoints.map((bpc) => (
+                                <li key={`boardingPoint-${bpc}`}>
+                                  <button
+                                    type="button"
+                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                    onClick={() => {
+                                      setValue("destinationPoint", bpc);
+                                      if (bpc) clearErrors("destinationPoint");
+                                      closeDestPopover();
+                                    }}
+                                  >
+                                    {bpc}
+                                  </button>
+                                </li>
+                              ))}
+                          </ul>
                         </div>
                       </div>
+                    </div>
+                  </Popover>
+                )}
 
-                      <div className="flex flex-col !bg-white p-4">
-                        <p className="font-semibold">Recent Searches</p>
-                      </div>
+                {windowSize <= 768 && (
+                  <Dialog
+                    fullScreen
+                    open={destPlaceDialog}
+                    onClose={() => setDestPlaceDialog(false)}
+                  >
+                    <div className="w-full h-full hideScrollBar overflow-y-scroll">
+                      <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
+                        <div className="sticky top-0 shadow-md left-0 right-0 p-4 bg-white flex items-center gap-x-2">
+                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                          <div>
+                            <p className="text-left text-xs text-gray-500">
+                              To
+                            </p>
+                            <input
+                              type="text"
+                              {...register("destinationPoint")}
+                              ref={destPlacePopInput}
+                              className="text-left font-bold outline-none"
+                              placeholder="Enter Destination point"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
+                            onClick={() => setDestPlaceDialog(false)}
+                          >
+                            <IoMdClose className="text-2xl" />
+                          </button>
+                        </div>
 
-                      <div className="!bg-white">
-                        <p className="font-semibold p-4">Popular cities</p>
-                        <ul className="flex flex-col ">
-                          {boardingPoints &&
-                            boardingPoints.length > 0 &&
-                            boardingPoints.map((bpc) => (
-                              <li key={`boardingPoint-${bpc}`}>
-                                <button
-                                  type="button"
-                                  className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
-                                  onClick={() => {
-                                    setValue("destinationPoint", bpc);
-                                    if (bpc) clearErrors("destinationPoint");
-                                    closeDestPopover();
-                                  }}
-                                >
-                                  {bpc}
-                                </button>
-                              </li>
-                            ))}
-                        </ul>
+                        <div className="flex flex-col !bg-white p-4">
+                          <p className="font-semibold">Recent Searches</p>
+                        </div>
+
+                        <div className="!bg-white">
+                          <p className="font-semibold p-4">Popular cities</p>
+                          <ul className="flex flex-col ">
+                            {boardingPoints &&
+                              boardingPoints.length > 0 &&
+                              boardingPoints.map((bpc) => (
+                                <li key={`boardingPoint-${bpc}`}>
+                                  <button
+                                    type="button"
+                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                    onClick={() => {
+                                      setValue("destinationPoint", bpc);
+                                      if (bpc) clearErrors("destinationPoint");
+                                      setDestPlaceDialog(false);
+                                    }}
+                                  >
+                                    {bpc}
+                                  </button>
+                                </li>
+                              ))}
+                          </ul>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Popover>
+                  </Dialog>
+                )}
               </div>
             </div>
 
@@ -639,7 +708,10 @@ export default function Home() {
               <button
                 type="button"
                 className="w-full p-2.5 md:p-3.5 border rounded-es-2xl lg:rounded-es-none rounded-ee-2xl lg:rounded-e-2xl border-slate-400 flex justify-between gap-x-1.5 items-center cursor-pointer outline-none"
-                onClick={openJourneyDatePopover}
+                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                  if (windowSize > 768) openJourneyDatePopover(event);
+                  else setJourneyDate(true);
+                }}
               >
                 <div className="flex items-center gap-x-2">
                   <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
@@ -684,64 +756,118 @@ export default function Home() {
                 </small>
               )}
 
-              <Popover
-                open={Boolean(journeyDatePop)}
-                anchorEl={journeyDatePop}
-                onClose={closeJourneyDatePopover}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                slotProps={{
-                  paper: {
-                    style: {
-                      width: 330,
-                      background: "white",
-                      borderRadius: 16,
-                      maxHeight: "calc(100% - 140px)",
-                      overflow: "hidden",
-                      top: 0,
-                      left: 0,
+              {windowSize > 768 && (
+                <Popover
+                  open={Boolean(journeyDatePop)}
+                  anchorEl={journeyDatePop}
+                  onClose={closeJourneyDatePopover}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  slotProps={{
+                    paper: {
+                      style: {
+                        width: 330,
+                        background: "white",
+                        borderRadius: 16,
+                        maxHeight: "calc(100% - 140px)",
+                        overflow: "hidden",
+                        top: 0,
+                        left: 0,
+                      },
                     },
-                  },
-                }}
-              >
-                <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll !bg-transparent">
-                  <div className="flex flex-col bg-white">
-                    <div className="p-4 flex items-center gap-x-2 border-b-slate-200">
-                      <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
-                      <div>
-                        <p className="text-left text-xs text-gray-500">
-                          Date of Journey
-                        </p>
-                        <p className="text-left font-bold">
-                          {getValues("journeyDate")
-                            ? DateFormater(getValues("journeyDate"))
-                            : "DD-MM-YYYY"}
-                        </p>
+                  }}
+                >
+                  <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll !bg-transparent">
+                    <div className="flex flex-col bg-white">
+                      <div className="p-4 flex items-center gap-x-2 border-b-slate-200">
+                        <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
+                        <div>
+                          <p className="text-left text-xs text-gray-500">
+                            Date of Journey
+                          </p>
+                          <p className="text-left font-bold">
+                            {getValues("journeyDate")
+                              ? DateFormater(getValues("journeyDate"))
+                              : "DD-MM-YYYY"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <Controller
+                          name="journeyDate"
+                          control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DateCalendar
+                                sx={{ margin: 0, minWidth: "100%" }}
+                                value={dayjs(value)}
+                                onChange={(date) => {
+                                  closeJourneyDatePopover();
+                                  if (date) onChange(date.toDate());
+                                }}
+                              />
+                            </LocalizationProvider>
+                          )}
+                        />
                       </div>
                     </div>
-                    <div className="flex-1">
-                      <Controller
-                        name="journeyDate"
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateCalendar
-                              sx={{ margin: 0, minWidth: "100%" }}
-                              value={dayjs(value)}
-                              onChange={(date) => {
-                                closeJourneyDatePopover();
-                                if (date) onChange(date.toDate());
-                              }}
-                            />
-                          </LocalizationProvider>
-                        )}
-                      />
+                  </div>
+                </Popover>
+              )}
+
+              {windowSize <= 768 && (
+                <Dialog
+                  fullScreen
+                  open={journeyDate}
+                  onClose={() => setJourneyDate(false)}
+                >
+                  <div className="hideScrollBar overflow-y-scroll !bg-transparent">
+                    <div className="flex flex-col bg-white">
+                      <div className="relative p-4 flex items-center gap-x-2 border-b-slate-200">
+                        <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
+                        <div>
+                          <p className="text-left text-xs text-gray-500">
+                            Date of Journey
+                          </p>
+                          <p className="text-left font-bold">
+                            {getValues("journeyDate")
+                              ? DateFormater(getValues("journeyDate"))
+                              : "DD-MM-YYYY"}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
+                          onClick={() => setJourneyDate(false)}
+                        >
+                          <IoMdClose className="text-2xl" />
+                        </button>
+                      </div>
+                      <div className="flex-1">
+                        <Controller
+                          name="journeyDate"
+                          control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DateCalendar
+                                sx={{ margin: 0, minWidth: "100%" }}
+                                value={dayjs(value)}
+                                onChange={(date) => {
+                                  if (date) onChange(date.toDate());
+
+                                  setJourneyDate(false);
+                                }}
+                              />
+                            </LocalizationProvider>
+                          )}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Popover>
+                </Dialog>
+              )}
             </div>
           </div>
 
