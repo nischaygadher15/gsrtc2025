@@ -40,6 +40,7 @@ import { useRouter } from "next/navigation";
 import BusLoader from "./loader";
 import Dialog from "@mui/material/Dialog";
 import { IoMdClose } from "react-icons/io";
+import Drawer from "@mui/material/Drawer";
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -325,12 +326,8 @@ export default function Home() {
   const onSearchBuses = async (data: SearchBusDataType) => {
     console.log("Form data: ", data);
     setLoading(true);
-    await new Promise((resolve) => {
-      resolve(router.push("/search"));
-      setTimeout(() => {
-        setLoading(false);
-      }, 700);
-    });
+    router.push("/search");
+    setTimeout(() => setLoading(false), 500);
   };
 
   // watching all search buses inputs
@@ -768,7 +765,7 @@ export default function Home() {
                   slotProps={{
                     paper: {
                       style: {
-                        width: 330,
+                        width: 350,
                         background: "white",
                         borderRadius: 16,
                         maxHeight: "calc(100% - 140px)",
@@ -781,7 +778,7 @@ export default function Home() {
                 >
                   <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll !bg-transparent">
                     <div className="flex flex-col bg-white">
-                      <div className="p-4 flex items-center gap-x-2 border-b-slate-200">
+                      <div className="p-4 pb-0 flex items-center gap-x-2 border-b-slate-200">
                         <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
                         <div>
                           <p className="text-left text-xs text-gray-500">
@@ -801,7 +798,36 @@ export default function Home() {
                           render={({ field: { onChange, value } }) => (
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                               <DateCalendar
-                                sx={{ margin: 0, minWidth: "100%" }}
+                                defaultValue={dayjs(new Date())}
+                                sx={{
+                                  margin: 0,
+                                  minWidth: "100%",
+                                  "& .MuiPickersDay-root": {
+                                    fontSize: 16,
+                                  },
+                                  "& .MuiDayCalendar-weekContainer": {
+                                    justifyContent: "space-around",
+                                  },
+                                  "& .MuiDayCalendar-header": {
+                                    justifyContent: "space-around",
+                                  },
+                                  "& .MuiDayCalendar-weekDayLabel": {
+                                    fontSize: 16,
+                                  },
+                                  "& .MuiPickersCalendarHeader-label": {
+                                    fontSize: 16,
+                                  },
+                                  "& .MuiYearCalendar-root": {
+                                    width: "100%",
+                                    minHeight: "100%",
+                                    padding: "0px 20px",
+                                  },
+                                  "&.MuiDateCalendar-root": {
+                                    maxHeight: "100%",
+                                    height: "100%",
+                                    padding: "0px 16px 30px 16px",
+                                  },
+                                }}
                                 value={dayjs(value)}
                                 onChange={(date) => {
                                   closeJourneyDatePopover();
@@ -818,55 +844,68 @@ export default function Home() {
               )}
 
               {windowSize <= 768 && (
-                <Dialog
-                  fullScreen
+                <Drawer
+                  anchor="bottom"
                   open={journeyDate}
                   onClose={() => setJourneyDate(false)}
+                  sx={{
+                    "& .MuiDrawer-paper": {
+                      borderRadius: "16px",
+                    },
+                  }}
                 >
-                  <div className="hideScrollBar overflow-y-scroll !bg-transparent">
-                    <div className="flex flex-col bg-white">
-                      <div className="relative p-4 flex items-center gap-x-2 border-b-slate-200">
-                        <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
-                        <div>
-                          <p className="text-left text-xs text-gray-500">
-                            Date of Journey
-                          </p>
-                          <p className="text-left font-bold">
-                            {getValues("journeyDate")
-                              ? DateFormater(getValues("journeyDate"))
-                              : "DD-MM-YYYY"}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
-                          onClick={() => setJourneyDate(false)}
-                        >
-                          <IoMdClose className="text-2xl" />
-                        </button>
-                      </div>
-                      <div className="flex-1">
-                        <Controller
-                          name="journeyDate"
-                          control={control}
-                          render={({ field: { onChange, value } }) => (
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <DateCalendar
-                                sx={{ margin: 0, minWidth: "100%" }}
-                                value={dayjs(value)}
-                                onChange={(date) => {
-                                  if (date) onChange(date.toDate());
-
-                                  setJourneyDate(false);
-                                }}
-                              />
-                            </LocalizationProvider>
-                          )}
-                        />
-                      </div>
-                    </div>
+                  <div className="p-4 pb-0 text-right">
+                    <button
+                      type="button"
+                      className="rounded-s-full rounded-e-full px-3.5 py-2.5"
+                      onClick={() => setJourneyDate(false)}
+                    >
+                      <IoMdClose className="text-2xl" />
+                    </button>
                   </div>
-                </Dialog>
+
+                  <div className="flex-1">
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DateCalendar
+                        defaultValue={dayjs(new Date())}
+                        value={dayjs(jDate)}
+                        sx={{
+                          margin: 0,
+                          minWidth: "100%",
+                          "& .MuiPickersDay-root": {
+                            fontSize: 16,
+                          },
+                          "& .MuiDayCalendar-weekContainer": {
+                            justifyContent: "space-around",
+                          },
+                          "& .MuiDayCalendar-header": {
+                            justifyContent: "space-around",
+                          },
+                          "& .MuiDayCalendar-weekDayLabel": {
+                            fontSize: 16,
+                          },
+                          "& .MuiPickersCalendarHeader-label": {
+                            fontSize: 16,
+                          },
+                          "& .MuiYearCalendar-root": {
+                            width: "100%",
+                            minHeight: "100%",
+                            padding: "0px 20px",
+                          },
+                          "&.MuiDateCalendar-root": {
+                            maxHeight: "100%",
+                            height: "100%",
+                            padding: "0px 16px 30px 16px",
+                          },
+                        }}
+                        onChange={(date) => {
+                          if (date) setValue("journeyDate", date.toDate());
+                          setJourneyDate(false);
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </div>
+                </Drawer>
               )}
             </div>
           </div>
