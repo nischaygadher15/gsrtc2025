@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { TimelineType } from "./BusStationTimeline";
 import Radio from "@mui/material/Radio";
 import { RadioGroup } from "@mui/material";
@@ -11,14 +11,20 @@ const BoardingDroppingTimeline = ({
   // const handleStopChange = () => {};
   return (
     <div className="w-full">
-      <RadioGroup name="BoardingDroppingPoint">
+      <RadioGroup
+        name="BoardingDroppingPoint"
+        defaultValue={"Ujala circle4"}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          console.log("RadioGroup: ", e.target.value);
+        }}
+      >
         <table className="w-full mb-6">
           <tbody>
             {timeLineList &&
               timeLineList.map((place, inx, Arr) => (
                 <tr
                   key={`timeLineList-place-${inx}`}
-                  className={`flex items-center ${
+                  className={`flex items-center cursor-pointer ${
                     inx == 0
                       ? "border-b border-t border-b-slate-300 border-t-slate-300"
                       : inx == Arr.length - 1
@@ -27,7 +33,10 @@ const BoardingDroppingTimeline = ({
                   }`}
                   onClick={(event) => {
                     let radioBtn = event.currentTarget.querySelector("input");
-                    console.log(radioBtn?.value, radioBtn?.checked);
+                    if (radioBtn) {
+                      radioBtn?.click();
+                      // console.log(radioBtn?.value, radioBtn?.checked);
+                    }
                   }}
                 >
                   <td>
@@ -56,7 +65,7 @@ const BoardingDroppingTimeline = ({
                     <Radio
                       // onChange={handleStopChange}
                       value={place.rightPart[0] + inx}
-                      id={`boardingPoint-${inx}`}
+                      id={`boardingPoint-${place.rightPart[0]}-${inx}`}
                       sx={{
                         color: "#173c62",
                         "&.Mui-checked": {

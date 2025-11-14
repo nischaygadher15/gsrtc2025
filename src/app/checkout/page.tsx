@@ -436,7 +436,24 @@ const CheckoutPage = () => {
                               }
                             />
                           </div>
-                          <RadioGroup name="radio-buttons-state">
+                          <RadioGroup
+                            value={
+                              indiaStatesAndUTs.find(
+                                (st) => st.state == stateName
+                              )?.code
+                            }
+                            name="radio-buttons-state"
+                            onChange={(
+                              event: React.ChangeEvent<HTMLInputElement>
+                            ) => {
+                              setStateName(() => {
+                                let index = indiaStatesAndUTs.findIndex(
+                                  (state) => state.code == event.target.value
+                                );
+                                return indiaStatesAndUTs[index].state;
+                              });
+                            }}
+                          >
                             <ul className="">
                               {filteredStatesList &&
                                 filteredStatesList.map((st, inx, stArr) => (
@@ -453,20 +470,6 @@ const CheckoutPage = () => {
                                       <Radio
                                         id={`state-options-${st.id}`}
                                         onClick={closeStateDialog}
-                                        onChange={(
-                                          event: React.ChangeEvent<HTMLInputElement>
-                                        ) => {
-                                          setStateName(() => {
-                                            let index =
-                                              indiaStatesAndUTs.findIndex(
-                                                (state) =>
-                                                  state.code ==
-                                                  event.target.value
-                                              );
-                                            return indiaStatesAndUTs[index]
-                                              .state;
-                                          });
-                                        }}
                                         value={st.code}
                                         sx={{
                                           color: "#173c62",

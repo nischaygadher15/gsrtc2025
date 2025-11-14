@@ -261,23 +261,9 @@ const BookTicketDrawer = ({
   };
 
   return (
-    <Drawer
-      anchor={"bottom"}
-      open={viewDrawer}
-      onClose={closeViewDrawer}
-      slotProps={{
-        paper: {
-          sx: {
-            borderTopLeftRadius: windowSize > 1024 ? 16 : 0,
-            borderTopRightRadius: windowSize > 1024 ? 16 : 0,
-          },
-        },
-      }}
-    >
+    <Dialog fullScreen open={viewDrawer} onClose={closeViewDrawer}>
       <div
-        className={`relative min-h-[100vh] max-h-[100vh] lg:max-h-[95vh] lg:min-h-[95vh] rounded-2xl flex flex-col ${
-          activeTab === 2 ? "" : ""
-        }`}
+        className={`relative h-full w-full overflow-hidden rounded-2xl flex flex-col`}
         id="drawerContainer"
       >
         <div className="z-[999] sticky top-0 left-0 right-0">
@@ -629,7 +615,23 @@ const BookTicketDrawer = ({
                           }
                         />
                       </div>
-                      <RadioGroup name="radio-buttons-state">
+                      <RadioGroup
+                        name="radio-buttons-state"
+                        value={
+                          indiaStatesAndUTs.find((st) => st.state == stateName)
+                            ?.code
+                        }
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          setStateName(() => {
+                            let index = indiaStatesAndUTs.findIndex(
+                              (state) => state.code == event.target.value
+                            );
+                            return indiaStatesAndUTs[index].state;
+                          });
+                        }}
+                      >
                         <ul className="">
                           {filteredStatesList &&
                             filteredStatesList.map((st, inx, stArr) => (
@@ -646,17 +648,6 @@ const BookTicketDrawer = ({
                                   <Radio
                                     id={`state-options-${st.id}`}
                                     onClick={closeStateDialog}
-                                    onChange={(
-                                      event: React.ChangeEvent<HTMLInputElement>
-                                    ) => {
-                                      setStateName(() => {
-                                        let index = indiaStatesAndUTs.findIndex(
-                                          (state) =>
-                                            state.code == event.target.value
-                                        );
-                                        return indiaStatesAndUTs[index].state;
-                                      });
-                                    }}
                                     value={st.code}
                                     sx={{
                                       color: "#173c62",
@@ -1063,7 +1054,7 @@ const BookTicketDrawer = ({
           </div>
         </div>
       </div>
-    </Drawer>
+    </Dialog>
   );
 };
 

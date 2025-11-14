@@ -3,7 +3,7 @@ import carousle_img_1 from "@/assets/images/carousel-img _1.jpg";
 import carousle_img_2 from "@/assets/images/carousel-img _2.jpg";
 import carousle_img_3 from "@/assets/images/carousel-img _3.jpg";
 import Image, { StaticImageData } from "next/image";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Popover, Switch } from "@mui/material";
 import HailOutlinedIcon from "@mui/icons-material/HailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -37,7 +37,7 @@ import NumberFormater from "@/utils/common/numberFormater";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import BusLoader from "./loader";
+import BusLoader from "../loader";
 import Dialog from "@mui/material/Dialog";
 import { IoMdClose } from "react-icons/io";
 import Drawer from "@mui/material/Drawer";
@@ -209,6 +209,8 @@ export default function Home() {
   const [fromPlace, setFromPlace] = useState<HTMLElement | null>(null);
   const [fromPlaceDialog, setFromPlaceDialog] = useState<boolean>(false);
   const fromPlacePopInputRef = useRef<HTMLInputElement | null>(null);
+  const [filteredBrdPoints, setFilteredBrdPoints] =
+    useState<string[]>(boardingPoints);
 
   const openFormPopover = (event: React.MouseEvent<HTMLElement>) => {
     setFromPlace(event.currentTarget);
@@ -216,6 +218,12 @@ export default function Home() {
 
   const closeFromPopover = () => {
     setFromPlace(null);
+    setFilteredBrdPoints(boardingPoints);
+  };
+
+  const closeFromDialog = () => {
+    setFromPlaceDialog(false);
+    setFilteredBrdPoints(boardingPoints);
   };
 
   useEffect(() => {
@@ -246,6 +254,8 @@ export default function Home() {
   const [destPlace, setDestPlace] = useState<HTMLElement | null>(null);
   const [destPlaceDialog, setDestPlaceDialog] = useState<boolean>(false);
   const destPlacePopInput = useRef<HTMLInputElement | null>(null);
+  const [filteredDestPoints, setFilteredDestPoints] =
+    useState<string[]>(boardingPoints);
 
   const openDestPopover = (event: React.MouseEvent<HTMLElement>) => {
     setDestPlace(event.currentTarget);
@@ -253,6 +263,12 @@ export default function Home() {
 
   const closeDestPopover = () => {
     setDestPlace(null);
+    setFilteredDestPoints(boardingPoints);
+  };
+
+  const closeDestDialog = () => {
+    setDestPlaceDialog(false);
+    setFilteredDestPoints(boardingPoints);
   };
 
   useEffect(() => {
@@ -441,6 +457,21 @@ export default function Home() {
                               type="text"
                               {...register("boardingPoint")}
                               ref={fromPlacePopInputRef}
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                if (e.target.value) {
+                                  let filtered: string[] =
+                                    boardingPoints.filter((city) =>
+                                      city
+                                        .toLowerCase()
+                                        .includes(e.target.value.toLowerCase())
+                                    );
+                                  setFilteredBrdPoints(filtered);
+                                } else {
+                                  setFilteredBrdPoints(boardingPoints);
+                                }
+                              }}
                               className="text-left font-bold outline-none"
                               placeholder="Enter Boarding point"
                             />
@@ -454,9 +485,9 @@ export default function Home() {
                         <div className="!bg-white">
                           <p className="font-semibold p-4">Popular cities</p>
                           <ul className="flex flex-col ">
-                            {boardingPoints &&
-                              boardingPoints.length > 0 &&
-                              boardingPoints.map((bpc) => (
+                            {filteredBrdPoints &&
+                              filteredBrdPoints.length > 0 &&
+                              filteredBrdPoints.map((bpc) => (
                                 <li key={`boardingPoint-${bpc}`}>
                                   <button
                                     type="button"
@@ -471,6 +502,15 @@ export default function Home() {
                                   </button>
                                 </li>
                               ))}
+
+                            {filteredBrdPoints &&
+                              filteredBrdPoints.length <= 0 && (
+                                <li>
+                                  <p className="font-semibold text-center text-red-500 p-4">
+                                    no city name found
+                                  </p>
+                                </li>
+                              )}
                           </ul>
                         </div>
                       </div>
@@ -482,7 +522,7 @@ export default function Home() {
                   <Dialog
                     fullScreen
                     open={fromPlaceDialog}
-                    onClose={() => setFromPlaceDialog(false)}
+                    onClose={closeFromDialog}
                   >
                     <div className="w-full h-full hideScrollBar overflow-y-scroll">
                       <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
@@ -494,8 +534,22 @@ export default function Home() {
                             </p>
                             <input
                               type="text"
-                              {...register("boardingPoint")}
-                              ref={fromPlacePopInputRef}
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                if (e.target.value) {
+                                  let filtered: string[] =
+                                    boardingPoints.filter((city) =>
+                                      city
+                                        .toLowerCase()
+                                        .includes(e.target.value.toLowerCase())
+                                    );
+                                  console.log("filtered: ", filtered);
+                                  setFilteredBrdPoints(filtered);
+                                } else {
+                                  setFilteredBrdPoints(boardingPoints);
+                                }
+                              }}
                               className="text-left font-bold outline-none"
                               placeholder="Enter Boarding point"
                             />
@@ -516,9 +570,9 @@ export default function Home() {
                         <div className="!bg-white">
                           <p className="font-semibold p-4">Popular cities</p>
                           <ul className="flex flex-col ">
-                            {boardingPoints &&
-                              boardingPoints.length > 0 &&
-                              boardingPoints.map((bpc) => (
+                            {filteredBrdPoints &&
+                              filteredBrdPoints.length > 0 &&
+                              filteredBrdPoints.map((bpc) => (
                                 <li key={`boardingPoint-${bpc}`}>
                                   <button
                                     type="button"
@@ -526,13 +580,22 @@ export default function Home() {
                                     onClick={() => {
                                       setValue("boardingPoint", bpc);
                                       if (bpc) clearErrors("boardingPoint");
-                                      setFromPlaceDialog(false);
+                                      closeFromDialog();
                                     }}
                                   >
                                     {bpc}
                                   </button>
                                 </li>
                               ))}
+
+                            {filteredBrdPoints &&
+                              filteredBrdPoints.length <= 0 && (
+                                <li>
+                                  <p className="font-semibold text-center text-red-500 p-4">
+                                    no city name found
+                                  </p>
+                                </li>
+                              )}
                           </ul>
                         </div>
                       </div>
@@ -599,6 +662,21 @@ export default function Home() {
                               type="text"
                               {...register("destinationPoint")}
                               ref={destPlacePopInput}
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                if (e.target.value) {
+                                  let filtered: string[] =
+                                    boardingPoints.filter((city) =>
+                                      city
+                                        .toLowerCase()
+                                        .includes(e.target.value.toLowerCase())
+                                    );
+                                  setFilteredDestPoints(filtered);
+                                } else {
+                                  setFilteredDestPoints(boardingPoints);
+                                }
+                              }}
                               className="text-left font-bold outline-none"
                               placeholder="Enter Destination point"
                             />
@@ -612,9 +690,9 @@ export default function Home() {
                         <div className="!bg-white">
                           <p className="font-semibold p-4">Popular cities</p>
                           <ul className="flex flex-col ">
-                            {boardingPoints &&
-                              boardingPoints.length > 0 &&
-                              boardingPoints.map((bpc) => (
+                            {filteredDestPoints &&
+                              filteredDestPoints.length > 0 &&
+                              filteredDestPoints.map((bpc) => (
                                 <li key={`boardingPoint-${bpc}`}>
                                   <button
                                     type="button"
@@ -629,6 +707,15 @@ export default function Home() {
                                   </button>
                                 </li>
                               ))}
+
+                            {filteredDestPoints &&
+                              filteredDestPoints.length <= 0 && (
+                                <li>
+                                  <p className="font-semibold text-center text-red-500 p-4">
+                                    no city name found
+                                  </p>
+                                </li>
+                              )}
                           </ul>
                         </div>
                       </div>
@@ -640,7 +727,7 @@ export default function Home() {
                   <Dialog
                     fullScreen
                     open={destPlaceDialog}
-                    onClose={() => setDestPlaceDialog(false)}
+                    onClose={closeDestDialog}
                   >
                     <div className="w-full h-full hideScrollBar overflow-y-scroll">
                       <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
@@ -652,8 +739,21 @@ export default function Home() {
                             </p>
                             <input
                               type="text"
-                              {...register("destinationPoint")}
-                              ref={destPlacePopInput}
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                if (e.target.value) {
+                                  let filtered: string[] =
+                                    boardingPoints.filter((city) =>
+                                      city
+                                        .toLowerCase()
+                                        .includes(e.target.value.toLowerCase())
+                                    );
+                                  setFilteredDestPoints(filtered);
+                                } else {
+                                  setFilteredDestPoints(boardingPoints);
+                                }
+                              }}
                               className="text-left font-bold outline-none"
                               placeholder="Enter Destination point"
                             />
@@ -661,7 +761,7 @@ export default function Home() {
                           <button
                             type="button"
                             className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
-                            onClick={() => setDestPlaceDialog(false)}
+                            onClick={closeDestDialog}
                           >
                             <IoMdClose className="text-2xl" />
                           </button>
@@ -674,9 +774,9 @@ export default function Home() {
                         <div className="!bg-white">
                           <p className="font-semibold p-4">Popular cities</p>
                           <ul className="flex flex-col ">
-                            {boardingPoints &&
-                              boardingPoints.length > 0 &&
-                              boardingPoints.map((bpc) => (
+                            {filteredDestPoints &&
+                              filteredDestPoints.length > 0 &&
+                              filteredDestPoints.map((bpc) => (
                                 <li key={`boardingPoint-${bpc}`}>
                                   <button
                                     type="button"
@@ -691,6 +791,15 @@ export default function Home() {
                                   </button>
                                 </li>
                               ))}
+
+                            {filteredDestPoints &&
+                              filteredDestPoints.length <= 0 && (
+                                <li>
+                                  <p className="font-semibold text-center text-red-500 p-4">
+                                    no city name found
+                                  </p>
+                                </li>
+                              )}
                           </ul>
                         </div>
                       </div>
