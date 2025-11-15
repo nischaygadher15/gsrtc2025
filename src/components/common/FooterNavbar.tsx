@@ -1,5 +1,5 @@
 "use client";
-import { Drawer } from "@mui/material";
+import { Drawer, TextField } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -22,13 +22,18 @@ import { BsTicketDetailed } from "react-icons/bs";
 import { RiFontSize } from "react-icons/ri";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import womenSvg from "@/assets/images/female.svg";
-import { IoMdHome } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdClose, IoMdHome } from "react-icons/io";
 import { BiHelpCircle } from "react-icons/bi";
 import { IoListOutline } from "react-icons/io5";
 import { usePathname } from "next/navigation";
+import Dialog from "@mui/material/Dialog";
+import ReCAPTCHA from "react-google-recaptcha";
+import googleIcon from "@/assets/images/google-sing-In.svg";
 
 const FooterNavbar = () => {
   const currentLocation = usePathname();
+  const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
+  if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
 
   // User Account Dropdown
   const [anchor1, setAnchor1] = useState<boolean>(false);
@@ -41,9 +46,25 @@ const FooterNavbar = () => {
 
   const currentRoute = usePathname();
 
-  useEffect(() => {
-    console.log("currentRoute: ", currentRoute);
-  }, [currentRoute]);
+  //GSRTC Login
+  const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
+  const openGsrctLoginDialog = () => {
+    setGsrctLoginDialog(true);
+  };
+
+  const closeGsrctLoginDialog = () => {
+    setGsrctLoginDialog(false);
+  };
+
+  // Recaptch
+  const onCaptchSuccess = (capchaToken: string | null) => {
+    if (!capchaToken) onCaptchaFailed();
+    console.log("Captcha is done.", capchaToken);
+  };
+
+  const onCaptchaFailed = () => {
+    console.log("Captcha failed!!");
+  };
 
   return (
     <div
@@ -97,247 +118,376 @@ const FooterNavbar = () => {
             <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
             <span className="text-xs">Account</span>
           </button>
-
-          <Drawer anchor="right" open={anchor1} onClose={closeUserDrawer}>
-            <div className="w-screen">
-              <div className="relative p-4 border-b-[1px] border-slate-200 flex items-center justify-between ">
-                <span className="font-semibold">Account</span>
-                <button
-                  type="button"
-                  onClick={closeUserDrawer}
-                  className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer px-3.5 py-2 rounded-s-full rounded-e-full bg-white hover:bg-slate-200"
-                >
-                  <CloseIcon sx={{ fontSize: 24 }} />
-                </button>
-              </div>
-
-              <div className="px-4">
-                <p className="py-10 font-bold text-[28px] leading-tight tracking-tight text-wrap">
-                  Log in to manage your bookings
-                </p>
-                <Link href="/login">
-                  <p className="w-full py-3 font-semibold text-center bg-primary text-white rounded-s-full rounded-e-full">
-                    GSRCT Log In
-                  </p>
-                </Link>
-                <div className="py-5 flex items-center gap-3">
-                  <p className="font-medium">Don&apos;t have an account?</p>
-                  <Link href="/signup" className="text-sm underline font-bold">
-                    Sign up
-                  </Link>
-                </div>
-              </div>
-
-              {/* Agent Login */}
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                  sx={{
-                    padding: "4px 16px",
-                    borderRadius: 0,
-                    fontWeight: 500,
-                  }}
-                >
-                  <div className="flex items-center gap-x-3">
-                    <PersonOutlineOutlinedIcon sx={{ fontSize: 24 }} />
-                    <span>Agent Login</span>
-                  </div>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <ul className="flex flex-col">
-                    <li className="p-4 bg-white hover:bg-slate-200">
-                      Agent Login
-                    </li>
-                    <li className="p-4 bg-white hover:bg-slate-200">
-                      New Agent Register
-                    </li>
-                    <li className="p-4 bg-white hover:bg-slate-200">
-                      Agent Allotment
-                    </li>
-                    <li className="p-4 bg-white hover:bg-slate-200">
-                      E-Top Status
-                    </li>
-                  </ul>
-                </AccordionDetails>
-              </Accordion>
-
-              {/* Bus pass Login */}
-              <Link href="/buspasslogin">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <DescriptionOutlinedIcon sx={{ fontSize: 24 }} />
-                    <span>Bus pass Login</span>
-                  </div>
-
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                </div>
-              </Link>
-
-              {/* Wallet */}
-              <div className="">
-                <p className="p-4 text-[22px] font-bold leading-tight py-7">
-                  Payments
-                </p>
-
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <AccountBalanceWalletOutlinedIcon sx={{ fontSize: 24 }} />
-                      <span>Wallet</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-              </div>
-
-              {/* More */}
-              <div className="">
-                <p className="p-4 text-[22px] font-bold leading-tight py-7">
-                  More
-                </p>
-                {/* Offer */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
-                      <span>Offer</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Know about GSRTC */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <InfoOutlinedIcon sx={{ fontSize: 24 }} />
-                      <span>Know about GSRTC</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Help */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <HelpOutlineOutlinedIcon sx={{ fontSize: 24 }} />
-                      <span>Help</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Cancel Ticket */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <TbTicketOff style={{ fontSize: 30 }} />
-                      <span>Cancel Ticket</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Reschedule Ticket */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <CalendarTodayIcon sx={{ fontSize: 24 }} />
-                      <span>Reschedule Ticket</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Search Ticket */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <BsTicketDetailed style={{ fontSize: 30 }} />
-                      <span>Search Ticket</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Langauge */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <RiFontSize style={{ fontSize: 30 }} />
-                      <div>
-                        <span>Langauge</span>
-                        <span>English</span>
-                      </div>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Notifications */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <NotificationsActiveOutlinedIcon sx={{ fontSize: 24 }} />
-                      <span>Notifications</span>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* State */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                    <div className="flex items-center gap-x-3">
-                      <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
-                      <div>
-                        <span>State</span>
-                        <span>Gujarat</span>
-                      </div>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-
-                {/* Booking for women */}
-                <Link href="/wallet">
-                  <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400 mb-7">
-                    <div className="flex items-center gap-x-3">
-                      <Image
-                        src={womenSvg}
-                        height={24}
-                        width={24}
-                        alt="Booking for women"
-                      />
-                      <div className="flex flex-col">
-                        <span>Booking for women</span>
-                        <span className="text-gray-500 text-sm font-normal">
-                          {false ? "Yes" : "No"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </Drawer>
         </li>
       </ul>
+
+      {/* Drawers */}
+
+      {/* GSRTC Login dialog */}
+      <Drawer anchor="right" open={anchor1} onClose={closeUserDrawer}>
+        <div className="w-screen">
+          <div className="relative p-4 border-b-[1px] border-slate-200 flex items-center justify-between ">
+            <span className="font-semibold">Account</span>
+            <button
+              type="button"
+              onClick={closeUserDrawer}
+              className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer px-3.5 py-2 rounded-s-full rounded-e-full bg-white hover:bg-slate-200"
+            >
+              <CloseIcon sx={{ fontSize: 24 }} />
+            </button>
+          </div>
+
+          <div className="px-4">
+            <p className="py-10 font-bold text-[28px] leading-tight tracking-tight text-wrap">
+              Log in to manage your bookings
+            </p>
+            <button
+              type="button"
+              className="w-full py-3 font-semibold text-center bg-primary text-white rounded-s-full rounded-e-full"
+              onClick={openGsrctLoginDialog}
+            >
+              GSRCT Log In
+            </button>
+            <div className="py-5 flex items-center gap-3">
+              <p className="font-medium">Don&apos;t have an account?</p>
+              <Link href="/signup" className="text-sm underline font-bold">
+                Sign up
+              </Link>
+            </div>
+          </div>
+
+          {/* Agent Login */}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+              sx={{
+                padding: "4px 16px",
+                borderRadius: 0,
+                fontWeight: 500,
+              }}
+            >
+              <div className="flex items-center gap-x-3">
+                <PersonOutlineOutlinedIcon sx={{ fontSize: 24 }} />
+                <span>Agent Login</span>
+              </div>
+            </AccordionSummary>
+            <AccordionDetails>
+              <ul className="flex flex-col">
+                <li className="p-4 bg-white hover:bg-slate-200">Agent Login</li>
+                <li className="p-4 bg-white hover:bg-slate-200">
+                  New Agent Register
+                </li>
+                <li className="p-4 bg-white hover:bg-slate-200">
+                  Agent Allotment
+                </li>
+                <li className="p-4 bg-white hover:bg-slate-200">
+                  E-Top Status
+                </li>
+              </ul>
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Bus pass Login */}
+          <Link href="/buspasslogin">
+            <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+              <div className="flex items-center gap-x-3">
+                <DescriptionOutlinedIcon sx={{ fontSize: 24 }} />
+                <span>Bus pass Login</span>
+              </div>
+
+              <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+            </div>
+          </Link>
+
+          {/* Wallet */}
+          <div className="">
+            <p className="p-4 text-[22px] font-bold leading-tight py-7">
+              Payments
+            </p>
+
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <AccountBalanceWalletOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Wallet</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+          </div>
+
+          {/* More */}
+          <div className="">
+            <p className="p-4 text-[22px] font-bold leading-tight py-7">More</p>
+            {/* Offer */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Offer</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Know about GSRTC */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <InfoOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Know about GSRTC</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Help */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <HelpOutlineOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Help</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Cancel Ticket */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <TbTicketOff style={{ fontSize: 30 }} />
+                  <span>Cancel Ticket</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Reschedule Ticket */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <CalendarTodayIcon sx={{ fontSize: 24 }} />
+                  <span>Reschedule Ticket</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Search Ticket */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <BsTicketDetailed style={{ fontSize: 30 }} />
+                  <span>Search Ticket</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Langauge */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <RiFontSize style={{ fontSize: 30 }} />
+                  <div>
+                    <span>Langauge</span>
+                    <span>English</span>
+                  </div>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Notifications */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <NotificationsActiveOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Notifications</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* State */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
+                  <div>
+                    <span>State</span>
+                    <span>Gujarat</span>
+                  </div>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Booking for women */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400 mb-7">
+                <div className="flex items-center gap-x-3">
+                  <Image
+                    src={womenSvg}
+                    height={24}
+                    width={24}
+                    alt="Booking for women"
+                  />
+                  <div className="flex flex-col">
+                    <span>Booking for women</span>
+                    <span className="text-gray-500 text-sm font-normal">
+                      {false ? "Yes" : "No"}
+                    </span>
+                  </div>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </Drawer>
+
+      {/* GSRTC Login/Sign up Dialog */}
+      <Dialog
+        fullScreen
+        onClose={closeGsrctLoginDialog}
+        open={gsrtcLoginDialog}
+      >
+        <div className="w-screen h-screen max-h-screen flex flex-col justify-between gap-7 px-4 py-5 bg-white overflow-y-auto hideScrollBar">
+          <form>
+            {/* Header */}
+            <div className="flex justify-between items-center mb-5">
+              <p className="font-bold">GSRTC Login</p>
+              <button
+                type="button"
+                className="rounded-s-full rounded-e-full px-3.5 py-2.5 hover:bg-slate-200 cursor-pointer"
+                onClick={closeGsrctLoginDialog}
+              >
+                <IoMdClose className="text-2xl" />
+              </button>
+            </div>
+
+            {/* Mobile no. */}
+            <div>
+              <p className="text-xl font-bold mb-4">
+                What's your mobile number?
+              </p>
+              <div className="flex">
+                <button
+                  type="button"
+                  disabled
+                  className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                >
+                  <p className="text-xs text-[#1d1d1da3]">Country Code</p>
+                  <p className="flex items-center gap-x-1 font-semibold">
+                    <span>+91 (IND)</span>
+                    <IoMdArrowDropdown className="text-xl" />
+                  </p>
+                </button>
+
+                <div className="flex-1 border rounded-se-lg rounded-ee-lg">
+                  <TextField
+                    type="text"
+                    id="userMobile"
+                    label="Mobile number*"
+                    placeholder="Enter mobile no."
+                    variant="filled"
+                    error={false}
+                    sx={{
+                      width: "100%",
+                      "& .MuiFilledInput-root": {
+                        fontWeight: "700 !important",
+                        backgroundColor: "white !important",
+                        borderTopLeftRadius: "0px",
+                        borderTopRightRadius: "8px",
+                        borderBottomRightRadius: "8px",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "#1d1d1da3 !important",
+                      },
+                      "& ::before": {
+                        display: "none",
+                      },
+                      "& ::after": {
+                        display: "none",
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Recatcha */}
+            <div className="flex justify-center py-5">
+              <ReCAPTCHA
+                sitekey={CaptchaClientKey}
+                onChange={onCaptchSuccess}
+                onErrored={onCaptchaFailed}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={false}
+              // onClick={}
+              className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full"
+            >
+              Generate OTP
+            </button>
+
+            <p className="flex justify-center items-center gap-2 py-5">
+              <span className="w-10 h-0 border border-slate-200"></span>
+              <span className="text-sm">or</span>
+              <span className="w-10 h-0 border border-slate-200"></span>
+            </p>
+
+            <button
+              type="button"
+              className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer mx-auto"
+            >
+              <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
+                <Image
+                  src={googleIcon}
+                  width={24}
+                  height={24}
+                  alt="Google Sign In Icon"
+                />
+              </div>
+
+              <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                Sign in with Google
+              </p>
+            </button>
+          </form>
+
+          <div className="w-full p-3 border-t border-t-slate-200">
+            <p className="text-sm text-center">By logging in, I agree</p>
+            <p className="text-sm flex justify-center items-center gap-2">
+              <a href="#" className="text-blue-500">
+                Terms & Conditions
+              </a>
+              <span>&</span>
+              <a href="#" className="text-blue-500">
+                Privacy Policy
+              </a>
+            </p>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
