@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import navbarLogo from "@/assets/images/Navbar_logo.png";
+import gsrtcLogo from "@/assets/images/gsrtc_logo_900x900.png";
 import { useEffect, useRef, useState } from "react";
 import { Popover } from "@mui/material";
 import HailOutlinedIcon from "@mui/icons-material/HailOutlined";
@@ -51,6 +52,7 @@ import Dialog from "@mui/material/Dialog";
 const SearchBus = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [windowSize, setWindowSize] = useState<number>(0);
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
   const router = useRouter();
 
   // Window size listener
@@ -60,12 +62,20 @@ const SearchBus = () => {
       setWindowSize(window.innerWidth);
     };
 
+    const handleScrolling = () => {
+      let position = window.scrollY;
+      setScrollPosition(position);
+    };
+
     listenWindowSize();
+    handleScrolling();
 
     window.addEventListener("resize", listenWindowSize);
+    window.addEventListener("scroll", handleScrolling);
 
     return () => {
       window.removeEventListener("resize", listenWindowSize);
+      window.removeEventListener("scroll", handleScrolling);
     };
   }, []);
 
@@ -968,20 +978,28 @@ const SearchBus = () => {
       </div>
 
       {/* Lower Navbar*/}
-      <div className="myContainer bg-white w-full sticky top-0 left-0 right-0 font-semibold hidden lg:flex items-center z-40 shadow-md">
+      <div className="myContainer bg-white w-full sticky top-0 left-0 right-0 font-semibold hidden lg:flex justify-between items-center gap-16 z-40 shadow-md">
         {/* GSRTC Logo */}
-        <Image
-          src={navbarLogo}
-          className="hidden w-[300px] h-[50px] lg:w-[385px] lg:h-[64px]"
-          alt="GSRTC Navbar LOGO"
-        />
+        <div
+          className={`${
+            scrollPosition >= 100 ? "" : "hidden"
+          } duration-200 transition-all`}
+        >
+          <Image
+            src={gsrtcLogo}
+            className="max-w-[50px] max-h-[50px] lg:max-w-16 lg:max-h-16"
+            alt="GSRTC Navbar LOGO"
+            width={64}
+            height={64}
+          />
+        </div>
 
         {/* Bus search function */}
         <form
           className="w-full rounded-3xl"
           onClick={(e) => {
             const eleCoord = e.currentTarget.getBoundingClientRect();
-            console.log("eleCoord.top: ", eleCoord.top);
+            // console.log("eleCoord.top: ", eleCoord.top);
             scrollBy({
               top: eleCoord.top,
               behavior: "instant",
@@ -1203,7 +1221,7 @@ const SearchBus = () => {
                     Today
                   </span>
                   <span
-                    className="bg-[#fed9d5] hover:bg-[#f8d3cf] text-sm font-bold px-3 py-2 rounded-s-full rounded-e-full cursor-pointer"
+                    className="hidden xl:block bg-[#fed9d5] hover:bg-[#f8d3cf] text-sm font-bold px-3 py-2 rounded-s-full rounded-e-full cursor-pointer"
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.stopPropagation();
                       setValue(
