@@ -7,11 +7,11 @@ const SwipeDrawer = () => {
   const BusInfoParentRef = useRef<HTMLDivElement | null>(null);
   return (
     <div
-      className={`md:hidden fixed top-[calc(100%-128px)] bottom-0 left-0 right-0 z-[999] bg-white ${
+      className={`md:hidden fixed z-[999] bg-white min-h-screen hideScrollBar ${
         open
-          ? "!top-0 min-h-screen overflow-y-scroll hideScrollBar"
-          : "h-[128px] overflow-hidden rounded-xl"
-      } duration-300`}
+          ? "inset-0 overflow-y-auto"
+          : "-bottom-[calc(100%-128px)] left-0 right-0 h-[128px] overflow-hidden rounded-xl"
+      } duration-300 pb-[100px]`}
       onClick={() => {
         setOpen(true);
       }}

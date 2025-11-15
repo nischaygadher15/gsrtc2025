@@ -361,7 +361,7 @@ const BookTicketDrawer = ({
             role="tabpanel"
             id="TabPanel-selectSeat"
             aria-labelledby="Tab-selectSeat"
-            className="w-full min-h-full max-h-full overflow-y-hidden bg-[#f2f2f8] pt-6 px-4 sm:px-6 lg:px-12 flex gap-x-7"
+            className="relative w-full min-h-full max-h-full overflow-y-hidden bg-[#f2f2f8] pt-6 px-4 sm:px-6 lg:px-12 flex gap-x-7"
           >
             {/* Seats */}
             <div className="w-full md:w-1/2 overflow-y-scroll hideScrollBar">
@@ -420,6 +420,40 @@ const BookTicketDrawer = ({
             </div>
 
             <SwipeDrawer />
+
+            {/* Button for seat amount and booking button */}
+            <div
+              className={`fixed bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+            >
+              <div className="flex justify-between items-center gap-x-7">
+                <p className="text-sm font-semibold">1 seat</p>
+                <button
+                  type="button"
+                  className="flex items-center gap-x-2 cursor-pointer"
+                >
+                  <span className="font-bold text-2xl">&#8377;{500}</span>
+                  <span className="border-2 border-slate-500 rounded">
+                    <FaPlus className="text-slate-500 text-sm" />
+                  </span>
+                </button>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  className="w-full sm:min-w-[340px] py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              bg-primary outline-none"
+                  onClick={() => {
+                    setActiveTab((prev) => {
+                      if (prev < 2) return prev + 1;
+                      else return prev;
+                    });
+                  }}
+                >
+                  Select boarding & dropping points
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -470,6 +504,37 @@ const BookTicketDrawer = ({
                   <BoardingDroppingTimeline timeLineList={BusBoardingPoints} />
                 </AccordionDetails>
               </Accordion>
+            </div>
+
+            {/* Button for seat amount and booking button */}
+            <div
+              className={`fixed bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+            >
+              <div className="flex justify-between items-center gap-x-7">
+                <p className="text-sm font-semibold">1 seat</p>
+                <button
+                  type="button"
+                  className="flex items-center gap-x-2 cursor-pointer"
+                >
+                  <span className="font-bold text-2xl">&#8377;{500}</span>
+                  <span className="border-2 border-slate-500 rounded">
+                    <FaPlus className="text-slate-500 text-sm" />
+                  </span>
+                </button>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  className="w-full sm:min-w-[340px] py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              bg-primary outline-none"
+                  onClick={() => {
+                    redirect("/checkout");
+                  }}
+                >
+                  Fill passenger details
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1013,7 +1078,7 @@ const BookTicketDrawer = ({
         )}
 
         {/* Button for seat amount and booking button */}
-        <div
+        {/* <div
           className={`z-[1000] ${
             activeTab === 2 ? "hidden" : "sticky bottom-0 left-0 right-0"
           }  duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 pt-1 pb-2.5 sm:py-4 border-t border-t-slate-300`}
@@ -1052,7 +1117,7 @@ const BookTicketDrawer = ({
                 : "Continue booking"}
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </Dialog>
   );
