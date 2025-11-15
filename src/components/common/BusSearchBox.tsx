@@ -1,4 +1,5 @@
-<form
+{
+  /* <form
   className="w-full rounded-3xl"
   onClick={(e) => {
     const eleCoord = e.currentTarget.getBoundingClientRect();
@@ -8,11 +9,17 @@
       behavior: "instant",
     });
   }}
-  onSubmit={handleSubmit(onSearchBuses)}
->
-  <div className="py-4 flex">
-    {/* Source place */}
-    <div className="relative w-[30%]">
+  onSubmit={handleSubmit(onSearchBuses)} */
+}
+// >
+{
+  /* <div className="py-4 flex"> */
+}
+{
+  /* Source place */
+}
+{
+  /* <div className="relative w-[30%]">
       <button
         type="button"
         className="w-full p-2.5 border rounded-s-2xl border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
@@ -100,10 +107,14 @@
           </div>
         </div>
       </Popover>
-    </div>
+    </div> */
+}
 
-    {/* Destination place */}
-    <div className="relative w-[30%]">
+{
+  /* Destination place */
+}
+{
+  /* <div className="relative w-[30%]">
       <button
         type="button"
         className="w-full p-2.5 border-t border-b border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
@@ -192,10 +203,14 @@
           </div>
         </div>
       </Popover>
-    </div>
+    </div> */
+}
 
-    {/* Date Picker */}
-    <div className="relative w-[32%]">
+{
+  /* Date Picker */
+}
+{
+  /* <div className="relative w-[32%]">
       <button
         type="button"
         className="w-full p-2.5 border border-slate-400 flex justify-between gap-x-1.5 items-center cursor-pointer outline-none"
@@ -330,10 +345,14 @@
           </div>
         </div>
       </Popover>
-    </div>
+    </div> */
+}
 
-    {/* Submit button */}
-    <div className="flex justify-center w-[8%] max-h-[62px] p-2 border border-s-0 border-slate-400 rounded-se-2xl rounded-ee-2xl">
+{
+  /* Submit button */
+}
+{
+  /* <div className="flex justify-center w-[8%] max-h-[62px] p-2 border border-s-0 border-slate-400 rounded-se-2xl rounded-ee-2xl">
       <button
         type="submit"
         className={`w-full h-full rounded-s-full rounded-e-full ${
@@ -346,6 +365,11 @@
           <ImSpinner8 className="text-2xl text-white  animate-spin" />
         )}
       </button>
-    </div>
-  </div>
-</form>;
+    </div> */
+}
+{
+  /* </div> */
+}
+{
+  /* </form>; */
+}
