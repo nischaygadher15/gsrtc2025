@@ -423,7 +423,7 @@ const BookTicketDrawer = ({
 
             {/* Button for seat amount and booking button */}
             <div
-              className={`fixed bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+              className={`fixed z-[1000] bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
             >
               <div className="flex justify-between items-center gap-x-7">
                 <p className="text-sm font-semibold">1 seat</p>
@@ -508,7 +508,7 @@ const BookTicketDrawer = ({
 
             {/* Button for seat amount and booking button */}
             <div
-              className={`fixed bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+              className={`z-[1000] fixed bottom-0 left-0 right-0 duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
             >
               <div className="flex justify-between items-center gap-x-7">
                 <p className="text-sm font-semibold">1 seat</p>
@@ -1046,7 +1046,7 @@ const BookTicketDrawer = ({
 
             {/* Button for seat amount and booking button */}
             <div
-              className={`duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
+              className={`z-[1000] duration-200 w-full flex flex-col sm:flex-row justify-center bg-white sm:items-center gap-x-7 gap-y-1 px-4 py-2.5 sm:py-4 border-t border-t-slate-300`}
             >
               <div className="flex justify-between items-center gap-x-7">
                 <p className="text-sm font-semibold">1 seat</p>
