@@ -10,8 +10,8 @@ const SwipeDrawer = () => {
       className={`md:hidden fixed z-[999] bg-white min-h-screen hideScrollBar ${
         open
           ? "inset-0 overflow-y-auto"
-          : "-bottom-[calc(100%-128px)] left-0 right-0 h-[128px] overflow-hidden rounded-xl"
-      } duration-300 pb-[100px]`}
+          : "-bottom-[calc(100vh-128px)] left-0 right-0 h-[128px] overflow-hidden rounded-xl"
+      } duration-300`}
       onClick={() => {
         setOpen(true);
       }}
