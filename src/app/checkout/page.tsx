@@ -23,6 +23,7 @@ import { FaCircleCheck, FaCircleUser } from "react-icons/fa6";
 import { IoMdArrowDropdown, IoMdClose } from "react-icons/io";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
+import useWindowSize from "@/Hooks/useWindowSize";
 
 // Types
 interface PassengerInfo {
@@ -34,7 +35,7 @@ interface PassengerInfo {
 
 const CheckoutPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [windowSize, setWindowSize] = useState<number>(0);
+  const windowSize = useWindowSize();
   const [cancelPayDialog, setCancelPayDialog] = useState<boolean>(false);
   const passengers: PassengerInfo[] = [
     {
@@ -60,22 +61,6 @@ const CheckoutPage = () => {
     ...passengers,
   ]);
   const [contactInfoEdit, setContactInfoEdit] = useState<boolean>(false);
-
-  // Window size listener
-  useEffect(() => {
-    const listenWindowSize = () => {
-      // console.log(window.innerWidth);
-      setWindowSize(window.innerWidth);
-    };
-
-    listenWindowSize();
-
-    window.addEventListener("resize", listenWindowSize);
-
-    return () => {
-      window.removeEventListener("resize", listenWindowSize);
-    };
-  }, []);
 
   // Passenger Gender
   const handleGenderChange = (

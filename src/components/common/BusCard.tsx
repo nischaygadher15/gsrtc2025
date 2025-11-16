@@ -7,7 +7,7 @@ import { LuDot } from "react-icons/lu";
 const BusCard = ({ openViewDrawer }: { openViewDrawer: () => void }) => {
   return (
     <div
-      className="bg-white flex flex-col rounded-2xl shadow-md p-4"
+      className="bg-white flex flex-col rounded-2xl shadow-md p-4 cursor-pointer"
       onClick={openViewDrawer}
     >
       <div className="w-full flex flex-wrap md:flex-nowrap lg:pb-3 gap-y-4">

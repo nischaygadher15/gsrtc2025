@@ -41,27 +41,12 @@ import BusLoader from "../loader";
 import Dialog from "@mui/material/Dialog";
 import { IoMdClose } from "react-icons/io";
 import Drawer from "@mui/material/Drawer";
+import useWindowSize from "@/Hooks/useWindowSize";
 
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [windowSize, setWindowSize] = useState<number>(0);
+  const windowSize = useWindowSize();
   const router = useRouter();
-
-  // Window size listener
-  useEffect(() => {
-    const listenWindowSize = () => {
-      // console.log(window.innerWidth);
-      setWindowSize(window.innerWidth);
-    };
-
-    listenWindowSize();
-
-    window.addEventListener("resize", listenWindowSize);
-
-    return () => {
-      window.removeEventListener("resize", listenWindowSize);
-    };
-  }, []);
 
   //Hero section carousel
   const [heroCarouselRef] = useEmblaCarousel({ loop: true, dragFree: true }, [

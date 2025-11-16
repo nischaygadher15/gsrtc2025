@@ -48,36 +48,15 @@ import FilterAccordian from "../../components/common/FilterAccordian";
 import BusCard from "@/components/common/BusCard";
 import BookTicketDrawer from "@/components/common/BookTicketDrawer";
 import Dialog from "@mui/material/Dialog";
+import useWindowSize from "@/Hooks/useWindowSize";
+import useScrollPosition from "@/Hooks/useScrollPosition";
+import { FaLongArrowAltUp } from "react-icons/fa";
 
 const SearchBus = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [windowSize, setWindowSize] = useState<number>(0);
-  const [scrollPosition, setScrollPosition] = useState<number>(0);
+  const windowSize = useWindowSize();
+  const scrollPosition = useScrollPosition();
   const router = useRouter();
-
-  // Window size listener
-  useEffect(() => {
-    const listenWindowSize = () => {
-      // console.log(window.innerWidth);
-      setWindowSize(window.innerWidth);
-    };
-
-    const handleScrolling = () => {
-      let position = window.scrollY;
-      setScrollPosition(position);
-    };
-
-    listenWindowSize();
-    handleScrolling();
-
-    window.addEventListener("resize", listenWindowSize);
-    window.addEventListener("scroll", handleScrolling);
-
-    return () => {
-      window.removeEventListener("resize", listenWindowSize);
-      window.removeEventListener("scroll", handleScrolling);
-    };
-  }, []);
 
   //Arrays
   const boardingPoints: string[] = [
@@ -800,6 +779,43 @@ const SearchBus = () => {
     setViewDrawer(false);
   };
 
+  type SortByFiltersVal = "ASC" | "DSC" | null;
+
+  type SortByFilters = {
+    ratings: SortByFiltersVal;
+    depatureTime: SortByFiltersVal;
+    price: SortByFiltersVal;
+  };
+
+  //Sort by variables
+  const [sortByFilter, setSortByFilter] = useState<SortByFilters>({
+    ratings: null,
+    depatureTime: null,
+    price: null,
+  });
+
+  useEffect(() => console.log("sortByFilter: ", sortByFilter), [sortByFilter]);
+
+  const handleSortByFilterChange = (
+    sortFilter: "ratings" | "depatureTime" | "price"
+  ) => {
+    if (sortByFilter[sortFilter] !== null) {
+      if (sortByFilter[sortFilter] == "ASC") {
+        setSortByFilter((prev) => {
+          return { ...prev, [sortFilter]: "DSC" };
+        });
+      } else {
+        setSortByFilter((prev) => {
+          return { ...prev, [sortFilter]: "ASC" };
+        });
+      }
+    } else {
+      setSortByFilter((prev) => {
+        return { ...prev, [sortFilter]: "ASC" };
+      });
+    }
+  };
+
   return (
     <>
       {/* Upper Navbar */}
@@ -982,7 +998,7 @@ const SearchBus = () => {
         {/* GSRTC Logo */}
         <div
           className={`${
-            scrollPosition >= 100 ? "" : "hidden"
+            scrollPosition >= 300 ? "" : "hidden"
           } duration-200 transition-all`}
         >
           <Image
@@ -1424,7 +1440,7 @@ const SearchBus = () => {
                 </div>
               </div>
 
-              {/* Tags */}
+              {/* Sort by and found bus no. */}
               <div className="max-w-screen sticky top-[80px] left-0 right-0 flex lg:hidden items-center gap-x-2 p-2 bg-white rounded-lg mb-4">
                 <button
                   type="button"
@@ -1458,24 +1474,57 @@ const SearchBus = () => {
                   <p className="h-full text-sm font-bold flex items-center">
                     Sort by:
                   </p>
-                  <div className="flex gap-x-10">
+                  <div className="flex gap-x-7">
                     <button
                       type="button"
-                      className="h-full cursor-pointer text-sm font-medium text-gray-600 hover:text-black"
+                      className="h-full cursor-pointer text-sm font-semibold text-gray-600 hover:text-black flex items-center gap-1 outline-none"
+                      onClick={() => handleSortByFilterChange("ratings")}
                     >
-                      Ratings
+                      <span>Ratings</span>
+
+                      <FaLongArrowAltUp
+                        className={`${
+                          sortByFilter.ratings ? "opacity-100" : "opacity-0"
+                        } text-xl text-primary duration-300 transition-all ${
+                          sortByFilter.ratings === "DSC" ? "rotate-180" : ""
+                        }`}
+                      />
                     </button>
                     <button
                       type="button"
-                      className="h-full cursor-pointer text-sm font-medium text-gray-600 hover:text-black"
+                      className="h-full cursor-pointer text-sm font-medium text-gray-600 hover:text-black flex items-center gap-1 outline-none"
+                      onClick={() => handleSortByFilterChange("depatureTime")}
                     >
-                      Depature Time
+                      <span>Depature Time</span>
+
+                      <FaLongArrowAltUp
+                        className={`${
+                          sortByFilter.depatureTime
+                            ? "opacity-100"
+                            : "opacity-0"
+                        } text-xl text-primary duration-300 transition-all ${
+                          sortByFilter.depatureTime === "DSC"
+                            ? "rotate-180"
+                            : "rotate-0"
+                        }`}
+                      />
                     </button>
                     <button
                       type="button"
-                      className="h-full cursor-pointer text-sm font-medium text-gray-600 hover:text-black"
+                      className="h-full cursor-pointer text-sm font-medium text-gray-600 hover:text-black flex items-center gap-1 outline-none"
+                      onClick={() => handleSortByFilterChange("price")}
                     >
-                      Price
+                      <span>Price</span>
+
+                      <FaLongArrowAltUp
+                        className={`${
+                          sortByFilter.price ? "opacity-100" : "opacity-0"
+                        } text-xl text-primary duration-300 transition-all ${
+                          sortByFilter.price === "DSC"
+                            ? "rotate-180"
+                            : "rotate-0"
+                        }`}
+                      />
                     </button>
                   </div>
                 </div>
