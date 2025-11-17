@@ -55,22 +55,22 @@ body {
   border-collapse: collapse;
 }
 
-#knowYourSeatTypes tr,
-#cancellationTable tr,
-th,
-td,
-#dateChangePolicyTable tr,
-th,
-td {
+#knowYourSeatTypes > tr,
+#cancellationTable > tr,
+#cancellationTable > th,
+#cancellationTable > td,
+#dateChangePolicyTable > tr,
+#dateChangePolicyTable > th,
+#dateChangePolicyTable > td {
   border: 1px solid #e6e6e6;
 }
 
-#knowYourSeatTypes td,
-th,
-#cancellationTable td,
-th,
-#dateChangePolicyTable td,
-th {
+#knowYourSeatTypes > td,
+#knowYourSeatTypes > th,
+#cancellationTable > td,
+#cancellationTable > th,
+#dateChangePolicyTable > td,
+#dateChangePolicyTable > th {
   padding: 16px;
 }
 
@@ -79,13 +79,13 @@ th {
   font-size: 14px;
 }
 
-#cancellationTable td,
-#dateChangePolicyTable td {
+#cancellationTable > td,
+#dateChangePolicyTable > td {
   font-weight: 500;
 }
 
-#ratePercentageTable tr,
-th,
-td {
+#ratePercentageTable > tr,
+#ratePercentageTable > th,
+#ratePercentageTable > td {
   border: none;
 }
