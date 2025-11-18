@@ -44,7 +44,6 @@ import Drawer from "@mui/material/Drawer";
 import useWindowSize from "@/Hooks/useWindowSize";
 
 export default function Home() {
-  const [loading, setLoading] = useState<boolean>(false);
   const windowSize = useWindowSize();
   const router = useRouter();
 
@@ -326,9 +325,7 @@ export default function Home() {
   //Handle submit on SearchBuses
   const onSearchBuses = async (data: SearchBusDataType) => {
     console.log("Form data: ", data);
-    setLoading(true);
     router.push("/search");
-    setTimeout(() => setLoading(false), 500);
   };
 
   // watching all search buses inputs
@@ -339,7 +336,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <BusLoader loading={loading} />
+      {/* <BusLoader loading={loading} /> */}
 
       {/* Home page hero section Carousel */}
       <div className="hidden md:block !overflow-hidden" ref={heroCarouselRef}>
@@ -1044,9 +1041,8 @@ export default function Home() {
         <div className="flex justify-center md:translate-y-1/2">
           <button
             type="submit"
-            className={`p-3 m-4 md:m-0 rounded-s-full rounded-e-full min-w-[300px] w-full md:w-1/4 ${
-              loading ? "bg-[#7d7d7d]" : "bg-primary"
-            } text-white font-semibold flex items-center justify-center gap-x-2 cursor-pointer outline-none`}
+            className={`p-3 m-4 md:m-0 rounded-s-full rounded-e-full min-w-[300px] w-full md:w-1/4
+              bg-primary text-white font-semibold flex items-center justify-center gap-x-2 cursor-pointer outline-none`}
           >
             <FiSearch className="text-2xl" />
             <span>Search buses</span>

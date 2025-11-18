@@ -2,12 +2,10 @@ import GsrtcBus from "@/assets/images/GSRTC_bus_trasparentBGCropped.png";
 import { LinearProgress } from "@mui/material";
 import Image from "next/image";
 
-const BusLoader = ({ loading }: { loading: boolean }) => {
+const BusLoaderProvider = () => {
   return (
     <div
-      className={`fixed inset-0 ${
-        loading ? "z-[1000]" : "-z-20 opacity-0"
-      } bg-white flex justify-center items-center transition-all duration-100`}
+      className={`fixed inset-0 z-[1000] bg-white flex justify-center items-center`}
     >
       <div className="flex flex-col gap-5">
         <Image
@@ -35,4 +33,4 @@ const BusLoader = ({ loading }: { loading: boolean }) => {
   );
 };
 
-export default BusLoader;
+export default BusLoaderProvider;
