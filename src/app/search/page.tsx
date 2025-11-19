@@ -1,10 +1,7 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 import BusListPage from "./BustListPage";
 
 const SearchBus = async () => {
-  await new Promise((res) => setTimeout(res, 3000));
+  await new Promise((res) => setTimeout(res, 1000));
 
   return <BusListPage />;
 };
