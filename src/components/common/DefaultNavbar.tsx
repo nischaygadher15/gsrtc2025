@@ -3,7 +3,7 @@ import navbarLogo from "@/assets/images/Navbar_logo.png";
 import { Drawer, Menu, TextField } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import unityBooking from "@/assets/images/imgi_32_unity_booking.png";
 import CloseIcon from "@mui/icons-material/Close";
@@ -30,6 +30,7 @@ import Dialog from "@mui/material/Dialog";
 import { IoMdArrowDropdown, IoMdClose } from "react-icons/io";
 import ReCAPTCHA from "react-google-recaptcha";
 import googleIcon from "@/assets/images/google-sing-In.svg";
+import { ImSpinner8 } from "react-icons/im";
 
 const DefaultNavbar = () => {
   const currentLocation = usePathname();
@@ -66,6 +67,7 @@ const DefaultNavbar = () => {
   };
 
   // Recaptch
+  const [captchaLoad, setCaptchaLoad] = useState(true);
   const onCaptchSuccess = (capchaToken: string | null) => {
     if (!capchaToken) onCaptchaFailed();
     console.log("Captcha is done.", capchaToken);
@@ -74,6 +76,15 @@ const DefaultNavbar = () => {
   const onCaptchaFailed = () => {
     console.log("Captcha failed!!");
   };
+
+  useEffect(() => {
+    if (gsrtcLoginDialog) {
+      setCaptchaLoad(true);
+      let delayTimer = setTimeout(() => {
+        setCaptchaLoad(false);
+      }, 250);
+    }
+  }, [gsrtcLoginDialog]);
 
   return (
     <nav
@@ -436,6 +447,12 @@ const DefaultNavbar = () => {
           },
         }}
       >
+        {captchaLoad && (
+          <div className="absolute inset-0 z-[1000] flex justify-center bg-white items-center">
+            <ImSpinner8 className="text-primary text-3xl animate-spin" />
+          </div>
+        )}
+
         <div className="relative w-xl min-h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] flex flex-col justify-between gap-7 px-4 pt-5 bg-white overflow-y-auto hideScrollBar">
           <form>
             {/* Header */}

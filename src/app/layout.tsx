@@ -4,6 +4,7 @@ import DefaultNavbar from "../components/common/DefaultNavbar";
 import FooterSection from "@/components/common/FooterSection";
 import FooterNavbar from "@/components/common/FooterNavbar";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   icons: {
@@ -24,6 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-white z-0">
+        <Script
+          src="https://www.google.com/recaptcha/api.js?render=explicit"
+          strategy="afterInteractive"
+        />
         <DefaultNavbar />
         {children}
         <Analytics />
