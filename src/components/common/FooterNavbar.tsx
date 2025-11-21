@@ -87,7 +87,7 @@ const FooterNavbar = () => {
 
         <li>
           <Link
-            href="#"
+            href="/bookings"
             className={`h-full w-full flex flex-col justify-center items-center gap-y-1.5 ${
               currentRoute === "/bookings" ? "text-primary" : "text-[#1d1d1da3]"
             }`}
@@ -371,7 +371,7 @@ const FooterNavbar = () => {
           <form>
             {/* Header */}
             <div className="flex justify-between items-center mb-5">
-              <p className="font-bold">GSRTC Login</p>
+              <p className="font-bold">GSRTC Sign Up</p>
               <button
                 type="button"
                 className="rounded-s-full rounded-e-full px-3.5 py-2.5 hover:bg-slate-200 cursor-pointer"
@@ -475,7 +475,7 @@ const FooterNavbar = () => {
           </form>
 
           <div className="w-full p-3 border-t border-t-slate-200">
-            <p className="text-sm text-center">By logging in, I agree</p>
+            <p className="text-sm text-center">By Sign Up, I agree</p>
             <p className="text-sm flex justify-center items-center gap-2">
               <a href="#" className="text-blue-500">
                 Terms & Conditions
