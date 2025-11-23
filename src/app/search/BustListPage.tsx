@@ -873,7 +873,7 @@ const BusListPage = () => {
             </div>
 
             {/* Filters tags from mobile screen */}
-            <div className="max-w-screen sticky top-[80px] left-0 right-0 flex lg:hidden items-center gap-x-2 p-2.5 bg-white rounded-lg mb-4 shadow-md">
+            <div className="max-w-screen sticky top-[72px] md:top-[80px] left-0 right-0 flex lg:hidden items-center gap-x-2 p-2.5 bg-white rounded-lg mb-4 shadow-md">
               <button
                 type="button"
                 className="px-2 py-1 bg-white border border-slate-400 rounded-lg cursor-pointer"
