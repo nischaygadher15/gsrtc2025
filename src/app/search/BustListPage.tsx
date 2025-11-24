@@ -3,7 +3,7 @@
 import Image from "next/image";
 import gsrtcLogo from "@/assets/images/gsrtc_logo_900x900.png";
 import { useEffect, useRef, useState } from "react";
-import { Popover } from "@mui/material";
+import { Checkbox, DialogTitle, Popover } from "@mui/material";
 import HailOutlinedIcon from "@mui/icons-material/HailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -37,6 +37,9 @@ import {
   filterList,
   tagsList,
 } from "@/components/common/SearchPageData";
+import { IoCloseSharp } from "react-icons/io5";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 const BusListPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -250,6 +253,23 @@ const BusListPage = () => {
         return { ...prev, [sortFilter]: "ASC" };
       });
     }
+  };
+
+  const [filterDialog, setFilterDialog] = useState<boolean>(true);
+  const [filterActiveTab, setFilterActiveTab] = useState<number>(0);
+  const openFilterDialog = (): void => {
+    setFilterDialog(true);
+  };
+
+  const closeFilterDialog = (): void => {
+    setFilterDialog(false);
+  };
+
+  const handleActiveFilter = (
+    event: React.SyntheticEvent,
+    newValue: number
+  ) => {
+    setFilterActiveTab(newValue);
   };
 
   return (
@@ -803,7 +823,7 @@ const BusListPage = () => {
       </div>
 
       {/* Buses */}
-      <div className="myContainer w-full max-w-full bg-[#f2f2f8] border-b border-b-gray-300">
+      <div className="lg:px-16 w-full max-w-full bg-[#f2f2f8] border-b border-b-gray-300">
         <div className="w-full py-5 flex gap-x-4">
           {/* Filters */}
           <div className="sticky top-[98px] max-h-[calc(100vh-94px)] overflow-y-scroll hideScrollBar min-w-[272px] max-w-[272px] h-full hidden lg:flex flex-col gap-y-4">
@@ -853,7 +873,10 @@ const BusListPage = () => {
           {/* Found Buses */}
           <div className="w-full lg:max-w-[calc(100%-272px)] flex flex-col">
             {/* Offers Carousel */}
-            <div className="!overflow-hidden" ref={offersCarouselRef}>
+            <div
+              className="mx-8 lg:mx-0 !overflow-hidden"
+              ref={offersCarouselRef}
+            >
               <div className="flex pb-5">
                 {offers &&
                   offers.map((o, inx) => (
@@ -873,12 +896,14 @@ const BusListPage = () => {
             </div>
 
             {/* Filters tags from mobile screen */}
-            <div className="max-w-screen sticky top-[72px] md:top-[80px] left-0 right-0 flex lg:hidden items-center gap-x-2 p-2.5 bg-white rounded-lg mb-4 shadow-md">
+            <div className="max-w-screen sticky top-[72px] md:top-[80px] left-0 right-0 flex lg:hidden items-center gap-x-2 p-2.5 bg-white lg:rounded-lg mb-4 shadow-md">
               <button
                 type="button"
-                className="px-2 py-1 bg-white border border-slate-400 rounded-lg cursor-pointer"
+                className="px-2 py-1 bg-white border border-slate-400 rounded-lg cursor-pointer flex items-center gap-1"
+                onClick={openFilterDialog}
               >
                 <VscSettings className="text-xl" />
+                <span className="text-nowrap text-sm">Filter & Sort</span>
               </button>
 
               <ul className="w-full overflow-x-scroll hideScrollBar  flex lg:hidden gap-x-2">
@@ -898,6 +923,180 @@ const BusListPage = () => {
                   ))}
               </ul>
             </div>
+
+            {/* Filter and sort Dialog */}
+            <Dialog
+              fullScreen={windowSize < 768 ? true : false}
+              onClose={closeFilterDialog}
+              open={filterDialog}
+              sx={{
+                "& .MuiDialog-paper": {
+                  borderRadius: windowSize < 768 ? "0px" : "16px",
+                },
+              }}
+            >
+              <div
+                className={`relative w-full md:min-w-lg md:max-w-lg overflow-hidden flex flex-col ${
+                  windowSize < 768 ? "h-full" : "max-h-[calc(100vh-64px)]"
+                }`}
+              >
+                {/* header */}
+                <div className="z-999 sticky top-0 left-0 right-0 px-4 py-2 flex justify-between items-center bg-white border-b border-b-slate-200">
+                  <p className="font-semibold">Sort and filter buses</p>
+                  <button
+                    type="button"
+                    className="p-2 cursor-pointer"
+                    onClick={closeFilterDialog}
+                  >
+                    <IoCloseSharp className="text-2xl" />
+                  </button>
+                </div>
+
+                {/* Filters */}
+                <div className={`overflow-y-auto flex flex-1`}>
+                  {/* Tabs */}
+                  <div className="w-1/4 min-w-[125px] bg-[#f2f2f8] overflow-y-auto">
+                    <Tabs
+                      orientation="vertical"
+                      variant="scrollable"
+                      value={filterActiveTab}
+                      onChange={handleActiveFilter}
+                      sx={{
+                        "& .MuiTabs-indicator": {
+                          backgroundColor: "#173c62 !important",
+                          left: 0,
+                        },
+                        "& .MuiTab-root": {
+                          borderBottom: 1,
+                          borderRight: 1,
+                          borderColor: "divider",
+                          textTransform: "none",
+                          textAlign: "left",
+                          alignItems: "flex-start",
+                          fontSize: 12,
+                          fontWeight: 600,
+                          paddingRight: 0,
+                        },
+                      }}
+                    >
+                      {filterList &&
+                        filterList.map((filter, inx) => (
+                          <Tab
+                            key={`filter-dialog-${inx}`}
+                            label={filter.title}
+                            sx={{
+                              "&.Mui-selected": {
+                                color: "#173c62 !important",
+                                backgroundColor: "white",
+                                borderRight: "0 !important",
+                              },
+                            }}
+                          />
+                        ))}
+                    </Tabs>
+                  </div>
+
+                  {/* Tab content */}
+                  <div className="w-3/4 p-4 overflow-y-auto">
+                    {filterList &&
+                      filterList.map((filter, inx) => (
+                        <>
+                          {filterActiveTab === inx && (
+                            <ul>
+                              {filter?.isSearchable && (
+                                <li className="pb-4">
+                                  <input
+                                    type="text"
+                                    className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
+                                    placeholder={
+                                      "Search " +
+                                      filter.title.toLocaleLowerCase()
+                                    }
+                                    // onChange={(
+                                    //   e: React.ChangeEvent<HTMLInputElement>
+                                    // ) =>
+                                    //   SearchFiltersFromList(
+                                    //     e.currentTarget.value,
+                                    //     contentsList
+                                    //   )
+                                    // }
+                                  />
+                                </li>
+                              )}
+
+                              {filter.contentsList &&
+                                filter.contentsList.map(
+                                  (flt, inx, filterArr) => (
+                                    <li key={flt.filterId}>
+                                      <label
+                                        htmlFor={flt.filterId}
+                                        className={`flex items-center gap-x-4 cursor-pointer ${
+                                          inx === 0 ? "pb-4" : "py-4"
+                                        } ${
+                                          inx !== filterArr.length - 1
+                                            ? "border-b border-b-slate-200"
+                                            : ""
+                                        }`}
+                                      >
+                                        {/* Icon */}
+                                        {flt.icon && flt.icon}
+
+                                        {/* Content */}
+                                        <div className="flex flex-1 justify-between items-center">
+                                          {flt.content}
+                                          <span className="text-xs text-[#1d1d1da3]">
+                                            {flt.numbers}
+                                          </span>
+                                        </div>
+
+                                        <Checkbox
+                                          id={flt.filterId}
+                                          sx={{
+                                            // color: "#173c62",
+                                            "&.Mui-checked": {
+                                              color: "#173c62",
+                                            },
+                                            "&.MuiCheckbox-root": {
+                                              padding: "0px !important",
+                                            },
+                                          }}
+                                        />
+                                      </label>
+                                    </li>
+                                  )
+                                )}
+                              {/* {filteredContentsList &&
+                                filteredContentsList.length <= 0 && (
+                                  <li>
+                                    <p className="pb-4 text-center text-[#1d1d1da3]">
+                                      No result found
+                                    </p>
+                                  </li>
+                                )} */}
+                            </ul>
+                          )}
+                        </>
+                      ))}
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="w-full flex gap-3 p-3">
+                  <button
+                    type="button"
+                    className="w-1/2 py-3 border rounded-s-full rounded-e-full font-semibold cursor-pointer"
+                  >
+                    Clear All
+                  </button>
+                  <button
+                    type="button"
+                    className="w-1/2 py-3 bg-primary text-white rounded-s-full rounded-e-full font-semibold "
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </Dialog>
 
             {/* found buses numbers and sort by options */}
             <div className="bg-white rounded-lg px-4 hidden lg:flex justify-between mb-7">
@@ -959,7 +1158,7 @@ const BusListPage = () => {
             </div>
 
             {/* List of buses cards */}
-            <ul className="w-full flex flex-col gap-y-5">
+            <ul className="px-8 lg:px-0 w-full flex flex-col gap-y-5">
               {foundBuses &&
                 foundBuses.map((fb, inx) => (
                   <li key={`busCard-${inx}`}>
