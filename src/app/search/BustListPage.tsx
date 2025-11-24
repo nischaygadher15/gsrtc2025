@@ -255,7 +255,7 @@ const BusListPage = () => {
     }
   };
 
-  const [filterDialog, setFilterDialog] = useState<boolean>(true);
+  const [filterDialog, setFilterDialog] = useState<boolean>(false);
   const [filterActiveTab, setFilterActiveTab] = useState<number>(0);
   const openFilterDialog = (): void => {
     setFilterDialog(true);
