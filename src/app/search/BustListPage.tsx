@@ -874,7 +874,7 @@ const BusListPage = () => {
           <div className="w-full lg:max-w-[calc(100%-272px)] flex flex-col">
             {/* Offers Carousel */}
             <div
-              className="mx-8 lg:mx-0 !overflow-hidden"
+              className="mx-4 md:mx-8 lg:mx-0 !overflow-hidden"
               ref={offersCarouselRef}
             >
               <div className="flex pb-5">
@@ -1158,7 +1158,7 @@ const BusListPage = () => {
             </div>
 
             {/* List of buses cards */}
-            <ul className="px-8 lg:px-0 w-full flex flex-col gap-y-5">
+            <ul className="px-4 md:px-8 lg:px-0 w-full flex flex-col gap-y-5">
               {foundBuses &&
                 foundBuses.map((fb, inx) => (
                   <li key={`busCard-${inx}`}>
