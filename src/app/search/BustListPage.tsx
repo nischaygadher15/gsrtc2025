@@ -1065,7 +1065,9 @@ const BusListPage = () => {
                                         <Checkbox
                                           id={`filter-dialog-${flt.filterId}`}
                                           checked={
-                                            activeFilters[flt.filterId] ?? false
+                                            activeFilters
+                                              ? activeFilters[flt.filterId]
+                                              : false
                                           }
                                           sx={{
                                             // color: "#173c62",
