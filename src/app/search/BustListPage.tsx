@@ -3,7 +3,7 @@
 import Image from "next/image";
 import gsrtcLogo from "@/assets/images/gsrtc_logo_900x900.png";
 import { useEffect, useRef, useState } from "react";
-import { Checkbox, DialogTitle, Popover } from "@mui/material";
+import { Checkbox, DialogTitle, FormGroup, Popover } from "@mui/material";
 import HailOutlinedIcon from "@mui/icons-material/HailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -35,6 +35,7 @@ import { FaLongArrowAltUp } from "react-icons/fa";
 import {
   boardingPoints,
   filterList,
+  FilterType,
   tagsList,
 } from "@/components/common/SearchPageData";
 import { IoCloseSharp } from "react-icons/io5";
@@ -257,6 +258,8 @@ const BusListPage = () => {
 
   const [filterDialog, setFilterDialog] = useState<boolean>(false);
   const [filterActiveTab, setFilterActiveTab] = useState<number>(0);
+  const [activeFilters, setActiveFilters] = useState({});
+
   const openFilterDialog = (): void => {
     setFilterDialog(true);
   };
@@ -271,6 +274,16 @@ const BusListPage = () => {
   ) => {
     setFilterActiveTab(newValue);
   };
+
+  const handleActiveFilters = (newfilter: string, isFilterActive: boolean) => {
+    setActiveFilters((prev) => {
+      return { ...prev, [newfilter]: isFilterActive };
+    });
+  };
+
+  useEffect(() => {
+    console.log("activeFilters: ", activeFilters);
+  }, [activeFilters]);
 
   return (
     <>
@@ -1029,7 +1042,7 @@ const BusListPage = () => {
                                   (flt, inx, filterArr) => (
                                     <li key={flt.filterId}>
                                       <label
-                                        htmlFor={flt.filterId}
+                                        htmlFor={`filter-dialog-${flt.filterId}`}
                                         className={`flex items-center gap-x-4 cursor-pointer ${
                                           inx === 0 ? "pb-4" : "py-4"
                                         } ${
@@ -1050,7 +1063,10 @@ const BusListPage = () => {
                                         </div>
 
                                         <Checkbox
-                                          id={flt.filterId}
+                                          id={`filter-dialog-${flt.filterId}`}
+                                          checked={
+                                            activeFilters[flt.filterId] ?? false
+                                          }
                                           sx={{
                                             // color: "#173c62",
                                             "&.Mui-checked": {
@@ -1060,6 +1076,15 @@ const BusListPage = () => {
                                               padding: "0px !important",
                                             },
                                           }}
+                                          value={flt.filterId}
+                                          onChange={(
+                                            event: React.ChangeEvent<HTMLInputElement>
+                                          ) =>
+                                            handleActiveFilters(
+                                              event.target.value,
+                                              event.target.checked
+                                            )
+                                          }
                                         />
                                       </label>
                                     </li>
@@ -1085,6 +1110,7 @@ const BusListPage = () => {
                   <button
                     type="button"
                     className="w-1/2 py-3 border rounded-s-full rounded-e-full font-semibold cursor-pointer"
+                    onClick={() => setActiveFilters({})}
                   >
                     Clear All
                   </button>

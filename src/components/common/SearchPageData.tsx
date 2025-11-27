@@ -16,6 +16,7 @@ import { TbBottle } from "react-icons/tb";
 import { BiBlanket } from "react-icons/bi";
 import { PiPlugCharging } from "react-icons/pi";
 import { LiaRestroomSolid } from "react-icons/lia";
+import { ReactNode } from "react";
 
 //Boarding points List
 export const boardingPoints: string[] = [
@@ -41,7 +42,21 @@ export const boardingPoints: string[] = [
   "Veraval",
 ];
 
-export const filterList = [
+export interface FilterContentType {
+  filterId: string;
+  icon: ReactNode;
+  content: ReactNode;
+  numbers: number;
+}
+
+export interface FilterType {
+  title: string;
+  contentsList: FilterContentType[];
+  selected: number;
+  isSearchable?: boolean;
+}
+
+export const filterList: FilterType[] = [
   {
     title: "Departure time from source",
     contentsList: [
