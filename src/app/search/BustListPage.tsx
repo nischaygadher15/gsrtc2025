@@ -276,7 +276,7 @@ const BusListPage = () => {
   };
 
   const handleActiveFilters = (newfilter: string, isFilterActive: boolean) => {
-    setActiveFilters((prev) => {
+    setActiveFilters((prev: any) => {
       return { ...prev, [newfilter]: isFilterActive };
     });
   };
