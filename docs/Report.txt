@@ -1,0 +1,15 @@
+Routes:
+    - Home : please add faq section
+    - Default Navbar : please remove bus pass and add booking, help link
+    - Search : 
+        - offers carousel : please add left and right navigation button
+        - please make filter controlled component and add filter tags active/inactive css,  
+        - please make Nabvar bus search bar animation with logo, 
+        - please add Buscard Links : (Boarding/ Dropping Points, Ratings & Reviews, Bus Photos, Cancellation Policies)
+        - please Add breadcrubms
+        - please add AI floating button
+    - Bus booking dialog:
+        - please add bottom margin when bottom bar appear
+        - select ticket: please improve select ticket css for man or female ticket
+        - Know your seat types table:please improve padding issue
+        - view boarding/Dropping drawer issue.
