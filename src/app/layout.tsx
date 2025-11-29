@@ -7,9 +7,9 @@ import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  icons: {
-    icon: "/favicon.webp",
-  },
+  // icons: {
+  //   icon: "/favicon.webp",
+  // },
   title: {
     default: "Gujarat State Road Transport Corporation(GSRTC)",
     template: "%s | GSRTC",

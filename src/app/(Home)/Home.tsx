@@ -2,6 +2,8 @@
 import carousle_img_1 from "@/assets/images/carousel-img _1.jpg";
 import carousle_img_2 from "@/assets/images/carousel-img _2.jpg";
 import carousle_img_3 from "@/assets/images/carousel-img _3.jpg";
+import carousle_img_4 from "@/assets/images/carousel-img _4.jpg";
+import carousle_img_5 from "@/assets/images/carousel-img _5.jpg";
 import Image, { StaticImageData } from "next/image";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Popover, Switch } from "@mui/material";
@@ -337,284 +339,544 @@ export default function Home() {
     <div className="min-h-screen">
       {/* <BusLoader loading={loading} /> */}
 
-      {/* Home page hero section Carousel */}
-      <div className="hidden md:block !overflow-hidden" ref={heroCarouselRef}>
-        <div className="flex">
-          <div className="min-w-full">
-            <Image
-              src={carousle_img_1}
-              alt="Carousel image 1"
-              className="h-[280px]"
-            />
-          </div>
-          <div className="min-w-full">
-            <Image
-              src={carousle_img_2}
-              alt="Carousel image 1"
-              className="h-[280px]"
-            />
-          </div>
-          <div className="min-w-full">
-            <Image
-              src={carousle_img_3}
-              alt="Carousel image 1"
-              className="h-[280px]"
-            />
+      <div className="flex flex-col justify-between">
+        {/* Home page hero section Carousel */}
+        <div className="hidden md:block !overflow-hidden" ref={heroCarouselRef}>
+          <div className="flex">
+            <div className="min-w-full">
+              <Image
+                src={carousle_img_1}
+                alt="Carousel image 1"
+                className="h-[280px]"
+              />
+            </div>
+            <div className="min-w-full">
+              <Image
+                src={carousle_img_2}
+                alt="Carousel image 1"
+                className="h-[280px]"
+              />
+            </div>
+            <div className="min-w-full">
+              <Image
+                src={carousle_img_3}
+                alt="Carousel image 1"
+                className="h-[280px]"
+              />
+            </div>
+            <div className="min-w-full">
+              <Image
+                src={carousle_img_4}
+                alt="Carousel image 1"
+                className="h-[280px]"
+              />
+            </div>
+            <div className="min-w-full">
+              <Image
+                src={carousle_img_5}
+                alt="Carousel image 1"
+                className="h-[280px]"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Bus search function */}
-      <form
-        className="md:mx-8 lg:mx-[75px] z-10 bg-white md:-translate-y-[64px] md:shadow-xl rounded-3xl mb-7"
-        onClick={(e) => {
-          const eleCoord = e.currentTarget.getBoundingClientRect();
-          scrollBy({
-            top: eleCoord.top - 100,
-            behavior: "instant",
-          });
-        }}
-        onSubmit={handleSubmit(onSearchBuses)}
-      >
-        <p className="md:hidden px-4 pt-5 font-bold text-[22px]">Bus Tickets</p>
-        <div className="p-4 pb-0 flex flex-col xl:flex-row gap-4 xl:gap-2">
-          <div className="w-full xl:w-[78%] flex flex-col lg:flex-row">
-            <div className="w-full lg:w-3/5 flex flex-col md:flex-row">
-              {/* Source place */}
-              <div className="relative w-full md:w-1/2">
-                <button
-                  type="button"
-                  className="w-full p-2.5 md:p-3.5 border border-b-0 lg:border-b-[1px] rounded-se-2xl md:rounded-se-none rounded-ss-2xl lg:rounded-s-2xl border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
-                  onClick={(e) => {
-                    if (windowSize > 768) openFormPopover(e);
-                    else setFromPlaceDialog(true);
-                  }}
-                >
-                  <HailOutlinedIcon sx={{ fontSize: 30 }} />
-                  <div>
-                    <p className="text-left text-xs text-gray-500">From</p>
-                    <p className="min-h-6 text-left font-bold">
-                      {bPoint ?? <span className="">Boarding point</span>}
-                    </p>
-                  </div>
-                </button>
-
-                {errors.boardingPoint && (
-                  <small className="text-red-500 font-medium">
-                    {errors.boardingPoint.message}
-                  </small>
-                )}
-
-                {windowSize > 768 && (
-                  <Popover
-                    open={Boolean(fromPlace)}
-                    anchorEl={fromPlace}
-                    onClose={closeFromPopover}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "left",
-                    }}
-                    slotProps={{
-                      paper: {
-                        style: {
-                          width: 386,
-                          background: "transparent",
-                          borderRadius: 16,
-                          maxHeight: "calc(100% - 140px)",
-                          overflow: "hidden",
-                        },
-                      },
+        {/* Bus search function */}
+        <form
+          className="md:mx-8 lg:mx-[75px] mt-7 mb-14 bg-white rounded-3xl md:shadow-[0_0_16px_rgba(0,0,0,0.3)]"
+          onClick={(e) => {
+            const eleCoord = e.currentTarget.getBoundingClientRect();
+            scrollBy({
+              top: eleCoord.top - 100,
+              behavior: "instant",
+            });
+          }}
+          onSubmit={handleSubmit(onSearchBuses)}
+        >
+          <p className="md:hidden px-4 pt-5 font-bold text-[22px]">
+            Bus Tickets
+          </p>
+          <div className="p-4 pb-0 flex flex-col xl:flex-row gap-4 xl:gap-2">
+            <div className="w-full xl:w-[78%] flex flex-col lg:flex-row">
+              <div className="w-full lg:w-3/5 flex flex-col md:flex-row">
+                {/* Source place */}
+                <div className="relative w-full md:w-1/2">
+                  <button
+                    type="button"
+                    className="w-full p-2.5 md:p-3.5 border border-b-0 lg:border-b-[1px] rounded-se-2xl md:rounded-se-none rounded-ss-2xl lg:rounded-s-2xl border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
+                    onClick={(e) => {
+                      if (windowSize > 768) openFormPopover(e);
+                      else setFromPlaceDialog(true);
                     }}
                   >
-                    <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
-                      <div className="!bg-slate-200/50 flex flex-col gap-y-2">
-                        <div className="p-4 bg-white flex items-center gap-x-2">
-                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
-                          <div>
-                            <p className="text-left text-xs text-gray-500">
-                              From
-                            </p>
-                            <input
-                              type="text"
-                              {...register("boardingPoint")}
-                              ref={fromPlacePopInputRef}
-                              onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                if (e.target.value) {
-                                  let filtered: string[] =
-                                    boardingPoints.filter((city) =>
-                                      city
-                                        .toLowerCase()
-                                        .includes(e.target.value.toLowerCase())
-                                    );
-                                  setFilteredBrdPoints(filtered);
-                                } else {
-                                  setFilteredBrdPoints(boardingPoints);
-                                }
-                              }}
-                              className="text-left font-bold outline-none"
-                              placeholder="Enter Boarding point"
-                            />
+                    <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                    <div>
+                      <p className="text-left text-xs text-gray-500">From</p>
+                      <p className="min-h-6 text-left font-bold">
+                        {bPoint ?? <span className="">Boarding point</span>}
+                      </p>
+                    </div>
+                  </button>
+
+                  {errors.boardingPoint && (
+                    <small className="text-red-500 font-medium">
+                      {errors.boardingPoint.message}
+                    </small>
+                  )}
+
+                  {windowSize > 768 && (
+                    <Popover
+                      open={Boolean(fromPlace)}
+                      anchorEl={fromPlace}
+                      onClose={closeFromPopover}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "left",
+                      }}
+                      slotProps={{
+                        paper: {
+                          style: {
+                            width: 386,
+                            background: "transparent",
+                            borderRadius: 16,
+                            maxHeight: "calc(100% - 140px)",
+                            overflow: "hidden",
+                          },
+                        },
+                      }}
+                    >
+                      <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
+                        <div className="!bg-slate-200/50 flex flex-col gap-y-2">
+                          <div className="p-4 bg-white flex items-center gap-x-2">
+                            <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                            <div>
+                              <p className="text-left text-xs text-gray-500">
+                                From
+                              </p>
+                              <input
+                                type="text"
+                                {...register("boardingPoint")}
+                                ref={fromPlacePopInputRef}
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  if (e.target.value) {
+                                    let filtered: string[] =
+                                      boardingPoints.filter((city) =>
+                                        city
+                                          .toLowerCase()
+                                          .includes(
+                                            e.target.value.toLowerCase()
+                                          )
+                                      );
+                                    setFilteredBrdPoints(filtered);
+                                  } else {
+                                    setFilteredBrdPoints(boardingPoints);
+                                  }
+                                }}
+                                className="text-left font-bold outline-none"
+                                placeholder="Enter Boarding point"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col !bg-white p-4">
+                            <p className="font-semibold">Recent Searches</p>
+                          </div>
+
+                          <div className="!bg-white">
+                            <p className="font-semibold p-4">Popular cities</p>
+                            <ul className="flex flex-col ">
+                              {filteredBrdPoints &&
+                                filteredBrdPoints.length > 0 &&
+                                filteredBrdPoints.map((bpc) => (
+                                  <li key={`boardingPoint-${bpc}`}>
+                                    <button
+                                      type="button"
+                                      className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                      onClick={() => {
+                                        setValue("boardingPoint", bpc);
+                                        if (bpc) clearErrors("boardingPoint");
+                                        closeFromPopover();
+                                      }}
+                                    >
+                                      {bpc}
+                                    </button>
+                                  </li>
+                                ))}
+
+                              {filteredBrdPoints &&
+                                filteredBrdPoints.length <= 0 && (
+                                  <li>
+                                    <p className="font-semibold text-center text-red-500 p-4">
+                                      no city name found
+                                    </p>
+                                  </li>
+                                )}
+                            </ul>
                           </div>
                         </div>
+                      </div>
+                    </Popover>
+                  )}
 
-                        <div className="flex flex-col !bg-white p-4">
-                          <p className="font-semibold">Recent Searches</p>
-                        </div>
+                  {windowSize <= 768 && (
+                    <Dialog
+                      fullScreen
+                      open={fromPlaceDialog}
+                      onClose={closeFromDialog}
+                    >
+                      <div className="w-full h-full hideScrollBar overflow-y-scroll">
+                        <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
+                          <div className="sticky top-0 shadow-md left-0 right-0 p-4 bg-white flex items-center gap-x-2">
+                            <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                            <div className="relative flex-1">
+                              <p className="text-left text-xs text-gray-500">
+                                From
+                              </p>
+                              <input
+                                type="text"
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  if (e.target.value) {
+                                    let filtered: string[] =
+                                      boardingPoints.filter((city) =>
+                                        city
+                                          .toLowerCase()
+                                          .includes(
+                                            e.target.value.toLowerCase()
+                                          )
+                                      );
+                                    console.log("filtered: ", filtered);
+                                    setFilteredBrdPoints(filtered);
+                                  } else {
+                                    setFilteredBrdPoints(boardingPoints);
+                                  }
+                                }}
+                                className="text-left font-bold outline-none"
+                                placeholder="Enter Boarding point"
+                              />
+                              <button
+                                type="button"
+                                className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
+                                onClick={() => setFromPlaceDialog(false)}
+                              >
+                                <IoMdClose className="text-2xl" />
+                              </button>
+                            </div>
+                          </div>
 
-                        <div className="!bg-white">
-                          <p className="font-semibold p-4">Popular cities</p>
-                          <ul className="flex flex-col ">
-                            {filteredBrdPoints &&
-                              filteredBrdPoints.length > 0 &&
-                              filteredBrdPoints.map((bpc) => (
-                                <li key={`boardingPoint-${bpc}`}>
-                                  <button
-                                    type="button"
-                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
-                                    onClick={() => {
-                                      setValue("boardingPoint", bpc);
-                                      if (bpc) clearErrors("boardingPoint");
-                                      closeFromPopover();
-                                    }}
-                                  >
-                                    {bpc}
-                                  </button>
-                                </li>
-                              ))}
+                          <div className="flex flex-col !bg-white p-4">
+                            <p className="font-semibold">Recent Searches</p>
+                          </div>
 
-                            {filteredBrdPoints &&
-                              filteredBrdPoints.length <= 0 && (
-                                <li>
-                                  <p className="font-semibold text-center text-red-500 p-4">
-                                    no city name found
-                                  </p>
-                                </li>
-                              )}
-                          </ul>
+                          <div className="!bg-white">
+                            <p className="font-semibold p-4">Popular cities</p>
+                            <ul className="flex flex-col ">
+                              {filteredBrdPoints &&
+                                filteredBrdPoints.length > 0 &&
+                                filteredBrdPoints.map((bpc) => (
+                                  <li key={`boardingPoint-${bpc}`}>
+                                    <button
+                                      type="button"
+                                      className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                      onClick={() => {
+                                        setValue("boardingPoint", bpc);
+                                        if (bpc) clearErrors("boardingPoint");
+                                        closeFromDialog();
+                                      }}
+                                    >
+                                      {bpc}
+                                    </button>
+                                  </li>
+                                ))}
+
+                              {filteredBrdPoints &&
+                                filteredBrdPoints.length <= 0 && (
+                                  <li>
+                                    <p className="font-semibold text-center text-red-500 p-4">
+                                      no city name found
+                                    </p>
+                                  </li>
+                                )}
+                            </ul>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Popover>
-                )}
+                    </Dialog>
+                  )}
+                </div>
 
-                {windowSize <= 768 && (
-                  <Dialog
-                    fullScreen
-                    open={fromPlaceDialog}
-                    onClose={closeFromDialog}
+                {/* Destination place */}
+                <div className="relative w-full md:w-1/2">
+                  <button
+                    type="button"
+                    className="w-full p-2.5 md:p-3.5 border-s md:border-s-0 border-e lg:border-e-0 border-t border-b-none lg:border-b md:rounded-se-2xl lg:rounded-se-none border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
+                    onClick={(e) => {
+                      if (windowSize > 768) openDestPopover(e);
+                      else setDestPlaceDialog(true);
+                    }}
                   >
-                    <div className="w-full h-full hideScrollBar overflow-y-scroll">
-                      <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
-                        <div className="sticky top-0 shadow-md left-0 right-0 p-4 bg-white flex items-center gap-x-2">
-                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
-                          <div className="relative flex-1">
-                            <p className="text-left text-xs text-gray-500">
-                              From
-                            </p>
-                            <input
-                              type="text"
-                              onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                if (e.target.value) {
-                                  let filtered: string[] =
-                                    boardingPoints.filter((city) =>
-                                      city
-                                        .toLowerCase()
-                                        .includes(e.target.value.toLowerCase())
-                                    );
-                                  console.log("filtered: ", filtered);
-                                  setFilteredBrdPoints(filtered);
-                                } else {
-                                  setFilteredBrdPoints(boardingPoints);
-                                }
-                              }}
-                              className="text-left font-bold outline-none"
-                              placeholder="Enter Boarding point"
-                            />
+                    <LocationOnOutlinedIcon sx={{ fontSize: 30 }} />
+                    <div>
+                      <p className="text-left text-xs text-gray-500">To</p>
+                      <p className="min-h-6 text-left font-bold">
+                        {dPoint ?? <span className="">Destination point</span>}
+                      </p>
+                    </div>
+                  </button>
+
+                  {errors.destinationPoint && (
+                    <small className="text-red-500 font-medium">
+                      {errors.destinationPoint.message}
+                    </small>
+                  )}
+
+                  {windowSize > 768 && (
+                    <Popover
+                      open={Boolean(destPlace)}
+                      anchorEl={destPlace}
+                      onClose={closeDestPopover}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "left",
+                      }}
+                      slotProps={{
+                        paper: {
+                          style: {
+                            width: 386,
+                            background: "transparent",
+                            borderRadius: 16,
+                            maxHeight: "calc(100% - 140px)",
+                            overflow: "hidden",
+                          },
+                        },
+                      }}
+                    >
+                      <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
+                        <div className="!bg-slate-200/50 flex flex-col gap-y-2">
+                          <div className="p-4 bg-white flex items-center gap-x-2">
+                            <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                            <div>
+                              <p className="text-left text-xs text-gray-500">
+                                To
+                              </p>
+                              <input
+                                type="text"
+                                {...register("destinationPoint")}
+                                ref={destPlacePopInput}
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  if (e.target.value) {
+                                    let filtered: string[] =
+                                      boardingPoints.filter((city) =>
+                                        city
+                                          .toLowerCase()
+                                          .includes(
+                                            e.target.value.toLowerCase()
+                                          )
+                                      );
+                                    setFilteredDestPoints(filtered);
+                                  } else {
+                                    setFilteredDestPoints(boardingPoints);
+                                  }
+                                }}
+                                className="text-left font-bold outline-none"
+                                placeholder="Enter Destination point"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col !bg-white p-4">
+                            <p className="font-semibold">Recent Searches</p>
+                          </div>
+
+                          <div className="!bg-white">
+                            <p className="font-semibold p-4">Popular cities</p>
+                            <ul className="flex flex-col ">
+                              {filteredDestPoints &&
+                                filteredDestPoints.length > 0 &&
+                                filteredDestPoints.map((bpc) => (
+                                  <li key={`boardingPoint-${bpc}`}>
+                                    <button
+                                      type="button"
+                                      className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                      onClick={() => {
+                                        setValue("destinationPoint", bpc);
+                                        if (bpc)
+                                          clearErrors("destinationPoint");
+                                        closeDestPopover();
+                                      }}
+                                    >
+                                      {bpc}
+                                    </button>
+                                  </li>
+                                ))}
+
+                              {filteredDestPoints &&
+                                filteredDestPoints.length <= 0 && (
+                                  <li>
+                                    <p className="font-semibold text-center text-red-500 p-4">
+                                      no city name found
+                                    </p>
+                                  </li>
+                                )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </Popover>
+                  )}
+
+                  {windowSize <= 768 && (
+                    <Dialog
+                      fullScreen
+                      open={destPlaceDialog}
+                      onClose={closeDestDialog}
+                    >
+                      <div className="w-full h-full hideScrollBar overflow-y-scroll">
+                        <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
+                          <div className="sticky top-0 shadow-md left-0 right-0 p-4 bg-white flex items-center gap-x-2">
+                            <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                            <div>
+                              <p className="text-left text-xs text-gray-500">
+                                To
+                              </p>
+                              <input
+                                type="text"
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  if (e.target.value) {
+                                    let filtered: string[] =
+                                      boardingPoints.filter((city) =>
+                                        city
+                                          .toLowerCase()
+                                          .includes(
+                                            e.target.value.toLowerCase()
+                                          )
+                                      );
+                                    setFilteredDestPoints(filtered);
+                                  } else {
+                                    setFilteredDestPoints(boardingPoints);
+                                  }
+                                }}
+                                className="text-left font-bold outline-none"
+                                placeholder="Enter Destination point"
+                              />
+                            </div>
                             <button
                               type="button"
                               className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
-                              onClick={() => setFromPlaceDialog(false)}
+                              onClick={closeDestDialog}
                             >
                               <IoMdClose className="text-2xl" />
                             </button>
                           </div>
-                        </div>
 
-                        <div className="flex flex-col !bg-white p-4">
-                          <p className="font-semibold">Recent Searches</p>
-                        </div>
+                          <div className="flex flex-col !bg-white p-4">
+                            <p className="font-semibold">Recent Searches</p>
+                          </div>
 
-                        <div className="!bg-white">
-                          <p className="font-semibold p-4">Popular cities</p>
-                          <ul className="flex flex-col ">
-                            {filteredBrdPoints &&
-                              filteredBrdPoints.length > 0 &&
-                              filteredBrdPoints.map((bpc) => (
-                                <li key={`boardingPoint-${bpc}`}>
-                                  <button
-                                    type="button"
-                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
-                                    onClick={() => {
-                                      setValue("boardingPoint", bpc);
-                                      if (bpc) clearErrors("boardingPoint");
-                                      closeFromDialog();
-                                    }}
-                                  >
-                                    {bpc}
-                                  </button>
-                                </li>
-                              ))}
+                          <div className="!bg-white">
+                            <p className="font-semibold p-4">Popular cities</p>
+                            <ul className="flex flex-col ">
+                              {filteredDestPoints &&
+                                filteredDestPoints.length > 0 &&
+                                filteredDestPoints.map((bpc) => (
+                                  <li key={`boardingPoint-${bpc}`}>
+                                    <button
+                                      type="button"
+                                      className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
+                                      onClick={() => {
+                                        setValue("destinationPoint", bpc);
+                                        if (bpc)
+                                          clearErrors("destinationPoint");
+                                        setDestPlaceDialog(false);
+                                      }}
+                                    >
+                                      {bpc}
+                                    </button>
+                                  </li>
+                                ))}
 
-                            {filteredBrdPoints &&
-                              filteredBrdPoints.length <= 0 && (
-                                <li>
-                                  <p className="font-semibold text-center text-red-500 p-4">
-                                    no city name found
-                                  </p>
-                                </li>
-                              )}
-                          </ul>
+                              {filteredDestPoints &&
+                                filteredDestPoints.length <= 0 && (
+                                  <li>
+                                    <p className="font-semibold text-center text-red-500 p-4">
+                                      no city name found
+                                    </p>
+                                  </li>
+                                )}
+                            </ul>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Dialog>
-                )}
+                    </Dialog>
+                  )}
+                </div>
               </div>
 
-              {/* Destination place */}
-              <div className="relative w-full md:w-1/2">
+              {/* Date Picker */}
+              <div className="relative w-full lg:w-2/5">
                 <button
                   type="button"
-                  className="w-full p-2.5 md:p-3.5 border-s md:border-s-0 border-e lg:border-e-0 border-t border-b-none lg:border-b md:rounded-se-2xl lg:rounded-se-none border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
-                  onClick={(e) => {
-                    if (windowSize > 768) openDestPopover(e);
-                    else setDestPlaceDialog(true);
+                  className="w-full p-2.5 md:p-3.5 border rounded-es-2xl lg:rounded-es-none rounded-ee-2xl lg:rounded-e-2xl border-slate-400 flex justify-between gap-x-1.5 items-center cursor-pointer outline-none"
+                  onClick={(event: React.MouseEvent<HTMLElement>) => {
+                    if (windowSize > 768) openJourneyDatePopover(event);
+                    else setJourneyDate(true);
                   }}
                 >
-                  <LocationOnOutlinedIcon sx={{ fontSize: 30 }} />
-                  <div>
-                    <p className="text-left text-xs text-gray-500">To</p>
-                    <p className="min-h-6 text-left font-bold">
-                      {dPoint ?? <span className="">Destination point</span>}
-                    </p>
+                  <div className="flex items-center gap-x-2">
+                    <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
+                    <div>
+                      <p className="text-left text-xs text-gray-500">
+                        Date of Journey
+                      </p>
+                      <p className="min-h-6 text-left font-bold text-nowrap">
+                        {jDate ? DateFormater(jDate) : "DD-MM-YYYY"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-x-2 overflow-y-scroll hideScrollBar">
+                    <span
+                      className="bg-[#fed9d5] hover:bg-[#f8d3cf] font-bold px-3 py-2 rounded-s-full text-sm rounded-e-full cursor-pointer"
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        setValue("journeyDate", new Date(Date.now()));
+                      }}
+                    >
+                      Today
+                    </span>
+                    <span
+                      className="bg-[#fed9d5] hover:bg-[#f8d3cf] text-sm font-bold px-3 py-2 rounded-s-full rounded-e-full cursor-pointer"
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        setValue(
+                          "journeyDate",
+                          new Date(Date.now() + 24 * 60 * 60 * 1000)
+                        );
+                      }}
+                    >
+                      Tomorrow
+                    </span>
                   </div>
                 </button>
 
-                {errors.destinationPoint && (
+                {errors.journeyDate && (
                   <small className="text-red-500 font-medium">
-                    {errors.destinationPoint.message}
+                    {errors.journeyDate.message}
                   </small>
                 )}
 
                 {windowSize > 768 && (
                   <Popover
-                    open={Boolean(destPlace)}
-                    anchorEl={destPlace}
-                    onClose={closeDestPopover}
+                    open={Boolean(journeyDatePop)}
+                    anchorEl={journeyDatePop}
+                    onClose={closeJourneyDatePopover}
                     anchorOrigin={{
                       vertical: "top",
                       horizontal: "left",
@@ -622,82 +884,78 @@ export default function Home() {
                     slotProps={{
                       paper: {
                         style: {
-                          width: 386,
-                          background: "transparent",
+                          width: 350,
+                          background: "white",
                           borderRadius: 16,
                           maxHeight: "calc(100% - 140px)",
                           overflow: "hidden",
+                          top: 0,
+                          left: 0,
                         },
                       },
                     }}
                   >
-                    <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll">
-                      <div className="!bg-slate-200/50 flex flex-col gap-y-2">
-                        <div className="p-4 bg-white flex items-center gap-x-2">
-                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
+                    <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll !bg-transparent">
+                      <div className="flex flex-col bg-white">
+                        <div className="p-4 pb-0 flex items-center gap-x-2 border-b-slate-200">
+                          <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
                           <div>
                             <p className="text-left text-xs text-gray-500">
-                              To
+                              Date of Journey
                             </p>
-                            <input
-                              type="text"
-                              {...register("destinationPoint")}
-                              ref={destPlacePopInput}
-                              onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                if (e.target.value) {
-                                  let filtered: string[] =
-                                    boardingPoints.filter((city) =>
-                                      city
-                                        .toLowerCase()
-                                        .includes(e.target.value.toLowerCase())
-                                    );
-                                  setFilteredDestPoints(filtered);
-                                } else {
-                                  setFilteredDestPoints(boardingPoints);
-                                }
-                              }}
-                              className="text-left font-bold outline-none"
-                              placeholder="Enter Destination point"
-                            />
+                            <p className="text-left font-bold">
+                              {getValues("journeyDate")
+                                ? DateFormater(getValues("journeyDate"))
+                                : "DD-MM-YYYY"}
+                            </p>
                           </div>
                         </div>
-
-                        <div className="flex flex-col !bg-white p-4">
-                          <p className="font-semibold">Recent Searches</p>
-                        </div>
-
-                        <div className="!bg-white">
-                          <p className="font-semibold p-4">Popular cities</p>
-                          <ul className="flex flex-col ">
-                            {filteredDestPoints &&
-                              filteredDestPoints.length > 0 &&
-                              filteredDestPoints.map((bpc) => (
-                                <li key={`boardingPoint-${bpc}`}>
-                                  <button
-                                    type="button"
-                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
-                                    onClick={() => {
-                                      setValue("destinationPoint", bpc);
-                                      if (bpc) clearErrors("destinationPoint");
-                                      closeDestPopover();
-                                    }}
-                                  >
-                                    {bpc}
-                                  </button>
-                                </li>
-                              ))}
-
-                            {filteredDestPoints &&
-                              filteredDestPoints.length <= 0 && (
-                                <li>
-                                  <p className="font-semibold text-center text-red-500 p-4">
-                                    no city name found
-                                  </p>
-                                </li>
-                              )}
-                          </ul>
+                        <div className="flex-1">
+                          <Controller
+                            name="journeyDate"
+                            control={control}
+                            render={({ field: { onChange, value } }) => (
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateCalendar
+                                  defaultValue={dayjs(new Date())}
+                                  sx={{
+                                    margin: 0,
+                                    minWidth: "100%",
+                                    "& .MuiPickersDay-root": {
+                                      fontSize: 16,
+                                    },
+                                    "& .MuiDayCalendar-weekContainer": {
+                                      justifyContent: "space-around",
+                                    },
+                                    "& .MuiDayCalendar-header": {
+                                      justifyContent: "space-around",
+                                    },
+                                    "& .MuiDayCalendar-weekDayLabel": {
+                                      fontSize: 16,
+                                    },
+                                    "& .MuiPickersCalendarHeader-label": {
+                                      fontSize: 16,
+                                    },
+                                    "& .MuiYearCalendar-root": {
+                                      width: "100%",
+                                      minHeight: "100%",
+                                      padding: "0px 20px",
+                                    },
+                                    "&.MuiDateCalendar-root": {
+                                      maxHeight: "100%",
+                                      height: "100%",
+                                      padding: "0px 16px 30px 16px",
+                                    },
+                                  }}
+                                  value={dayjs(value)}
+                                  onChange={(date) => {
+                                    closeJourneyDatePopover();
+                                    if (date) onChange(date.toDate());
+                                  }}
+                                />
+                              </LocalizationProvider>
+                            )}
+                          />
                         </div>
                       </div>
                     </div>
@@ -705,349 +963,121 @@ export default function Home() {
                 )}
 
                 {windowSize <= 768 && (
-                  <Dialog
-                    fullScreen
-                    open={destPlaceDialog}
-                    onClose={closeDestDialog}
+                  <Drawer
+                    anchor="bottom"
+                    open={journeyDate}
+                    onClose={() => setJourneyDate(false)}
+                    sx={{
+                      "& .MuiDrawer-paper": {
+                        borderRadius: "16px",
+                      },
+                    }}
                   >
-                    <div className="w-full h-full hideScrollBar overflow-y-scroll">
-                      <div className="relative !bg-slate-200/50 flex flex-col gap-y-2">
-                        <div className="sticky top-0 shadow-md left-0 right-0 p-4 bg-white flex items-center gap-x-2">
-                          <HailOutlinedIcon sx={{ fontSize: 30 }} />
-                          <div>
-                            <p className="text-left text-xs text-gray-500">
-                              To
-                            </p>
-                            <input
-                              type="text"
-                              onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                if (e.target.value) {
-                                  let filtered: string[] =
-                                    boardingPoints.filter((city) =>
-                                      city
-                                        .toLowerCase()
-                                        .includes(e.target.value.toLowerCase())
-                                    );
-                                  setFilteredDestPoints(filtered);
-                                } else {
-                                  setFilteredDestPoints(boardingPoints);
-                                }
-                              }}
-                              className="text-left font-bold outline-none"
-                              placeholder="Enter Destination point"
-                            />
-                          </div>
-                          <button
-                            type="button"
-                            className="absolute z-10 top-1/2 -translate-y-1/2 right-4 rounded-s-full rounded-e-full px-3 py-2 bg-slate-200 hover:bg-slate-300"
-                            onClick={closeDestDialog}
-                          >
-                            <IoMdClose className="text-2xl" />
-                          </button>
-                        </div>
-
-                        <div className="flex flex-col !bg-white p-4">
-                          <p className="font-semibold">Recent Searches</p>
-                        </div>
-
-                        <div className="!bg-white">
-                          <p className="font-semibold p-4">Popular cities</p>
-                          <ul className="flex flex-col ">
-                            {filteredDestPoints &&
-                              filteredDestPoints.length > 0 &&
-                              filteredDestPoints.map((bpc) => (
-                                <li key={`boardingPoint-${bpc}`}>
-                                  <button
-                                    type="button"
-                                    className="p-4 w-full h-full text-left hover:bg-[#fed9d5] border-b border-b-slate-200 cursor-pointer"
-                                    onClick={() => {
-                                      setValue("destinationPoint", bpc);
-                                      if (bpc) clearErrors("destinationPoint");
-                                      setDestPlaceDialog(false);
-                                    }}
-                                  >
-                                    {bpc}
-                                  </button>
-                                </li>
-                              ))}
-
-                            {filteredDestPoints &&
-                              filteredDestPoints.length <= 0 && (
-                                <li>
-                                  <p className="font-semibold text-center text-red-500 p-4">
-                                    no city name found
-                                  </p>
-                                </li>
-                              )}
-                          </ul>
-                        </div>
-                      </div>
+                    <div className="p-4 pb-0 text-right">
+                      <button
+                        type="button"
+                        className="rounded-s-full rounded-e-full px-3.5 py-2.5"
+                        onClick={() => setJourneyDate(false)}
+                      >
+                        <IoMdClose className="text-2xl" />
+                      </button>
                     </div>
-                  </Dialog>
+
+                    <div className="flex-1">
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateCalendar
+                          defaultValue={dayjs(new Date())}
+                          value={dayjs(jDate)}
+                          sx={{
+                            margin: 0,
+                            minWidth: "100%",
+                            "& .MuiPickersDay-root": {
+                              fontSize: 16,
+                            },
+                            "& .MuiDayCalendar-weekContainer": {
+                              justifyContent: "space-around",
+                            },
+                            "& .MuiDayCalendar-header": {
+                              justifyContent: "space-around",
+                            },
+                            "& .MuiDayCalendar-weekDayLabel": {
+                              fontSize: 16,
+                            },
+                            "& .MuiPickersCalendarHeader-label": {
+                              fontSize: 16,
+                            },
+                            "& .MuiYearCalendar-root": {
+                              width: "100%",
+                              minHeight: "100%",
+                              padding: "0px 20px",
+                            },
+                            "&.MuiDateCalendar-root": {
+                              maxHeight: "100%",
+                              height: "100%",
+                              padding: "0px 16px 30px 16px",
+                            },
+                          }}
+                          onChange={(date) => {
+                            if (date) setValue("journeyDate", date.toDate());
+                            setJourneyDate(false);
+                          }}
+                        />
+                      </LocalizationProvider>
+                    </div>
+                  </Drawer>
                 )}
               </div>
             </div>
 
-            {/* Date Picker */}
-            <div className="relative w-full lg:w-2/5">
+            {/* Women booking */}
+            <div className="relative w-full xl:w-[22%] flex items-center border rounded-2xl border-slate-400">
               <button
                 type="button"
-                className="w-full p-2.5 md:p-3.5 border rounded-es-2xl lg:rounded-es-none rounded-ee-2xl lg:rounded-e-2xl border-slate-400 flex justify-between gap-x-1.5 items-center cursor-pointer outline-none"
-                onClick={(event: React.MouseEvent<HTMLElement>) => {
-                  if (windowSize > 768) openJourneyDatePopover(event);
-                  else setJourneyDate(true);
-                }}
+                className="w-full p-3.5 pe-0  flex items-center gap-x-2 cursor-pointer outline-none"
+                // onClick={openDestPopover}
               >
-                <div className="flex items-center gap-x-2">
-                  <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
-                  <div>
-                    <p className="text-left text-xs text-gray-500">
-                      Date of Journey
-                    </p>
-                    <p className="min-h-6 text-left font-bold text-nowrap">
-                      {jDate ? DateFormater(jDate) : "DD-MM-YYYY"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-x-2 overflow-y-scroll hideScrollBar">
-                  <span
-                    className="bg-[#fed9d5] hover:bg-[#f8d3cf] font-bold px-3 py-2 rounded-s-full text-sm rounded-e-full cursor-pointer"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      e.stopPropagation();
-                      setValue("journeyDate", new Date(Date.now()));
-                    }}
+                <Image
+                  src={womenSvg}
+                  height={26}
+                  width={26}
+                  alt="Booking for women"
+                />
+                <div>
+                  <p className="text-left text-sm text-nowrap font-semibold text-gray-500">
+                    Booking for women
+                  </p>
+                  <Link
+                    href="/"
+                    className="block text-left text-xs font-semibold text-blue-600 underline"
                   >
-                    Today
-                  </span>
-                  <span
-                    className="bg-[#fed9d5] hover:bg-[#f8d3cf] text-sm font-bold px-3 py-2 rounded-s-full rounded-e-full cursor-pointer"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      e.stopPropagation();
-                      setValue(
-                        "journeyDate",
-                        new Date(Date.now() + 24 * 60 * 60 * 1000)
-                      );
-                    }}
-                  >
-                    Tomorrow
-                  </span>
+                    Know more
+                  </Link>
                 </div>
               </button>
 
-              {errors.journeyDate && (
-                <small className="text-red-500 font-medium">
-                  {errors.journeyDate.message}
-                </small>
-              )}
-
-              {windowSize > 768 && (
-                <Popover
-                  open={Boolean(journeyDatePop)}
-                  anchorEl={journeyDatePop}
-                  onClose={closeJourneyDatePopover}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  slotProps={{
-                    paper: {
-                      style: {
-                        width: 350,
-                        background: "white",
-                        borderRadius: 16,
-                        maxHeight: "calc(100% - 140px)",
-                        overflow: "hidden",
-                        top: 0,
-                        left: 0,
-                      },
-                    },
-                  }}
-                >
-                  <div className="max-h-[calc(100vh-140px)] hideScrollBar overflow-y-scroll !bg-transparent">
-                    <div className="flex flex-col bg-white">
-                      <div className="p-4 pb-0 flex items-center gap-x-2 border-b-slate-200">
-                        <CalendarMonthOutlinedIcon sx={{ fontSize: 30 }} />
-                        <div>
-                          <p className="text-left text-xs text-gray-500">
-                            Date of Journey
-                          </p>
-                          <p className="text-left font-bold">
-                            {getValues("journeyDate")
-                              ? DateFormater(getValues("journeyDate"))
-                              : "DD-MM-YYYY"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <Controller
-                          name="journeyDate"
-                          control={control}
-                          render={({ field: { onChange, value } }) => (
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <DateCalendar
-                                defaultValue={dayjs(new Date())}
-                                sx={{
-                                  margin: 0,
-                                  minWidth: "100%",
-                                  "& .MuiPickersDay-root": {
-                                    fontSize: 16,
-                                  },
-                                  "& .MuiDayCalendar-weekContainer": {
-                                    justifyContent: "space-around",
-                                  },
-                                  "& .MuiDayCalendar-header": {
-                                    justifyContent: "space-around",
-                                  },
-                                  "& .MuiDayCalendar-weekDayLabel": {
-                                    fontSize: 16,
-                                  },
-                                  "& .MuiPickersCalendarHeader-label": {
-                                    fontSize: 16,
-                                  },
-                                  "& .MuiYearCalendar-root": {
-                                    width: "100%",
-                                    minHeight: "100%",
-                                    padding: "0px 20px",
-                                  },
-                                  "&.MuiDateCalendar-root": {
-                                    maxHeight: "100%",
-                                    height: "100%",
-                                    padding: "0px 16px 30px 16px",
-                                  },
-                                }}
-                                value={dayjs(value)}
-                                onChange={(date) => {
-                                  closeJourneyDatePopover();
-                                  if (date) onChange(date.toDate());
-                                }}
-                              />
-                            </LocalizationProvider>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </Popover>
-              )}
-
-              {windowSize <= 768 && (
-                <Drawer
-                  anchor="bottom"
-                  open={journeyDate}
-                  onClose={() => setJourneyDate(false)}
-                  sx={{
-                    "& .MuiDrawer-paper": {
-                      borderRadius: "16px",
-                    },
-                  }}
-                >
-                  <div className="p-4 pb-0 text-right">
-                    <button
-                      type="button"
-                      className="rounded-s-full rounded-e-full px-3.5 py-2.5"
-                      onClick={() => setJourneyDate(false)}
-                    >
-                      <IoMdClose className="text-2xl" />
-                    </button>
-                  </div>
-
-                  <div className="flex-1">
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DateCalendar
-                        defaultValue={dayjs(new Date())}
-                        value={dayjs(jDate)}
-                        sx={{
-                          margin: 0,
-                          minWidth: "100%",
-                          "& .MuiPickersDay-root": {
-                            fontSize: 16,
-                          },
-                          "& .MuiDayCalendar-weekContainer": {
-                            justifyContent: "space-around",
-                          },
-                          "& .MuiDayCalendar-header": {
-                            justifyContent: "space-around",
-                          },
-                          "& .MuiDayCalendar-weekDayLabel": {
-                            fontSize: 16,
-                          },
-                          "& .MuiPickersCalendarHeader-label": {
-                            fontSize: 16,
-                          },
-                          "& .MuiYearCalendar-root": {
-                            width: "100%",
-                            minHeight: "100%",
-                            padding: "0px 20px",
-                          },
-                          "&.MuiDateCalendar-root": {
-                            maxHeight: "100%",
-                            height: "100%",
-                            padding: "0px 16px 30px 16px",
-                          },
-                        }}
-                        onChange={(date) => {
-                          if (date) setValue("journeyDate", date.toDate());
-                          setJourneyDate(false);
-                        }}
-                      />
-                    </LocalizationProvider>
-                  </div>
-                </Drawer>
-              )}
+              <Controller
+                name="isWomen"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Switch color="primary" checked={value} onChange={onChange} />
+                )}
+              />
             </div>
           </div>
 
-          {/* Women booking */}
-          <div className="relative w-full xl:w-[22%] flex items-center border rounded-2xl border-slate-400">
+          {/* Submit button */}
+          <div className="flex justify-center md:translate-y-1/2">
             <button
-              type="button"
-              className="w-full p-3.5 pe-0  flex items-center gap-x-2 cursor-pointer outline-none"
-              // onClick={openDestPopover}
-            >
-              <Image
-                src={womenSvg}
-                height={26}
-                width={26}
-                alt="Booking for women"
-              />
-              <div>
-                <p className="text-left text-sm text-nowrap font-semibold text-gray-500">
-                  Booking for women
-                </p>
-                <Link
-                  href="/"
-                  className="block text-left text-xs font-semibold text-blue-600 underline"
-                >
-                  Know more
-                </Link>
-              </div>
-            </button>
-
-            <Controller
-              name="isWomen"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Switch color="primary" checked={value} onChange={onChange} />
-              )}
-            />
-          </div>
-        </div>
-
-        {/* Submit button */}
-        <div className="flex justify-center md:translate-y-1/2">
-          <button
-            type="submit"
-            className={`p-3 m-4 md:m-0 rounded-s-full rounded-e-full min-w-[300px] w-full md:w-1/4
+              type="submit"
+              className={`p-3 m-4 md:m-0 rounded-s-full rounded-e-full min-w-[300px] w-full md:w-1/4
               bg-primary text-white font-semibold flex items-center justify-center gap-x-2 cursor-pointer outline-none`}
-          >
-            <FiSearch className="text-2xl" />
-            <span>Search buses</span>
-          </button>
-        </div>
-      </form>
+            >
+              <FiSearch className="text-2xl" />
+              <span>Search buses</span>
+            </button>
+          </div>
+        </form>
+      </div>
 
       {/* GSRTC Growing Numbers */}
       <div className="myContainer mb-7">
