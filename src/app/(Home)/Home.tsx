@@ -67,8 +67,29 @@ export default function Home() {
     if (heroCarouselAPI) heroCarouselAPI.scrollPrev();
   }, [heroCarouselAPI]);
 
-  const [offersCarouselRef] = useEmblaCarousel({ dragFree: true });
-  const [whatNewCarouselRef] = useEmblaCarousel({ dragFree: true });
+  //Offers carousel
+  const [offersCarouselRef, offersCarouselAPI] = useEmblaCarousel({
+    dragFree: true,
+  });
+  const offersCarouselScrollNext = useCallback(() => {
+    if (offersCarouselAPI) offersCarouselAPI.scrollNext();
+  }, [offersCarouselAPI]);
+  const offersCarouselScrollPrev = useCallback(() => {
+    if (offersCarouselAPI) offersCarouselAPI.scrollPrev();
+  }, [offersCarouselAPI]);
+
+  //What's new carousel
+  const [whatNewCarouselRef, whatNewCarouselAPI] = useEmblaCarousel({
+    dragFree: true,
+  });
+  const whatNewCarouselScrollNext = useCallback(() => {
+    if (whatNewCarouselAPI) whatNewCarouselAPI.scrollNext();
+  }, [whatNewCarouselAPI]);
+  const whatNewCarouselScrollPrev = useCallback(() => {
+    if (whatNewCarouselAPI) whatNewCarouselAPI.scrollPrev();
+  }, [whatNewCarouselAPI]);
+
+  //Top destination carousel
   const [topDestinationCarousel, topDestinationCarouselAPI] = useEmblaCarousel(
     { loop: true, dragFree: true },
     [Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true })]
@@ -80,7 +101,16 @@ export default function Home() {
     if (topDestinationCarouselAPI) topDestinationCarouselAPI.scrollPrev();
   }, [topDestinationCarouselAPI]);
 
-  const [testimonialsCarouselRef] = useEmblaCarousel({ dragFree: true });
+  // Testimonials Carousel
+  const [testimonialsCarouselRef, testimonialsCarouselAPI] = useEmblaCarousel({
+    dragFree: true,
+  });
+  const testimonialsCarouselScrollNext = useCallback(() => {
+    if (testimonialsCarouselAPI) testimonialsCarouselAPI.scrollNext();
+  }, [testimonialsCarouselAPI]);
+  const testimonialsCarouselScrollPrev = useCallback(() => {
+    if (testimonialsCarouselAPI) testimonialsCarouselAPI.scrollPrev();
+  }, [testimonialsCarouselAPI]);
 
   //Arrays
   const boardingPoints: string[] = [
@@ -1189,14 +1219,14 @@ export default function Home() {
             onClick={topDestinationCarouselScrollPrev}
             className="absolute top-1/2 -translate-y-1/2 left-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
           >
-            <GrPrevious className="text-2xl" />
+            <GrPrevious className="text-lg sm:text-xl md:text-2xl" />
           </button>
           <button
             type="button"
             onClick={topDestinationCarouselScrollNext}
             className="absolute top-1/2 -translate-y-1/2 right-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
           >
-            <GrNext className="text-2xl" />
+            <GrNext className="text-lg sm:text-xl md:text-2xl" />
           </button>
         </div>
       </div>
@@ -1214,7 +1244,7 @@ export default function Home() {
         </div>
 
         {/* Offers Carousel */}
-        <div className="!overflow-hidden" ref={offersCarouselRef}>
+        <div className="relative !overflow-hidden" ref={offersCarouselRef}>
           <div className="flex">
             {offers &&
               offers.map((o, inx) => (
@@ -1227,6 +1257,20 @@ export default function Home() {
                 </a>
               ))}
           </div>
+          <button
+            type="button"
+            onClick={offersCarouselScrollPrev}
+            className="absolute top-1/2 -translate-y-1/2 left-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrPrevious className="text-lg sm:text-xl md:text-2xl" />
+          </button>
+          <button
+            type="button"
+            onClick={offersCarouselScrollNext}
+            className="absolute top-1/2 -translate-y-1/2 right-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrNext className="text-lg sm:text-xl md:text-2xl" />
+          </button>
         </div>
       </div>
 
@@ -1235,7 +1279,7 @@ export default function Home() {
         <p className="font-bold text-[22px] mb-5">What&apos;s new</p>
 
         {/* What's new Carousel */}
-        <div className="!overflow-hidden" ref={whatNewCarouselRef}>
+        <div className="relative !overflow-hidden" ref={whatNewCarouselRef}>
           <div className="flex">
             {offers &&
               offers.map((o, inx) => (
@@ -1248,6 +1292,20 @@ export default function Home() {
                 </a>
               ))}
           </div>
+          <button
+            type="button"
+            onClick={whatNewCarouselScrollPrev}
+            className="absolute top-1/2 -translate-y-1/2 left-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrPrevious className="text-lg sm:text-xl md:text-2xl" />
+          </button>
+          <button
+            type="button"
+            onClick={whatNewCarouselScrollNext}
+            className="absolute top-1/2 -translate-y-1/2 right-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrNext className="text-lg sm:text-xl md:text-2xl" />
+          </button>
         </div>
       </div>
 
@@ -1256,7 +1314,10 @@ export default function Home() {
         <p className="font-bold text-[22px] mb-5">Testimonials</p>
 
         {/* Testimonials Carousel */}
-        <div className="!overflow-hidden" ref={testimonialsCarouselRef}>
+        <div
+          className="relative !overflow-hidden"
+          ref={testimonialsCarouselRef}
+        >
           <div className="flex">
             {offers &&
               offers.map((o, inx) => (
@@ -1269,6 +1330,20 @@ export default function Home() {
                 </a>
               ))}
           </div>
+          <button
+            type="button"
+            onClick={testimonialsCarouselScrollPrev}
+            className="absolute top-1/2 -translate-y-1/2 left-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrPrevious className="text-lg sm:text-xl md:text-2xl" />
+          </button>
+          <button
+            type="button"
+            onClick={testimonialsCarouselScrollNext}
+            className="absolute top-1/2 -translate-y-1/2 right-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrNext className="text-lg sm:text-xl md:text-2xl" />
+          </button>
         </div>
       </div>
 

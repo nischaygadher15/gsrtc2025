@@ -98,20 +98,23 @@ const DefaultNavbar = () => {
     >
       <Image
         src={navbarLogo}
-        className="max-w-full w-[300px] h-[50px] lg:w-[385px] lg:h-[64px]"
         alt="GSRTC Navbar LOGO"
+        width={385}
+        height={navbarLogo.height} // gives correct aspect ratio
+        quality={100}
+        unoptimized
+        className="object-contain"
+        priority
       />
 
       {/* Drawer Navbar */}
       <div className="flex">
-        <ul className="list-none !text-xs !font-medium hidden lg:flex items-center gap-x-5">
-          <li className="px-4">
+        <ul className="list-none !text-xs !font-medium hidden lg:flex items-center gap-x-3 xl:gap-x-5">
+          <li>
             <Link
               href="/bookings"
-              className={`h-full w-full flex flex-col justify-center items-center gap-y-1.5 ${
-                currentLocation === "/bookings"
-                  ? "text-primary"
-                  : "text-[#1d1d1da3]"
+              className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+                currentLocation === "/bookings" ? "text-primary" : "text-black"
               }`}
             >
               <IoListOutline className="w-6 h-6" />
@@ -119,10 +122,10 @@ const DefaultNavbar = () => {
             </Link>
           </li>
 
-          <li className="px-4">
+          <li>
             <Link
               href="#"
-              className={`h-full w-full flex flex-col justify-center items-center gap-y-1.5 ${
+              className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
                 currentLocation === "/help" ? "text-primary" : "text-black"
               }`}
             >
@@ -133,9 +136,10 @@ const DefaultNavbar = () => {
           <li className="">
             <a
               href="https://yatradham.gujarat.gov.in/Booking"
-              className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200"
+              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center  rounded-e-full bg-white hover:bg-slate-200"
             >
-              Sharvan Tirth Darshan
+              <span>Sharvan</span>
+              <span>Tirth Darshan</span>
             </a>
           </li>
           <li>

@@ -303,7 +303,7 @@ const FooterSection = () => {
         <a href="#" className="">
           <Image
             src={navbarLogo}
-            className="w-full sm:min-w-[300px] max-w-[300px] h-[50px] lg:w-[385px] lg:h-[64px]"
+            className="max-w-[385px] object-contain"
             alt="GSRTC Footer LOGO"
           />
         </a>
