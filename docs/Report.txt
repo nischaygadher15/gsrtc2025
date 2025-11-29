@@ -1,15 +1,28 @@
 Routes:
-    - Home : please add faq section
-    - Default Navbar : please remove bus pass and add booking, help link
+    - Home : 
+        - add new images in carousel
+        - please add faq section
+        - add animation in page reload or scroll
+        - add navigation buttons in all carousel.
+        - add information about GSRTC:
+            - Why Choose GSRTC for Bus Booking?
+            - How to Book Bus Tickets and Train Tickets Online on redBus?
+        - Add popular bus operators all state local transports
+        - GSRTC growing no. hover effect
+        - Bus search: add Advance booking/MP_MLA booking/Divyang booking/Statue of unity/Electric bus/Package tour
+    - Default Navbar : 
+        - please remove bus pass and add booking, help link
+        - Logo link & logo dimension
     - Search : 
         - offers carousel : please add left and right navigation button
-        - please make filter controlled component and add filter tags active/inactive css,  
-        - please make Nabvar bus search bar animation with logo, 
-        - please add Buscard Links : (Boarding/ Dropping Points, Ratings & Reviews, Bus Photos, Cancellation Policies)
-        - please Add breadcrubms
+        - please make filter controlled component and add filter tags active/inactive css,
+        - please make Navbar bus search bar animation with logo, 
+        - please add Bus card Links : (Boarding/ Dropping Points, Ratings & Reviews, Bus Photos, Cancellation Policies)
+        - please Add bread crubms
         - please add AI floating button
     - Bus booking dialog:
         - please add bottom margin when bottom bar appear
         - select ticket: please improve select ticket css for man or female ticket
         - Know your seat types table:please improve padding issue
         - view boarding/Dropping drawer issue.
+    
