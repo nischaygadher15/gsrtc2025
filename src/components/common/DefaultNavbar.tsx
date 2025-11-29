@@ -103,7 +103,7 @@ const DefaultNavbar = () => {
         height={navbarLogo.height} // gives correct aspect ratio
         quality={100}
         unoptimized
-        className="object-contain"
+        className="object-contain max-h-16"
         priority
       />
 
