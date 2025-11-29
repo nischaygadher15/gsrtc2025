@@ -31,6 +31,8 @@ import { IoMdArrowDropdown, IoMdClose } from "react-icons/io";
 import ReCAPTCHA from "react-google-recaptcha";
 import googleIcon from "@/assets/images/google-sing-In.svg";
 import { ImSpinner8 } from "react-icons/im";
+import { IoListOutline } from "react-icons/io5";
+import { BiHelpCircle } from "react-icons/bi";
 
 const DefaultNavbar = () => {
   const currentLocation = usePathname();
@@ -103,6 +105,31 @@ const DefaultNavbar = () => {
       {/* Drawer Navbar */}
       <div className="flex">
         <ul className="list-none !text-xs !font-medium hidden lg:flex items-center gap-x-5">
+          <li className="px-4">
+            <Link
+              href="/bookings"
+              className={`h-full w-full flex flex-col justify-center items-center gap-y-1.5 ${
+                currentLocation === "/bookings"
+                  ? "text-primary"
+                  : "text-[#1d1d1da3]"
+              }`}
+            >
+              <IoListOutline className="w-6 h-6" />
+              <span>Bookings</span>
+            </Link>
+          </li>
+
+          <li className="px-4">
+            <Link
+              href="#"
+              className={`h-full w-full flex flex-col justify-center items-center gap-y-1.5 ${
+                currentLocation === "/help" ? "text-primary" : "text-black"
+              }`}
+            >
+              <BiHelpCircle className="w-6 h-6" />
+              <span>Help</span>
+            </Link>
+          </li>
           <li className="">
             <a
               href="https://yatradham.gujarat.gov.in/Booking"
@@ -110,37 +137,6 @@ const DefaultNavbar = () => {
             >
               Sharvan Tirth Darshan
             </a>
-          </li>
-          <li>
-            <div className="">
-              <button
-                type="button"
-                id="basic-button"
-                aria-controls={openAnchor2 ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={openAnchor2 ? "true" : undefined}
-                onClick={handleClickAnchor2}
-                className="p-3 rounded-s-full rounded-e-full flex items-center outline-none cursor-pointer bg-white hover:bg-slate-200"
-              >
-                <span className="text-xs">Bus Pass</span>
-              </button>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchor2}
-                open={openAnchor2}
-                disableScrollLock
-                onClose={handleCloseAnchor2}
-                slotProps={{
-                  list: {
-                    "aria-labelledby": "basic-button",
-                  },
-                }}
-              >
-                <MenuItem onClick={handleCloseAnchor2}>Profile</MenuItem>
-                <MenuItem onClick={handleCloseAnchor2}>My account</MenuItem>
-                <MenuItem onClick={handleCloseAnchor2}>Logout</MenuItem>
-              </Menu>
-            </div>
           </li>
           <li>
             <a href="https://www.soutickets.in/#/gsrtc-booking">

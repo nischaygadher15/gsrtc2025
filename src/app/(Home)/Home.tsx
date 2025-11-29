@@ -5,8 +5,14 @@ import carousle_img_3 from "@/assets/images/carousel-img _3.jpg";
 import carousle_img_4 from "@/assets/images/carousel-img _4.jpg";
 import carousle_img_5 from "@/assets/images/carousel-img _5.jpg";
 import Image, { StaticImageData } from "next/image";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { Popover, Switch } from "@mui/material";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Popover, Switch, Tab, Tabs } from "@mui/material";
 import HailOutlinedIcon from "@mui/icons-material/HailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
@@ -43,21 +49,37 @@ import Dialog from "@mui/material/Dialog";
 import { IoMdClose } from "react-icons/io";
 import Drawer from "@mui/material/Drawer";
 import useWindowSize from "@/Hooks/useWindowSize";
+import { GrNext, GrPrevious } from "react-icons/gr";
 
 export default function Home() {
   const windowSize = useWindowSize();
   const router = useRouter();
 
   //Hero section carousel
-  const [heroCarouselRef] = useEmblaCarousel({ loop: true, dragFree: true }, [
-    Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true }),
-  ]);
-  const [offersCarouselRef] = useEmblaCarousel({ dragFree: true });
-  const [whatNewCarouselRef] = useEmblaCarousel({ dragFree: true });
-  const [topDestinationCarousel] = useEmblaCarousel(
+  const [heroCarouselRef, heroCarouselAPI] = useEmblaCarousel(
     { loop: true, dragFree: true },
     [Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true })]
   );
+  const heroCarouselRefScrollNext = useCallback(() => {
+    if (heroCarouselAPI) heroCarouselAPI.scrollNext();
+  }, [heroCarouselAPI]);
+  const heroCarouselRefScrollPrev = useCallback(() => {
+    if (heroCarouselAPI) heroCarouselAPI.scrollPrev();
+  }, [heroCarouselAPI]);
+
+  const [offersCarouselRef] = useEmblaCarousel({ dragFree: true });
+  const [whatNewCarouselRef] = useEmblaCarousel({ dragFree: true });
+  const [topDestinationCarousel, topDestinationCarouselAPI] = useEmblaCarousel(
+    { loop: true, dragFree: true },
+    [Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true })]
+  );
+  const topDestinationCarouselScrollNext = useCallback(() => {
+    if (topDestinationCarouselAPI) topDestinationCarouselAPI.scrollNext();
+  }, [topDestinationCarouselAPI]);
+  const topDestinationCarouselScrollPrev = useCallback(() => {
+    if (topDestinationCarouselAPI) topDestinationCarouselAPI.scrollPrev();
+  }, [topDestinationCarouselAPI]);
+
   const [testimonialsCarouselRef] = useEmblaCarousel({ dragFree: true });
 
   //Arrays
@@ -341,7 +363,10 @@ export default function Home() {
 
       <div className="flex flex-col justify-between">
         {/* Home page hero section Carousel */}
-        <div className="hidden md:block !overflow-hidden" ref={heroCarouselRef}>
+        <div
+          className="relative hidden md:block !overflow-hidden"
+          ref={heroCarouselRef}
+        >
           <div className="flex">
             <div className="min-w-full">
               <Image
@@ -379,6 +404,20 @@ export default function Home() {
               />
             </div>
           </div>
+          <button
+            type="button"
+            onClick={heroCarouselRefScrollPrev}
+            className="absolute top-1/2 -translate-y-1/2 left-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrPrevious className="text-2xl" />
+          </button>
+          <button
+            type="button"
+            onClick={heroCarouselRefScrollNext}
+            className="absolute top-1/2 -translate-y-1/2 right-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrNext className="text-2xl" />
+          </button>
         </div>
 
         {/* Bus search function */}
@@ -1084,34 +1123,31 @@ export default function Home() {
         <p className="font-bold text-[22px] mb-5">GSRTC Growing Numbers</p>
 
         {/* Numbers */}
-        <div className="!overflow-hidden" ref={topDestinationCarousel}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:grid-rows-2 lg:grid-rows-1 gap-2 p-2">
-            {growingNumbers &&
-              growingNumbers.length > 0 &&
-              growingNumbers.map((card, inx) => (
-                <a
-                  key={`growingNumCard-${inx}`}
-                  href={card.link}
-                  target="_blank"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:grid-rows-2 lg:grid-rows-1 gap-5 p-2">
+          {growingNumbers &&
+            growingNumbers.length > 0 &&
+            growingNumbers.map((card, inx) => (
+              <a
+                key={`growingNumCard-${inx}`}
+                href={card.link}
+                target="_blank"
+                className="hover:-translate-y-2 duration-200"
+              >
+                <div
+                  className="w-full h-full flex flex-col justify-center gap-y-4 p-4 rounded-lg shadow-lg"
+                  style={{ backgroundImage: card.backgroundImg }}
                 >
-                  <div
-                    className="w-full h-full flex flex-col justify-center gap-y-4 p-4 rounded-lg shadow-lg"
-                    style={{ backgroundImage: card.backgroundImg }}
-                  >
-                    <div className="flex justify-center">{card.icon}</div>
-                    <p className="text-center text-white text-lg">
-                      {card.title}
-                    </p>
-                    <p className="text-center text-white text-2xl font-semibold">
-                      {NumberFormater(card.number)}
-                    </p>
-                    <p className="text-center text-white text-sm">
-                      {card.footerText}
-                    </p>
-                  </div>
-                </a>
-              ))}
-          </div>
+                  <div className="flex justify-center">{card.icon}</div>
+                  <p className="text-center text-white text-lg">{card.title}</p>
+                  <p className="text-center text-white text-2xl font-semibold">
+                    {NumberFormater(card.number)}
+                  </p>
+                  <p className="text-center text-white text-sm">
+                    {card.footerText}
+                  </p>
+                </div>
+              </a>
+            ))}
         </div>
       </div>
 
@@ -1120,7 +1156,7 @@ export default function Home() {
         <p className="font-bold text-[22px] mb-5">Top destinations</p>
 
         {/* Top destination carousel */}
-        <div className="!overflow-hidden" ref={topDestinationCarousel}>
+        <div className="relative !overflow-hidden" ref={topDestinationCarousel}>
           <div className="flex">
             {topDestinations &&
               topDestinations.map((o, inx) => (
@@ -1148,6 +1184,20 @@ export default function Home() {
                 </a>
               ))}
           </div>
+          <button
+            type="button"
+            onClick={topDestinationCarouselScrollPrev}
+            className="absolute top-1/2 -translate-y-1/2 left-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrPrevious className="text-2xl" />
+          </button>
+          <button
+            type="button"
+            onClick={topDestinationCarouselScrollNext}
+            className="absolute top-1/2 -translate-y-1/2 right-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+          >
+            <GrNext className="text-2xl" />
+          </button>
         </div>
       </div>
 
