@@ -1,7 +1,6 @@
 "use client";
-import navbarLogo from "@/assets/images/Navbar_logo.png";
+import navbarLogo from "@/assets/images/Logos/gsrtcLogo2.svg";
 import { Drawer, Menu, TextField } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -48,15 +47,15 @@ const DefaultNavbar = () => {
     setAnchor1(false);
   };
 
-  // Agent Login Dropdown
-  const [anchor2, setAnchor2] = useState<null | HTMLElement>(null);
-  const openAnchor2 = Boolean(anchor2);
-  const handleClickAnchor2 = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchor2(event.currentTarget);
-  };
-  const handleCloseAnchor2 = () => {
-    setAnchor2(null);
-  };
+  // // Agent Login Dropdown
+  // const [anchor2, setAnchor2] = useState<null | HTMLElement>(null);
+  // const openAnchor2 = Boolean(anchor2);
+  // const handleClickAnchor2 = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   setAnchor2(event.currentTarget);
+  // };
+  // const handleCloseAnchor2 = () => {
+  //   setAnchor2(null);
+  // };
 
   //GSRTC Login
   const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
@@ -96,24 +95,38 @@ const DefaultNavbar = () => {
           : "relative border-b border-b-slate-200 z-40 hidden lg:flex"
       }  min-w-full bg-white justify-between py-3`}
     >
-      <Image
-        src={navbarLogo}
-        alt="GSRTC Navbar LOGO"
-        width={385}
-        height={navbarLogo.height} // gives correct aspect ratio
-        quality={100}
-        unoptimized
-        className="object-contain max-h-16"
-        priority
-      />
+      {/* GSRTC Logo */}
+      <div className="lg:min-w-[360px] flex flex-nowrap gap-x-2 items-center">
+        <Image
+          src={navbarLogo}
+          alt="GSRTC Navbar LOGO"
+          width={60}
+          quality={100}
+          unoptimized
+          className="object-contain"
+          priority
+        />
+        <div className="hidden lg:block">
+          <p className="text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
+            Gujarat State Road Transport Corporation
+          </p>
+          <p className="text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
+            ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
+          </p>
+          <hr className="border-px border-slate-200 my-[2px]" />
+          <p className="text-nowrap text-lg text-[#cc0000] font-semibold font-allura leading-none tracking-widest">
+            Steering miles with smiles
+          </p>
+        </div>
+      </div>
 
       {/* Drawer Navbar */}
       <div className="flex">
-        <ul className="list-none !text-xs !font-medium hidden lg:flex items-center gap-x-3 xl:gap-x-5">
+        <ul className="list-none !text-xs !font-medium flex items-center gap-x-3 xl:gap-x-5">
           <li>
             <Link
               href="/bookings"
-              className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+              className={`p-3 h-full w-full hidden lg:flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
                 currentLocation === "/bookings" ? "text-primary" : "text-black"
               }`}
             >
@@ -125,7 +138,7 @@ const DefaultNavbar = () => {
           <li>
             <Link
               href="#"
-              className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+              className={`p-3 h-full w-full hidden lg:flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
                 currentLocation === "/help" ? "text-primary" : "text-black"
               }`}
             >
@@ -136,27 +149,26 @@ const DefaultNavbar = () => {
           <li className="">
             <a
               href="https://yatradham.gujarat.gov.in/Booking"
-              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center  rounded-e-full bg-white hover:bg-slate-200"
+              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
             >
               <span>Sharvan</span>
               <span>Tirth Darshan</span>
             </a>
           </li>
           <li>
-            <a href="https://www.soutickets.in/#/gsrtc-booking">
-              <Image
-                src={unityBooking}
-                height={32}
-                width={42}
-                alt="Unity booking"
-              />
+            <a
+              href="https://www.soutickets.in/#/gsrtc-booking"
+              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
+            >
+              <span>Unity</span>
+              <span>Booking</span>
             </a>
           </li>
           <li className="">
             <button
               type="button"
               onClick={handleUserDrawer}
-              className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1"
+              className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 hidden lg:flex items-center gap-1"
             >
               <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
               <span className="text-xs">Account</span>

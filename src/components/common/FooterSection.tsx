@@ -6,14 +6,16 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Link from "next/link";
 import Image from "next/image";
-import navbarLogo from "@/assets/images/Navbar_logo.png";
+import navbarLogo from "@/assets/images/Logos/gsrtcLogo2.svg";
 import { DiAndroid } from "react-icons/di";
 import { FaApple, FaFacebook } from "react-icons/fa";
 import { FaSquareXTwitter } from "react-icons/fa6";
 import { usePathname } from "next/navigation";
+import useWindowSize from "@/Hooks/useWindowSize";
 
 const FooterSection = () => {
   const currentLocation = usePathname();
+  const windowSize = useWindowSize();
 
   const popRotesList: string[] = [
     "Delhi To Manali Bus",
@@ -155,8 +157,8 @@ const FooterSection = () => {
   return (
     <div
       className={`myContainer py-7 bg-[#f2f2f8] ${
-        currentLocation !== "/search" ? "pb-[128px] md:pb-0" : "pb-7"
-      } `}
+        windowSize < 1025 ? "pb-[73px]" : ""
+      }`}
     >
       {/* Popular Routes */}
       <Accordion
@@ -300,13 +302,33 @@ const FooterSection = () => {
 
       {/* Footer Logo */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center border-b border-b-gray-300 py-5">
-        <a href="#" className="">
-          <Image
-            src={navbarLogo}
-            className="max-w-[385px] object-contain"
-            alt="GSRTC Footer LOGO"
-          />
-        </a>
+        <div>
+          <a href="#" className="flex">
+            <div className="lg:min-w-[360px] flex flex-nowrap gap-x-2 items-center">
+              <Image
+                src={navbarLogo}
+                alt="GSRTC Navbar LOGO"
+                width={60}
+                quality={100}
+                unoptimized
+                className="object-contain"
+                priority
+              />
+              <div className="hidden lg:block">
+                <p className="text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
+                  Gujarat State Road Transport Corporation
+                </p>
+                <p className="text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
+                  ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
+                </p>
+                <hr className="border-px border-slate-200 my-[2px]" />
+                <p className="text-nowrap text-lg text-[#cc0000] font-semibold font-allura leading-none tracking-widest">
+                  Steering miles with smiles
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
 
         <div className="flex flex-col gap-3">
           <p className="text-sm text-[#1d1d1da3]">
@@ -339,7 +361,7 @@ const FooterSection = () => {
       </div>
 
       {/* Footer Social Logos */}
-      <div className="flex justify-between items-center pt-7">
+      <div className="flex justify-between items-center py-7">
         <p className="text-[#1d1d1da3] text-sm">
           &copy; GSRTC. All rights reserved
         </p>
