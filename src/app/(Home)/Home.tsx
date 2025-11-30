@@ -1618,7 +1618,7 @@ export default function Home() {
                 paddingRight: 0,
               },
               "& .Mui-selected": {
-                color: "#173c62",
+                color: "#173c62 !important",
               },
               "& .MuiTabs-indicator": {
                 height: "3px",
