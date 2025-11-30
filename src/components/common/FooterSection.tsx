@@ -101,6 +101,30 @@ const FooterSection = () => {
     "Varanasi Bus Booking",
   ];
 
+  const popBusOperators = [
+    "APSRTC", // Andhra Pradesh
+    "ASTC", // Assam
+    "BSRTC", // Bihar
+    "GSRTC", // Gujarat
+    "HRTC", // Himachal Pradesh
+    "JKSRTC", // Jammu & Kashmir
+    "KSRTC", // Karnataka
+    "KSRTC", // Kerala (same short form but different state)
+    "MSRTC", // Maharashtra
+    "OSRTC", // Odisha
+    "PRTC", // Punjab / Pepsu area
+    "PSRTC", // Puducherry
+    "RSRTC", // Rajasthan
+    "SNT", // Sikkim Nationalised Transport
+    "TNSTC", // Tamil Nadu
+    "TSRTC", // Telangana
+    "UPSRTC", // Uttar Pradesh
+    "UTC", // Uttarakhand Transport Corporation
+    "WBSTC", // West Bengal State Transport
+    "SBSTC", // South Bengal State Transport
+    "NBSTC", // North Bengal State Transport
+  ];
+
   const footerLinks1: string[] = [
     "About Us",
     "Leadership",
@@ -165,6 +189,9 @@ const FooterSection = () => {
         sx={{
           backgroundColor: "transparent",
           boxShadow: "none",
+          "& .Mui-expanded": {
+            margin: 0,
+          },
         }}
       >
         <AccordionSummary
@@ -196,11 +223,14 @@ const FooterSection = () => {
         </AccordionDetails>
       </Accordion>
 
-      {/* Poplar Cities */}
+      {/* Popular Cities */}
       <Accordion
         sx={{
           backgroundColor: "transparent",
           boxShadow: "none",
+          "& .Mui-expanded": {
+            margin: 0,
+          },
         }}
         id="popCitiesAccordian"
       >
@@ -226,6 +256,46 @@ const FooterSection = () => {
                     className="block px-5 py-3 rounded-s-full rounded-e-full bg-transparent hover:bg-gray-200 text-sm font-semibold text-blue-700 underline"
                   >
                     {city}
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Popular Bus Operators */}
+      <Accordion
+        sx={{
+          backgroundColor: "transparent",
+          boxShadow: "none",
+          "& .Mui-expanded": {
+            margin: 0,
+          },
+        }}
+        id="popCitiesAccordian"
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel2-content"
+          id="panel2-header"
+          sx={{
+            padding: "10px 20px",
+            fontWeight: 600,
+            borderBottom: "1px solid #d1d5dc",
+          }}
+        >
+          Popular Bus Operators
+        </AccordionSummary>
+        <AccordionDetails>
+          <ul className="flex flex-wrap flex-col sm:flex-row">
+            {popBusOperators &&
+              popBusOperators.map((operator, inx) => (
+                <li key={`Footer-popular-busOperator-${inx}`}>
+                  <Link
+                    href="#"
+                    className="block px-5 py-3 rounded-s-full rounded-e-full bg-transparent hover:bg-gray-200 text-sm font-semibold text-blue-700 underline"
+                  >
+                    {operator}
                   </Link>
                 </li>
               ))}
@@ -314,11 +384,11 @@ const FooterSection = () => {
                 className="object-contain"
                 priority
               />
-              <div className="hidden lg:block">
-                <p className="text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
+              <div className="">
+                <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
                   Gujarat State Road Transport Corporation
                 </p>
-                <p className="text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
+                <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
                   ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
                 </p>
                 <hr className="border-px border-slate-200 my-[2px]" />

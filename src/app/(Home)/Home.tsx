@@ -50,6 +50,10 @@ import { IoMdClose } from "react-icons/io";
 import Drawer from "@mui/material/Drawer";
 import useWindowSize from "@/Hooks/useWindowSize";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function Home() {
   const windowSize = useWindowSize();
@@ -386,6 +390,158 @@ export default function Home() {
   const bPoint = watch("boardingPoint");
   const dPoint = watch("destinationPoint");
   const [journeyDate, setJourneyDate] = useState<boolean>(false);
+
+  // FAQs tabs
+  const [faqActiveTab, setFAQActiveTab] = useState<number>(0);
+
+  const handleFAQTabs = (event: React.SyntheticEvent, newValue: number) => {
+    setFAQActiveTab(newValue);
+  };
+
+  const FAQs = {
+    general: [
+      {
+        q: "Can I track the location of my booked bus online?",
+        a: `Yes, you can track your bus online by using our bus tracking app feature called “Track My Bus”. This feature allows passengers and their families to track the live bus location. You may follow your bus on a map and use the information to plan your trip to the boarding point and to get off at the correct stop. Family and friends may also check the bus position to schedule pick-ups and ensure safety.`,
+      },
+      {
+        q: "What are the advantages of bus ticket booking with redBus?",
+        a: `There are many advantages of booking bus tickets online with redBus. redBus is India's leading bus ticket booking platform, where you can book private or government-owned buses. redBus allows you to find the different types of buses, choose the preferred bus seats, and find your nearest boarding and dropping points. You can also filter the buses based on timings, like morning, evening, etc.
+        `,
+      },
+      {
+        q: "Why book bus tickets online on redBus?",
+        a: `
+        Booking bus tickets online on redBus is increasingly becoming the preferred choice for travellers due to its numerous advantages over traditional methods. With redBus, customers can book their bus tickets effortlessly from the comfort of their homes, avoiding the inconvenience of standing in long lines at bus stations or travel agencies. Online bus booking offers the luxury of comparing different bus schedules and operators and presents various discount offers and exclusive deals, resulting in significant savings. Payment security is another notable feature of online booking, which ensures that your financial information is well-protected against fraud. Additionally, customers can pick their seats, providing a customized travel experience. Online bus booking platforms give real-time updates about any changes in the bus timetable, including delays or cancellations, enabling better planning. The convenience doesn't stop here; travellers can even compare onboard amenities like charging points or snacks, further enhancing the travel experience.
+        `,
+      },
+      {
+        q: "Do I need to create an account on the redBus site to book bus ticket?",
+        a: `
+        No, you don’t have to create an account on the redBus site to book bus ticket. But it is advisable to make one to accelerate the process next time you want to book bus tickets. Also, redBus has many discounts and bus booking offers that you can easily access if you have an account with us.
+        `,
+      },
+      {
+        q: "Does bus booking online cost me more?",
+        a: `
+        Not at all! The bus ticket price is the same as you would get from the bus operator/ counter of any bus ticket agency. redbus reduces the travel budget by comparing the bus ticket prices among various operators, making it a more cost-effective choice. Therefore, online bus booking is increasingly recognized as a more convenient, efficient, and economical mode of securing travel arrangements.
+        `,
+      },
+      {
+        q: "How can I get the discounts on the bus booking?",
+        a: `
+        To get a discount on bus booking, please visit https://www.redbus.in/offers and check the available offers. Copy the coupon code and paste it during checkout to avail of the discount.
+        `,
+      },
+      {
+        q: "What's New in Bus Booking on redBus?",
+        a: `
+        Primo Bus Ticket: redBus has launched Primo bus services, where passengers can enjoy travelling in high-rated buses with best-in-class services. While looking for bus tickets on the desired route, customers can check the Primo tag to choose this excellent service. From hygiene standards to on-time service and comfort, passengers can benefit from the online bus booking experience from Primo buses.
+        `,
+      },
+      {
+        q: "Can I book a Government bus ticket on redBus?",
+        a: `
+        Yes, you can book government bus tickets on redBus. redBus has extended its bus booking services to many RTCs in India. Some of these RTCs are Andhra Pradesh State Road Transport Corporation (APSRTC), Assam State Transport Corporation (ASTC), Bihar State Tourism Development Corporation (BSTDC), Himachal Road Transport Corporation (HRTC), Jammu and Kashmir State Road Transport Corporation (JKSRTC), Kerala RTC, Kadamba Transport Corporation (KTCL), Patiala and the East Punjab States Union (PEPSU), Odisha State Road Transport Corporation (OSRTC), Rajasthan State Road Transport Corporation (RSRTC), South Bengal State Transport Corporation (SBSTC), Uttarakhand Transport Corporation (UTC), West Bengal Transport Corporation WBTC (CTC), North Bengal State Transport Corporation (NBSTC), Chandigarh Transport Undertaking (CTU), Gujarat State Road Transport Corporation (GSRTC), Telangana State Road Transport Corporation (TSRTC), Uttar Pradesh State Road Transport Corporation (UPSRTC).
+        `,
+      },
+    ],
+    ticketRelated: [
+      {
+        q: "How can I book bus tickets on redBus?",
+        a: `Bus ticket Booking is effortless on redBus. To book the bus tickets, go to the main page and enter your source city and destination city in the “From” and “To” fields, respectively. Enter the travel date and hit the search button. Now, you will see the bus list available on the given bus route. You can use the filter option, such as duration, fare, bus type, etc., to rearrange the list accordingly. This makes it easier for customers to book their bus tickets online with redBus.
+        `,
+      },
+      {
+        q: "Can I change the date of my journey after I have booked bus ticket?",
+        a: `Yes, you can change the journey date after booking a bus ticket on redBus by clicking the “Reschedule” icon if your travel plan might get interrupted while booking. Bus operators with the “Reschedule icon” next to it offer rescheduling of the bus ticket in case your initially selected date is not viable for travel.
+        `,
+      },
+      {
+        q: "Is it mandatory to take a printout of the ticket?",
+        a: `It depends on the bus operator you have booked your online bus tickets with. Even mTickets are available on redBus. For operators that support mTickets, the SMS that is sent to your mobile can be produced at the time of boarding and you will be allowed to travel. For operators that do not support m-Tickets, it is a must to take a printout of the e-ticket and produce it at the time of boarding. The e-ticket is sent to the email ID provided at the time of boarding. To know which operators are m-Ticket-enabled, look for the m-Ticket icon under the m-Ticket column while searching for buses.`,
+      },
+      {
+        q: "I've lost my ticket. What should I do now?",
+        a: `A copy of the bus ticket would have been sent to you by email when you booked bus ticket online. Please take a printout of that mail and produce it at the time of boarding. If you have not received the ticket e-mail, please call any of our call centers and our executive will resend you a copy by mail.`,
+      },
+      {
+        q: "What is an m-Ticket?",
+        a: `An m-Ticket is an SMS that is sent to your mobile on booking bus tickets with select private bus operators. This SMS has the TIN number and the PNR number along with other ticket related information. It can be used to board the bus. Please note that not all operators accept mTickets. To know which operators are m-Ticket enabled, look for the mTicket icon under the mTicket column while searching for buses.`,
+      },
+      {
+        q: "I didn't receive my mTicket. Can you resend it?",
+        a: `You can generate your mTicket online. To generate m-Ticket online click on the Print/SMS ticket link on the redbus home page on www.redBus.in. Enter your TIN number mentioned on the e-ticket we emailed you. Choose the SMS option and click on Submit. In case you don't have a copy of the e-ticket either, contact our call center and our executive will assist you.`,
+      },
+      {
+        q: "I entered the wrong mobile number while bus booking. Can I get my m-Ticket on a different number?",
+        a: `Yes, you can get the m-Ticket on the different numbers.To get the M-Ticket on the different number please contact redBus call center and our customer executive will send you the mTicket on your desired number.`,
+      },
+    ],
+    paymentRelated: [
+      {
+        q: "Is it safe to use my credit or debit card to book bus tickets on redBus?",
+        a: `Transactions on redBus are very safe. We employ the best-in-class security and the transactions done are secure. Apart from being certified by Verisign, redBus uses Secure Socket Layers (SSL) data encryption. Using SSL ensures that the information exchanged with us is never transmitted unencrypted, thus protecting the information from being viewed by unauthorized individuals.`,
+      },
+      {
+        q: "Does the owner of the credit card/debit card with which the bus ticket is purchased need to be one of the passengers?",
+        a: `Not at all! A passenger can use any debit or credit card to pay for the bus ticket, not necessarily their own. However, please note that the passenger in whose name the ticket is booked should carry a proof of his identity (along with the ticket) at the time of boarding the bus.`,
+      },
+      {
+        q: "What are the different payment options available on Bus Ticket booking?",
+        a: (
+          <ul className="list-disc ps-7">
+            <li>
+              There are many payment modes available to book buses on the redBus
+              website and app. Some of these payment modes that are available
+              for the bus ticket booking process are:Debit Card/Credit Card/ATM
+              Cards (Visa, MasterCard, Maestro & Rupay)
+            </li>
+            <li>
+              Net Banking (HDFC Bank, ICICI Bank, Indian Bank, Axis Bank, SBI
+              and all major banks)
+            </li>
+            <li>UPI (Google Pay, Amazon Pay, PhonePe)</li>
+            <li>Book Now, Pay Later (Simple)</li>
+            <li>
+              Wallets (Paytm) Make sure to check the coupon code to get the
+              discounts on bus booking online, redBus offers a lot of redDeals
+              to book the bus ticket on budget.
+            </li>
+          </ul>
+        ),
+      },
+    ],
+    cancellationRefund: [
+      {
+        q: "Can I cancel my bus ticket online?",
+        a: `Yes you can cancel bus tickets online, Most of the tickets can be canceled online. However, there are some bus tickets that can only be canceled through our call center.However please note that the cancellation fee and cancellation period may differ for specific bus services. Please contact any of our executives for cancellation details on any specific service.`,
+      },
+      {
+        q: "How can I cancel a bus ticket online?",
+        a: `To cancel the bus ticket online, you need to click on the cancellation link provided on our home page. Enter your ticket number and the e-mail ID that was provided at the time of bus booking and click on cancel ticket.`,
+      },
+      {
+        q: "I missed the bus. Do I get a refund?",
+        a: `redBus provides a 100% refund if the bus is missed due to either redBus or its partner company's fault. However, if the bus is missed due to any other reason not directly related to redBus no refund is provided.`,
+      },
+      {
+        q: "How can I get a refund in case I cancel a bus ticket?",
+        a: `The refund is provided as per the cancellation policy of the operator. The refund can be credited to the source of payment (Example: debit card, credit card, net banking) or credited to redBus wallet. Wallet credit can be used for bus booking in future (within 6 months of cancellation).`,
+      },
+      {
+        q: "What happens if the bus does not leave on time or is canceled?",
+        a: `If your bus does not leave on time or is canceled, in such situations, you will need to consult the counter of the respective bus operators. You can also call the redBus customer care to discuss the appropriate actions.`,
+      },
+      {
+        q: "How can I reschedule my bus tickets?",
+        a: `To reschedule your bus ticket on redBus, follow these steps: Visit https://www.redbus.in/reschedule
+        Search for your bus ticket by entering your ticket number and registered email ID. 
+        Verify your online bus ticket details and select the date to reschedule your journey. 
+        Select a bus operator, verify every detail, and make your payment if any difference in bus ticket prices needs to be cleared.`,
+      },
+    ],
+  };
 
   return (
     <div className="min-h-screen">
@@ -1370,6 +1526,245 @@ export default function Home() {
           >
             Download App
           </a>
+        </div>
+      </div>
+
+      {/* GSRTC Information*/}
+      <div className="myContainer py-7">
+        <p className="font-bold text-[22px] mb-5">
+          GSRTC: India's Leading Online Bus Booking Ticket Booking Platform
+        </p>
+        <p className="mb-4 text-sm">
+          Gujarat State Road Transport Corporation (GSRTC) is a passenger
+          transport organisation providing bus services both within Gujarat and
+          neighbouring states.
+        </p>
+        <p className="text-sm">
+          GSRTC came into existence on 1st May, 1960 on formation of Gujarat.
+          From a modest begining of 7 divisions, 76 depots and 7 divisional
+          workshops and a fleet of 1,767 buses it has gone to,
+        </p>
+        <ul className="list-disc ps-12 text-sm py-4">
+          <li>16 Divisions</li>
+          <li>125 Depots</li>
+          <li>226 bus stations</li>
+          <li>1,554 pick up stands</li>
+          <li>8,322 buses</li>
+        </ul>
+        <p className="text-sm">
+          This remarkable growth is an outcome of unflagging effort of more than
+          39,795 workforce, dynamic management and sustained support from the
+          state govt. It has built up formidable technical facilities.
+        </p>
+      </div>
+
+      {/* How to book ticket */}
+      <div className="myContainer py-7">
+        <p className="font-bold text-[22px] mb-4">
+          How to Book Bus Tickets Online on GSRTC?
+        </p>
+
+        <p className="text-sm">
+          Below are some simple steps that you can follow when booking train or
+          bus tickets online on GSRTC.
+        </p>
+
+        <ul className="list-disc ps-12 text-sm py-4 flex flex-col gap-3">
+          <li>
+            <b>Step 1:</b> Visit the GSRTC website or app.
+          </li>
+          <li>
+            <b>Step 2:</b> Select your travel date and journey details.
+          </li>
+          <li>
+            <b>Step 3:</b> Search for your preferred bus available on your
+            chosen travel date and route.
+          </li>
+          <li>
+            <b>Step 4:</b> Select your preferred boarding or dropping points and
+            enter your contact details.
+          </li>
+          <li>
+            <b>Step 5:</b> Choose from multiple payment options to proceed with
+            the payment process.
+          </li>
+          <li>
+            <b>Step 6:</b> After the successful payment, you will receive a
+            confirmation of your train or bus bookings on your registered email
+            ID or mobile number.
+          </li>
+        </ul>
+      </div>
+
+      {/* FAQs */}
+      <div className="myContainer py-7">
+        <p className="font-bold text-[22px] mb-4">
+          FAQs related to Bus Tickets Booking
+        </p>
+
+        {/* Tabs */}
+        <div>
+          <Tabs
+            value={faqActiveTab}
+            onChange={handleFAQTabs}
+            aria-label="FAQs Tabs"
+            sx={{
+              "& .MuiTabs-list": {
+                gap: "24px",
+              },
+              "& .MuiTab-root": {
+                fontWeight: 600,
+                paddingLeft: 0,
+                paddingRight: 0,
+              },
+              "& .Mui-selected": {
+                color: "#173c62",
+              },
+              "& .MuiTabs-indicator": {
+                height: "3px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+                backgroundColor: "#173c62",
+              },
+            }}
+          >
+            <Tab label="General" />
+            <Tab label="Ticket-related" />
+            <Tab label="Payment" />
+            <Tab label="Cancellation & Refund" />
+          </Tabs>
+        </div>
+
+        {/* Tab content */}
+        <div>
+          {faqActiveTab === 0 && (
+            <ul>
+              {FAQs.general &&
+                FAQs.general.map((que, inx) => (
+                  <li key={`Genera-FAQs-${inx}`}>
+                    <Accordion
+                      sx={{
+                        "&.MuiAccordion-root": {
+                          boxShadow: "none",
+                          borderBottom: "1px solid #cad5e2",
+                          borderRadius: 0,
+                        },
+                        "& .MuiAccordionSummary-root": {
+                          minHeight: "48px !important",
+                          fontWeight: 600,
+                        },
+                      }}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        className="text-semibold"
+                      >
+                        {que.q}
+                      </AccordionSummary>
+                      <AccordionDetails className="text-sm">
+                        {que.a}
+                      </AccordionDetails>
+                    </Accordion>
+                  </li>
+                ))}
+            </ul>
+          )}
+          {faqActiveTab === 1 && (
+            <ul>
+              {FAQs.ticketRelated &&
+                FAQs.ticketRelated.map((que, inx) => (
+                  <li key={`Genera-FAQs-${inx}`}>
+                    <Accordion
+                      sx={{
+                        "&.MuiAccordion-root": {
+                          boxShadow: "none",
+                          borderBottom: "1px solid #cad5e2",
+                          borderRadius: 0,
+                        },
+                        "& .MuiAccordionSummary-root": {
+                          minHeight: "48px !important",
+                          fontWeight: 600,
+                        },
+                      }}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        className="text-semibold"
+                      >
+                        {que.q}
+                      </AccordionSummary>
+                      <AccordionDetails className="text-sm">
+                        {que.a}
+                      </AccordionDetails>
+                    </Accordion>
+                  </li>
+                ))}
+            </ul>
+          )}
+          {faqActiveTab === 2 && (
+            <ul>
+              {FAQs.paymentRelated &&
+                FAQs.paymentRelated.map((que, inx) => (
+                  <li key={`Genera-FAQs-${inx}`}>
+                    <Accordion
+                      sx={{
+                        "&.MuiAccordion-root": {
+                          boxShadow: "none",
+                          borderBottom: "1px solid #cad5e2",
+                          borderRadius: 0,
+                        },
+                        "& .MuiAccordionSummary-root": {
+                          minHeight: "48px !important",
+                          fontWeight: 600,
+                        },
+                      }}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        className="text-semibold"
+                      >
+                        {que.q}
+                      </AccordionSummary>
+                      <AccordionDetails className="text-sm">
+                        {que.a}
+                      </AccordionDetails>
+                    </Accordion>
+                  </li>
+                ))}
+            </ul>
+          )}
+          {faqActiveTab === 3 && (
+            <ul>
+              {FAQs.cancellationRefund &&
+                FAQs.cancellationRefund.map((que, inx) => (
+                  <li key={`Genera-FAQs-${inx}`}>
+                    <Accordion
+                      sx={{
+                        "&.MuiAccordion-root": {
+                          boxShadow: "none",
+                          borderBottom: "1px solid #cad5e2",
+                          borderRadius: 0,
+                        },
+                        "& .MuiAccordionSummary-root": {
+                          minHeight: "48px !important",
+                          fontWeight: 600,
+                        },
+                      }}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        className="text-semibold"
+                      >
+                        {que.q}
+                      </AccordionSummary>
+                      <AccordionDetails className="text-sm">
+                        {que.a}
+                      </AccordionDetails>
+                    </Accordion>
+                  </li>
+                ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

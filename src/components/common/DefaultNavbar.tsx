@@ -106,11 +106,11 @@ const DefaultNavbar = () => {
           className="object-contain"
           priority
         />
-        <div className="hidden lg:block">
-          <p className="text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
+        <div className="">
+          <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
             Gujarat State Road Transport Corporation
           </p>
-          <p className="text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
+          <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
             ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
           </p>
           <hr className="border-px border-slate-200 my-[2px]" />
@@ -120,62 +120,60 @@ const DefaultNavbar = () => {
         </div>
       </div>
 
-      {/* Drawer Navbar */}
-      <div className="flex">
-        <ul className="list-none !text-xs !font-medium flex items-center gap-x-3 xl:gap-x-5">
-          <li>
-            <Link
-              href="/bookings"
-              className={`p-3 h-full w-full hidden lg:flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
-                currentLocation === "/bookings" ? "text-primary" : "text-black"
-              }`}
-            >
-              <IoListOutline className="w-6 h-6" />
-              <span>Bookings</span>
-            </Link>
-          </li>
+      {/* Navbar links */}
+      <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-2 sm:gap-x-3 xl:gap-x-5">
+        <li>
+          <Link
+            href="/bookings"
+            className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+              currentLocation === "/bookings" ? "text-primary" : "text-black"
+            }`}
+          >
+            <IoListOutline className="w-6 h-6" />
+            <span>Bookings</span>
+          </Link>
+        </li>
 
-          <li>
-            <Link
-              href="#"
-              className={`p-3 h-full w-full hidden lg:flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
-                currentLocation === "/help" ? "text-primary" : "text-black"
-              }`}
-            >
-              <BiHelpCircle className="w-6 h-6" />
-              <span>Help</span>
-            </Link>
-          </li>
-          <li className="">
-            <a
-              href="https://yatradham.gujarat.gov.in/Booking"
-              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
-            >
-              <span>Sharvan</span>
-              <span>Tirth Darshan</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.soutickets.in/#/gsrtc-booking"
-              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
-            >
-              <span>Unity</span>
-              <span>Booking</span>
-            </a>
-          </li>
-          <li className="">
-            <button
-              type="button"
-              onClick={handleUserDrawer}
-              className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 hidden lg:flex items-center gap-1"
-            >
-              <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
-              <span className="text-xs">Account</span>
-            </button>
-          </li>
-        </ul>
-      </div>
+        <li>
+          <Link
+            href="#"
+            className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+              currentLocation === "/help" ? "text-primary" : "text-black"
+            }`}
+          >
+            <BiHelpCircle className="w-6 h-6" />
+            <span>Help</span>
+          </Link>
+        </li>
+        <li className="">
+          <a
+            href="https://yatradham.gujarat.gov.in/Booking"
+            className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
+          >
+            <span>Sharvan</span>
+            <span>Tirth Darshan</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://www.soutickets.in/#/gsrtc-booking"
+            className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
+          >
+            <span>Unity</span>
+            <span>Booking</span>
+          </a>
+        </li>
+        <li className="">
+          <button
+            type="button"
+            onClick={handleUserDrawer}
+            className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1"
+          >
+            <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
+            <span className="text-xs">Account</span>
+          </button>
+        </li>
+      </ul>
 
       {/* <=============== Drawer and Dialogs ===============> */}
 
