@@ -54,6 +54,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { motion } from "motion/react";
 
 export default function Home() {
   const windowSize = useWindowSize();
@@ -607,7 +608,20 @@ export default function Home() {
         </div>
 
         {/* Bus search function */}
-        <form
+
+        <motion.form
+          initial={{
+            y: 100,
+            opacity: 0,
+          }}
+          whileInView={{
+            y: 0,
+            opacity: 1,
+          }}
+          transition={{
+            duration: 0.6,
+          }}
+          viewport={{ once: true }}
           className="md:mx-8 lg:mx-[75px] mt-7 mb-14 bg-white rounded-3xl md:shadow-[0_0_16px_rgba(0,0,0,0.3)]"
           onClick={(e) => {
             const eleCoord = e.currentTarget.getBoundingClientRect();
@@ -1301,11 +1315,25 @@ export default function Home() {
               <span>Search buses</span>
             </button>
           </div>
-        </form>
+        </motion.form>
       </div>
 
       {/* GSRTC Growing Numbers */}
-      <div className="myContainer mb-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer mb-7"
+      >
         <p className="font-bold text-[22px] mb-5">GSRTC Growing Numbers</p>
 
         {/* Numbers */}
@@ -1335,10 +1363,24 @@ export default function Home() {
               </a>
             ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Top Destination */}
-      <div className="myContainer mb-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer mb-7"
+      >
         <p className="font-bold text-[22px] mb-5">Top destinations</p>
 
         {/* Top destination carousel */}
@@ -1385,10 +1427,24 @@ export default function Home() {
             <GrNext className="text-lg sm:text-xl md:text-2xl" />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Offer For you section */}
-      <div className="myContainer mb-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer mb-7"
+      >
         <div className="flex justify-between items-center mb-5">
           <p className="font-bold text-[22px]">Offer For you</p>
           <a
@@ -1428,10 +1484,24 @@ export default function Home() {
             <GrNext className="text-lg sm:text-xl md:text-2xl" />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* What's new section */}
-      <div className="myContainer mb-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer mb-7"
+      >
         <p className="font-bold text-[22px] mb-5">What&apos;s new</p>
 
         {/* What's new Carousel */}
@@ -1463,10 +1533,24 @@ export default function Home() {
             <GrNext className="text-lg sm:text-xl md:text-2xl" />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Testimonials */}
-      <div className="myContainer mb-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer mb-7"
+      >
         <p className="font-bold text-[22px] mb-5">Testimonials</p>
 
         {/* Testimonials Carousel */}
@@ -1501,10 +1585,24 @@ export default function Home() {
             <GrNext className="text-lg sm:text-xl md:text-2xl" />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Dowbload GSRTC App */}
-      <div className="myContainer mb-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer mb-7"
+      >
         <p className="font-bold text-[22px] mb-5">Get the GSRTC App</p>
         <div className="bg-white shadow-lg rounded-lg p-5 flex flex-col md:flex-row md:justify-between items-center gap-y-5 md:gap-y-0">
           <div className="w-full flex gap-x-4 items-center">
@@ -1527,10 +1625,24 @@ export default function Home() {
             Download App
           </a>
         </div>
-      </div>
+      </motion.div>
 
       {/* GSRTC Information*/}
-      <div className="myContainer py-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer py-7"
+      >
         <p className="font-bold text-[22px] mb-5">
           GSRTC: India's Leading Online Bus Booking Ticket Booking Platform
         </p>
@@ -1556,10 +1668,24 @@ export default function Home() {
           39,795 workforce, dynamic management and sustained support from the
           state govt. It has built up formidable technical facilities.
         </p>
-      </div>
+      </motion.div>
 
       {/* How to book ticket */}
-      <div className="myContainer py-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer py-7"
+      >
         <p className="font-bold text-[22px] mb-4">
           How to Book Bus Tickets Online on GSRTC?
         </p>
@@ -1594,10 +1720,24 @@ export default function Home() {
             ID or mobile number.
           </li>
         </ul>
-      </div>
+      </motion.div>
 
       {/* FAQs */}
-      <div className="myContainer py-7">
+      <motion.div
+        initial={{
+          y: 100,
+          opacity: 0,
+        }}
+        whileInView={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.6,
+        }}
+        viewport={{ once: true }}
+        className="myContainer py-7"
+      >
         <p className="font-bold text-[22px] mb-4">
           FAQs related to Bus Tickets Booking
         </p>
@@ -1772,7 +1912,7 @@ export default function Home() {
             </ul>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
