@@ -35,12 +35,14 @@ import { FaLongArrowAltUp } from "react-icons/fa";
 import {
   boardingPoints,
   filterList,
-  FilterType,
   tagsList,
 } from "@/components/common/SearchPageData";
 import { IoCloseSharp } from "react-icons/io5";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { Link as MuiLink } from "@mui/material";
 
 const BusListPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -288,7 +290,7 @@ const BusListPage = () => {
   return (
     <>
       {/* Upper Navbar */}
-      <div className="myContainer shadow-sm lg:shadow-none bg-white w-full sticky lg:relative top-0 left-0 right-0 z-40 flex items-center">
+      <div className="myContainer shadow-sm lg:shadow-none bg-white w-full sticky lg:relative top-0 left-0 right-0 z-40 flex flex-col justify-center">
         <div className="w-full h-full py-3 lg:pt-4 flex justify-between items-center">
           <div className="flex items-center gap-x-2">
             <div>
@@ -459,6 +461,29 @@ const BusListPage = () => {
               </div>
             </Drawer>
           )}
+        </div>
+
+        {/* Breadcrums */}
+        <div>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="Search Page breadcrumb"
+            sx={{
+              "& .MuiBreadcrumbs-ol": {
+                fontSize: "12px",
+              },
+            }}
+          >
+            <MuiLink underline="hover" key="1" color="inherit" href="/">
+              Home
+            </MuiLink>
+            <MuiLink underline="hover" key="1" color="inherit" href="/">
+              Bus Booking
+            </MuiLink>
+            <MuiLink underline="hover" key="1" color="inherit" href="/">
+              Ahmedabad to Jamnagar
+            </MuiLink>
+          </Breadcrumbs>
         </div>
       </div>
 

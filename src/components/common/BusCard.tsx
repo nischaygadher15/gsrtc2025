@@ -51,42 +51,40 @@ const BusCard = ({ openViewDrawer }: { openViewDrawer: () => void }) => {
       </div>
 
       <div className="hidden lg:flex justify-between items-center pt-3 border-t border-dotted border-t-slate-200">
-        <div>
-          <ul className="hidden">
-            <li className="border-e border-e-slate-200">
-              <button
-                type="button"
-                className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] "
-              >
-                Boarding/ Dropping Points
-              </button>
-            </li>
-            <li className="border-e border-e-slate-200">
-              <button
-                type="button"
-                className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] "
-              >
-                Ratings & Reviews
-              </button>
-            </li>
-            <li className="border-e border-e-slate-200">
-              <button
-                type="button"
-                className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] "
-              >
-                Bus Photos
-              </button>
-            </li>
-            <li className="border-e border-e-slate-200">
-              <button
-                type="button"
-                className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] "
-              >
-                Cancellation Policies
-              </button>
-            </li>
-          </ul>
-        </div>
+        <ul className="flex list-none">
+          <li className="border-e border-e-slate-200">
+            <button
+              type="button"
+              className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] cursor-pointer"
+            >
+              Boarding/ Dropping Points
+            </button>
+          </li>
+          <li className="border-e border-e-slate-200">
+            <button
+              type="button"
+              className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] cursor-pointer"
+            >
+              Ratings & Reviews
+            </button>
+          </li>
+          <li className="border-e border-e-slate-200">
+            <button
+              type="button"
+              className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] cursor-pointer"
+            >
+              Bus Photos
+            </button>
+          </li>
+          <li className="border-e border-e-slate-200">
+            <button
+              type="button"
+              className="px-4 py-2 text-xs font-semibold rounded-s-full rounded-e-full text-[#5258e4] hover:bg-[#e4ecfd] cursor-pointer"
+            >
+              Cancellation Policies
+            </button>
+          </li>
+        </ul>
 
         <div>
           <button

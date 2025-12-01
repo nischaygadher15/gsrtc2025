@@ -373,7 +373,7 @@ const FooterSection = () => {
       {/* Footer Logo */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center border-b border-b-gray-300 py-5">
         <div>
-          <a href="#" className="flex">
+          <Link href="#" className="flex">
             <div className="lg:min-w-[360px] flex flex-nowrap gap-x-2 items-center">
               <Image
                 src={navbarLogo}
@@ -388,7 +388,7 @@ const FooterSection = () => {
                 <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
                   Gujarat State Road Transport Corporation
                 </p>
-                <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
+                <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-tight tracking-wider text-[#212153]">
                   ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
                 </p>
                 <hr className="border-px border-slate-200 my-[2px]" />
@@ -397,7 +397,7 @@ const FooterSection = () => {
                 </p>
               </div>
             </div>
-          </a>
+          </Link>
         </div>
 
         <div className="flex flex-col gap-3">
@@ -431,7 +431,7 @@ const FooterSection = () => {
       </div>
 
       {/* Footer Social Logos */}
-      <div className="flex justify-between items-center py-7">
+      <div className="flex justify-between items-center pt-7">
         <p className="text-[#1d1d1da3] text-sm">
           &copy; GSRTC. All rights reserved
         </p>

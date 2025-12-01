@@ -96,29 +96,31 @@ const DefaultNavbar = () => {
       }  min-w-full bg-white justify-between py-3`}
     >
       {/* GSRTC Logo */}
-      <div className="lg:min-w-[360px] flex flex-nowrap gap-x-2 items-center">
-        <Image
-          src={navbarLogo}
-          alt="GSRTC Navbar LOGO"
-          width={60}
-          quality={100}
-          unoptimized
-          className="object-contain"
-          priority
-        />
-        <div className="">
-          <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
-            Gujarat State Road Transport Corporation
-          </p>
-          <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-snug tracking-wider text-[#212153]">
-            ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
-          </p>
-          <hr className="border-px border-slate-200 my-[2px]" />
-          <p className="text-nowrap text-lg text-[#cc0000] font-semibold font-allura leading-none tracking-widest">
-            Steering miles with smiles
-          </p>
+      <Link href="#">
+        <div className="lg:min-w-[360px] flex flex-nowrap gap-x-2 items-center">
+          <Image
+            src={navbarLogo}
+            alt="GSRTC Navbar LOGO"
+            width={60}
+            quality={100}
+            unoptimized
+            className="object-contain"
+            priority
+          />
+          <div className="">
+            <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
+              Gujarat State Road Transport Corporation
+            </p>
+            <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-tight tracking-wider text-[#212153]">
+              ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
+            </p>
+            <hr className="border-px border-slate-200 my-[2px]" />
+            <p className="text-nowrap text-lg text-[#cc0000] font-semibold font-allura leading-none tracking-widest">
+              Steering miles with smiles
+            </p>
+          </div>
         </div>
-      </div>
+      </Link>
 
       {/* Navbar links */}
       <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-2 sm:gap-x-3 xl:gap-x-5">
