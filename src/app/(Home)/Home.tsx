@@ -622,7 +622,7 @@ export default function Home() {
             duration: 0.6,
           }}
           viewport={{ once: true }}
-          className="md:mx-8 lg:mx-[75px] mt-7 mb-14 bg-white rounded-3xl md:shadow-[0_0_16px_rgba(0,0,0,0.3)]"
+          className="md:mx-8 lg:mx-[75px] md:mt-7 mb-7 md:mb-14 bg-white rounded-3xl md:shadow-[0_0_16px_rgba(0,0,0,0.3)]"
           onClick={(e) => {
             const eleCoord = e.currentTarget.getBoundingClientRect();
             scrollBy({
