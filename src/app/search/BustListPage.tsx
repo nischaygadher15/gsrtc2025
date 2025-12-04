@@ -43,6 +43,7 @@ import Tab from "@mui/material/Tab";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Link as MuiLink } from "@mui/material";
+import { motion, useInView, useScroll } from "motion/react";
 
 const BusListPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -283,12 +284,22 @@ const BusListPage = () => {
     });
   };
 
+  //Lower navbar animation
+  const { scrollY } = useScroll();
+  const [logoTrigger, setLogoTrigger] = useState(false);
+
   useEffect(() => {
-    console.log("activeFilters: ", activeFilters);
-  }, [activeFilters]);
+    return scrollY.on("change", (latest) => {
+      if (latest > 30) {
+        setLogoTrigger(true);
+      } else {
+        setLogoTrigger(false);
+      }
+    });
+  }, [scrollY]);
 
   return (
-    <>
+    <div>
       {/* Upper Navbar */}
       <div className="myContainer shadow-sm lg:shadow-none bg-white w-full sticky lg:relative top-0 left-0 right-0 z-40 flex flex-col justify-center">
         <div className="w-full h-full py-3 lg:pt-4 flex justify-between items-center">
@@ -488,12 +499,13 @@ const BusListPage = () => {
       </div>
 
       {/* Lower Navbar*/}
-      <div className="myContainer bg-white w-full sticky top-0 left-0 right-0 font-semibold hidden lg:flex justify-between items-center gap-16 z-40 shadow-md">
+      <div className="myContainer bg-white w-full sticky top-0 left-0 right-0 font-semibold hidden lg:flex justify-between items-center gap-10 z-40 shadow-md">
         {/* GSRTC Logo */}
-        <div
-          className={`${
-            scrollPosition >= 300 ? "" : "hidden"
-          } duration-200 transition-all`}
+        <motion.div
+          initial={{ marginLeft: "-200px" }}
+          animate={logoTrigger ? { marginLeft: 0 } : { marginLeft: "-200px" }}
+          transition={{ duration: 0.7 }}
+          className=""
         >
           <Image
             src={gsrtcLogo}
@@ -502,10 +514,10 @@ const BusListPage = () => {
             width={64}
             height={64}
           />
-        </div>
+        </motion.div>
 
         {/* Bus search function */}
-        <form
+        <motion.form
           className="w-full rounded-3xl"
           onClick={(e) => {
             const eleCoord = e.currentTarget.getBoundingClientRect();
@@ -857,7 +869,7 @@ const BusListPage = () => {
               </button>
             </div>
           </div>
-        </form>
+        </motion.form>
       </div>
 
       {/* Buses */}
@@ -1232,7 +1244,7 @@ const BusListPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
