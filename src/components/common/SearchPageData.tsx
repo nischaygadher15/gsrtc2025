@@ -44,15 +44,13 @@ export const boardingPoints: string[] = [
 
 export interface FilterContentType {
   filterId: string;
-  icon: ReactNode;
+  icon?: ReactNode;
   content: ReactNode;
-  numbers: number;
 }
 
 export interface FilterType {
   title: string;
   contentsList: FilterContentType[];
-  selected: number;
   isSearchable?: boolean;
 }
 
@@ -69,7 +67,6 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Morning</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "afternoon_12_to_18",
@@ -80,7 +77,6 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Afternoon</p>
           </div>
         ),
-        numbers: 20,
       },
       {
         filterId: "evening_18_to_24",
@@ -91,7 +87,6 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Evening</p>
           </div>
         ),
-        numbers: 54,
       },
       {
         filterId: "night_00_to_06",
@@ -102,10 +97,8 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Afternoon</p>
           </div>
         ),
-        numbers: 12,
       },
     ],
-    selected: 1,
   },
   {
     title: "Arrival time at destination",
@@ -119,7 +112,6 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Morning</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "arrival_afternoon_12_to_18",
@@ -130,7 +122,6 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Afternoon</p>
           </div>
         ),
-        numbers: 20,
       },
       {
         filterId: "arrival_evening_18_to_24",
@@ -141,7 +132,6 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Evening</p>
           </div>
         ),
-        numbers: 54,
       },
       {
         filterId: "arrival_night_00_to_06",
@@ -152,10 +142,8 @@ export const filterList: FilterType[] = [
             <p className="text-sm text-[#1d1d1da3]">Afternoon</p>
           </div>
         ),
-        numbers: 12,
       },
     ],
-    selected: 1,
   },
   {
     title: "Bus type",
@@ -168,7 +156,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">AC</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busType_NON_AC",
@@ -178,7 +165,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">NON-AC</p>
           </div>
         ),
-        numbers: 20,
       },
       {
         filterId: "busType_Seater",
@@ -188,7 +174,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">SEATER</p>
           </div>
         ),
-        numbers: 54,
       },
       {
         filterId: "busType_Sleeper",
@@ -198,10 +183,8 @@ export const filterList: FilterType[] = [
             <p className="font-medium">SLEEPER</p>
           </div>
         ),
-        numbers: 12,
       },
     ],
-    selected: 1,
   },
   {
     title: "Single window seater/sleeper",
@@ -214,10 +197,8 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Single Seats</p>
           </div>
         ),
-        numbers: 13,
       },
     ],
-    selected: 1,
   },
   {
     title: "Bus features",
@@ -230,7 +211,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Live Tracking</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busFeatures_highRatedBuses",
@@ -240,7 +220,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">High Rated Buses</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busFeatures_deals",
@@ -250,7 +229,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Deals</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busFeatures_primoBus",
@@ -260,7 +238,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Primo Bus</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busFeatures_freeCancellation",
@@ -270,7 +247,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Free Cancellation</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busFeatures_volvoBuses",
@@ -280,10 +256,8 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Volvo Buses</p>
           </div>
         ),
-        numbers: 13,
       },
     ],
-    selected: 1,
   },
   {
     title: "Bus operator",
@@ -296,7 +270,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">GSRTC</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busOperator_MHSRTC",
@@ -306,7 +279,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">MHSRTC</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busOperator_RSRTC",
@@ -316,7 +288,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">RSRTC</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "busOperator_MPSRTC",
@@ -326,105 +297,9 @@ export const filterList: FilterType[] = [
             <p className="font-medium">MPSRTC</p>
           </div>
         ),
-        numbers: 13,
       },
     ],
     isSearchable: true,
-    selected: 1,
-  },
-  {
-    title: "Boarding points",
-    contentsList: [
-      {
-        filterId: "boardingPoints_satrasta",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Sat Rasta</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-      {
-        filterId: "boardingPoints_gurudwara",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Gurudwara</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-      {
-        filterId: "boardingPoints_gulabnagar",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Gulabnagar</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-      {
-        filterId: "boardingPoints_townhall",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Town Hall</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-    ],
-    isSearchable: true,
-    selected: 1,
-  },
-  {
-    title: "Dropping points",
-    contentsList: [
-      {
-        filterId: "droppingPoints_satrasta",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Sat Rasta</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-      {
-        filterId: "droppingPoints_gurudwara",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Gurudwara</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-      {
-        filterId: "droppingPoints_gulabnagar",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Gulabnagar</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-      {
-        filterId: "droppingPoints_townhall",
-        icon: null,
-        content: (
-          <div>
-            <p className="font-medium">Town Hall</p>
-          </div>
-        ),
-        numbers: 13,
-      },
-    ],
-    isSearchable: true,
-    selected: 1,
   },
   {
     title: "Amenities",
@@ -437,7 +312,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Water Bottle</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "amenities_blanket",
@@ -447,7 +321,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Blanket</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "amenities_chargingPoint",
@@ -457,7 +330,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Charging Point</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "amenitie_toilet",
@@ -467,11 +339,9 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Toilet</p>
           </div>
         ),
-        numbers: 13,
       },
     ],
     isSearchable: true,
-    selected: 1,
   },
   {
     title: "Special bus features",
@@ -484,7 +354,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Free Bus Change</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "specialBusFeature_highlyRatedByWomen",
@@ -494,7 +363,6 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Highly rated by women</p>
           </div>
         ),
-        numbers: 13,
       },
       {
         filterId: "specialBusFeature_womenTravelling",
@@ -504,10 +372,8 @@ export const filterList: FilterType[] = [
             <p className="font-medium">Women Travelling</p>
           </div>
         ),
-        numbers: 13,
       },
     ],
-    selected: 1,
   },
 ];
 
@@ -515,66 +381,55 @@ export const tagsList: {
   name: string;
   icon: React.ReactNode;
   title: string;
-  numbers: number;
 }[] = [
   {
     name: "primoBus",
     icon: <FaRegStar className="text-xl" />,
     title: "Primo Bus",
-    numbers: 8,
   },
   {
     name: "ac",
     icon: <TbAirConditioning className="text-xl" />,
     title: "AC",
-    numbers: 55,
   },
   {
     name: "sleeper",
     icon: <MdOutlineBed className="text-xl" />,
     title: "SLEEPER",
-    numbers: 59,
   },
   {
     name: "singleSeat",
     icon: <TbArmchair className="text-xl" />,
     title: "Single Seats",
-    numbers: 60,
   },
   {
     name: "seater",
     icon: <MdOutlineAirlineSeatReclineExtra className="text-xl" />,
     title: "SEATER",
-    numbers: 3,
   },
   {
     name: "non_ac",
     icon: <MdOutlineNoBackpack className="text-xl" />,
     title: "NON AC",
-    numbers: 43,
   },
   {
     name: "earlyMorning",
     icon: <FiSunrise className="text-xl" />,
     title: "06:00-12:00",
-    numbers: 13,
   },
   {
     name: "evening",
     icon: <FiSunset className="text-xl" />,
     title: "18:00-24:00",
-    numbers: 53,
   },
   {
     name: "highRatedBuses",
     icon: <RiBusWifiLine className="text-xl" />,
     title: "High Rated Buses",
-    numbers: 8,
   },
   {
     name: "livaTracking",
     icon: <FaMapLocationDot className="text-xl" />,
     title: "Live Tracking",
-    numbers: 8,
   },
 ];

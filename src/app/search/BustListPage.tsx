@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import gsrtcLogo from "@/assets/images/gsrtc_logo_900x900.png";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Checkbox, DialogTitle, FormGroup, Popover } from "@mui/material";
 import HailOutlinedIcon from "@mui/icons-material/HailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -18,7 +18,7 @@ import { DateFormater, getDayOfWeek } from "@/utils/common/dateFormater";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImSpinner8 } from "react-icons/im";
 import { IoMdArrowBack, IoMdClose } from "react-icons/io";
-import { GrLinkNext } from "react-icons/gr";
+import { GrLinkNext, GrNext, GrPrevious } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 import useEmblaCarousel from "embla-carousel-react";
 import bus_offer_test from "@/assets/images/bus-offer-test.png";
@@ -35,6 +35,7 @@ import { FaLongArrowAltUp } from "react-icons/fa";
 import {
   boardingPoints,
   filterList,
+  FilterType,
   tagsList,
 } from "@/components/common/SearchPageData";
 import { IoCloseSharp } from "react-icons/io5";
@@ -43,12 +44,11 @@ import Tab from "@mui/material/Tab";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Link as MuiLink } from "@mui/material";
-import { motion, useInView, useScroll } from "motion/react";
+import { motion, useScroll } from "motion/react";
 
 const BusListPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const windowSize = useWindowSize();
-  const scrollPosition = useScrollPosition();
   const router = useRouter();
 
   // Source popover
@@ -195,7 +195,16 @@ const BusListPage = () => {
   }, [jorneyDateBtn]);
 
   //Offer carousel
-  const [offersCarouselRef] = useEmblaCarousel({ dragFree: true });
+  const [offersCarouselRef, offersCarouselAPI] = useEmblaCarousel({
+    dragFree: true,
+  });
+  const offersCarouselScrollNext = useCallback(() => {
+    if (offersCarouselAPI) offersCarouselAPI.scrollNext();
+  }, [offersCarouselAPI]);
+  const offersCarouselScrollPrev = useCallback(() => {
+    if (offersCarouselAPI) offersCarouselAPI.scrollPrev();
+  }, [offersCarouselAPI]);
+
   const offers: string[] = [
     "o1",
     "o1",
@@ -297,6 +306,144 @@ const BusListPage = () => {
       }
     });
   }, [scrollY]);
+
+  interface FilterStateType {
+    filterId: string;
+    isActive: boolean;
+    foundResults: number;
+  }
+
+  const initialFilterState = [
+    { filterId: "morning_6_to_12", isActive: false, foundResults: 0 },
+    { filterId: "afternoon_12_to_18", isActive: false, foundResults: 0 },
+    { filterId: "evening_18_to_24", isActive: false, foundResults: 0 },
+    { filterId: "night_00_to_06", isActive: false, foundResults: 0 },
+    { filterId: "arrival_morning_6_to_12", isActive: false, foundResults: 0 },
+    {
+      filterId: "arrival_afternoon_12_to_18",
+      isActive: false,
+      foundResults: 0,
+    },
+    { filterId: "arrival_evening_18_to_24", isActive: false, foundResults: 0 },
+    { filterId: "arrival_night_00_to_06", isActive: false, foundResults: 0 },
+    { filterId: "busType_AC", isActive: false, foundResults: 0 },
+    { filterId: "busType_NON_AC", isActive: false, foundResults: 0 },
+    { filterId: "busType_Seater", isActive: false, foundResults: 0 },
+    { filterId: "busType_Sleeper", isActive: false, foundResults: 0 },
+    {
+      filterId: "singleWindowSeaterOrSleeper",
+      isActive: false,
+      foundResults: 0,
+    },
+    { filterId: "busFeatures_liveTracking", isActive: false, foundResults: 0 },
+    {
+      filterId: "busFeatures_highRatedBuses",
+      isActive: false,
+      foundResults: 0,
+    },
+    { filterId: "busFeatures_deals", isActive: false, foundResults: 0 },
+    { filterId: "busFeatures_primoBus", isActive: false, foundResults: 0 },
+    {
+      filterId: "busFeatures_freeCancellation",
+      isActive: false,
+      foundResults: 0,
+    },
+    { filterId: "busFeatures_volvoBuses", isActive: false, foundResults: 0 },
+    { filterId: "busOperator_GSRTC", isActive: false, foundResults: 0 },
+    { filterId: "busOperator_MHSRTC", isActive: false, foundResults: 0 },
+    { filterId: "busOperator_RSRTC", isActive: false, foundResults: 0 },
+    { filterId: "busOperator_MPSRTC", isActive: false, foundResults: 0 },
+    { filterId: "amenitie_waterBottle", isActive: false, foundResults: 0 },
+    { filterId: "amenities_blanket", isActive: false, foundResults: 0 },
+    { filterId: "amenities_chargingPoint", isActive: false, foundResults: 0 },
+    { filterId: "amenitie_toilet", isActive: false, foundResults: 0 },
+    {
+      filterId: "specialBusFeature_freeBusChange",
+      isActive: false,
+      foundResults: 0,
+    },
+    {
+      filterId: "specialBusFeature_highlyRatedByWomen",
+      isActive: false,
+      foundResults: 0,
+    },
+    {
+      filterId: "specialBusFeature_womenTravelling",
+      isActive: false,
+      foundResults: 0,
+    },
+  ];
+
+  const filterBoardingPoints = {
+    title: "Boarding points",
+    contentsList: [
+      {
+        filterId: "boardingPoints_satrasta",
+        icon: null,
+        content: (
+          <div>
+            <p className="font-medium">Sat Rasta</p>
+          </div>
+        ),
+      },
+    ],
+    isSearchable: true,
+  };
+
+  const filterDroppingPoints = {
+    title: "Dropping points",
+    contentsList: [
+      {
+        filterId: "droppingPoints_satrasta",
+        icon: null,
+        content: (
+          <div>
+            <p className="font-medium">Sat Rasta</p>
+          </div>
+        ),
+      },
+    ],
+    isSearchable: true,
+  };
+
+  //filters rendering
+  const [filterRender, setFilterRender] = useState<FilterType[]>([
+    ...filterList,
+  ]);
+
+  //filters state
+  const [filterState, setFilterState] =
+    useState<FilterStateType[]>(initialFilterState);
+
+  useEffect(() => {
+    boardingPoints.forEach((brdp) => {
+      filterBoardingPoints.contentsList.push({
+        filterId: `boardingPoints_${brdp.replace(" ", "").toLocaleLowerCase()}`,
+        icon: null,
+        content: (
+          <div>
+            <p className="font-medium">{brdp}</p>
+          </div>
+        ),
+      });
+
+      filterDroppingPoints.contentsList.push({
+        filterId: `droppingPoints_${brdp.replace(" ", "").toLocaleLowerCase()}`,
+        icon: null,
+        content: (
+          <div>
+            <p className="font-medium">{brdp}</p>
+          </div>
+        ),
+      });
+    });
+
+    setFilterRender((prev) => [
+      ...prev,
+      filterBoardingPoints,
+      filterDroppingPoints,
+    ]);
+  }, []);
 
   return (
     <div>
@@ -889,17 +1036,21 @@ const BusListPage = () => {
               </p>
 
               {/* Tags */}
-              <ul className="w-full p-4 flex flex-col gap-y-4 border-b border-b-slate-200">
+              <ul className="w-full p-4 flex flex-col gap-y-4">
                 {tagsList &&
                   tagsList.map((tag) => (
                     <li key={`tag-${tag.name}`}>
                       <button
                         type="button"
-                        className="p-2 border hover:bg-gray-200 border-slate-400 !text-[#1d1d1d] rounded-lg flex items-center gap-1.5 cursor-pointer"
+                        // className="p-2 border hover:bg-gray-200 border-slate-400 !text-[#1d1d1d] rounded-lg flex items-center gap-1.5 cursor-pointer"
+                        className="p-2 border bg-primary/95 hover:bg-primary !text-white rounded-lg flex items-center gap-1.5 cursor-pointer"
                       >
                         {tag.icon}
                         <span className="text-sm font-medium">
                           {tag.title}&nbsp;({tag.numbers})
+                        </span>
+                        <span>
+                          <IoMdClose className="text-xl" />
                         </span>
                       </button>
                     </li>
@@ -907,14 +1058,14 @@ const BusListPage = () => {
               </ul>
 
               {/* Other filters */}
-              {filterList &&
-                filterList.map((filterAcc) => (
+              {filterRender &&
+                filterRender.map((filterAcc) => (
                   <FilterAccordian
                     isSearchable={filterAcc?.isSearchable ?? false}
                     key={filterAcc.title}
                     title={filterAcc.title}
                     contentsList={filterAcc.contentsList}
-                    selected={filterAcc.selected}
+                    selected={0}
                   />
                 ))}
             </div>
@@ -924,10 +1075,10 @@ const BusListPage = () => {
           <div className="w-full lg:max-w-[calc(100%-272px)] flex flex-col">
             {/* Offers Carousel */}
             <div
-              className="mx-4 md:mx-8 lg:mx-0 !overflow-hidden"
+              className="relative mx-4 md:mx-8 lg:mx-0 !overflow-hidden mb-5"
               ref={offersCarouselRef}
             >
-              <div className="flex pb-5">
+              <div className="flex">
                 {offers &&
                   offers.map((o, inx) => (
                     <Link
@@ -943,6 +1094,21 @@ const BusListPage = () => {
                     </Link>
                   ))}
               </div>
+
+              <button
+                type="button"
+                onClick={offersCarouselScrollPrev}
+                className="absolute top-1/2 -translate-y-1/2 left-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+              >
+                <GrPrevious className="text-lg sm:text-xl md:text-2xl" />
+              </button>
+              <button
+                type="button"
+                onClick={offersCarouselScrollNext}
+                className="absolute top-1/2 -translate-y-1/2 right-5 p-2 rounded-full bg-white/50 hover:bg-white cursor-pointer"
+              >
+                <GrNext className="text-lg sm:text-xl md:text-2xl" />
+              </button>
             </div>
 
             {/* Filters tags from mobile screen */}
@@ -967,6 +1133,9 @@ const BusListPage = () => {
                         {tag.icon}
                         <span className="text-sm font-medium text-nowrap">
                           {tag.title}&nbsp;({tag.numbers})
+                        </span>
+                        <span>
+                          <IoMdClose />
                         </span>
                       </button>
                     </li>
