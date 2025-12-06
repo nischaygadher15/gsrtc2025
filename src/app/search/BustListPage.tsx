@@ -1047,7 +1047,7 @@ const BusListPage = () => {
                       >
                         {tag.icon}
                         <span className="text-sm font-medium">
-                          {tag.title}&nbsp;({tag.numbers})
+                          {tag.title}&nbsp;({0})
                         </span>
                         <span>
                           <IoMdClose className="text-xl" />
@@ -1132,7 +1132,7 @@ const BusListPage = () => {
                       >
                         {tag.icon}
                         <span className="text-sm font-medium text-nowrap">
-                          {tag.title}&nbsp;({tag.numbers})
+                          {tag.title}&nbsp;({0})
                         </span>
                         <span>
                           <IoMdClose />
@@ -1264,7 +1264,7 @@ const BusListPage = () => {
                                         <div className="flex flex-1 justify-between items-center">
                                           {flt.content}
                                           <span className="text-xs text-[#1d1d1da3]">
-                                            {flt.numbers}
+                                            {0}
                                           </span>
                                         </div>
 
