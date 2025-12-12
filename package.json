@@ -1,0 +1,50 @@
+{
+  "name": "gsrtc_sarathi_frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/lab": "^7.0.1-beta.20",
+    "@mui/material": "^7.3.6",
+    "@mui/x-date-pickers": "^8.21.0",
+    "@types/react-google-recaptcha": "^2.1.9",
+    "@types/react-slick": "^0.23.13",
+    "@vercel/analytics": "^1.6.1",
+    "dayjs": "^1.11.19",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "motion": "^12.23.25",
+    "next": "^16.0.10",
+    "next-auth": "^4.24.13",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
+    "react-google-recaptcha": "^3.1.0",
+    "react-hook-form": "^7.68.0",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.5.0",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.7",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

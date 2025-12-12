@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Allura&family=Noto+Sans+Gujarati:wght@100..900&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #173c62;
+
+  /* Breakpoints */
+  --breakpoint-xs: 300px;
+
+  /* fonts */
+  --font-noto-guj: "Noto Sans Gujarati", sans-serif;
+  --font-allura: "Allura", cursive;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  scroll-behavior: smooth;
+}
+
+.myContainer {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 768px) {
+  .myContainer {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .myContainer {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .myContainer {
+    padding-left: 75px;
+    padding-right: 75px;
+  }
+}
+
+.hideScrollBar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox, Safari 18.2+, Chromium 121+ */
+}
+.hideScrollBar::-webkit-scrollbar {
+  display: none; /* Older Safari and Chromium */
+}
+
+/* Footer accordinas css */
+#popCitiesAccordian::before {
+  display: none;
+}
+
+#knowYourSeatTypes,
+#cancellationTable {
+  border: 1px solid #e6e6e6;
+  border-collapse: collapse;
+}
+
+#knowYourSeatTypes > tr,
+#cancellationTable > tr,
+#cancellationTable > th,
+#cancellationTable > td,
+#dateChangePolicyTable > tr,
+#dateChangePolicyTable > th,
+#dateChangePolicyTable > td {
+  border: 1px solid #e6e6e6;
+}
+
+#knowYourSeatTypes > td,
+#knowYourSeatTypes > th,
+#cancellationTable > td,
+#cancellationTable > th,
+#dateChangePolicyTable > td,
+#dateChangePolicyTable > th {
+  padding: 16px;
+}
+
+#cancellationTable,
+#dateChangePolicyTable {
+  font-size: 14px;
+}
+
+#cancellationTable > td,
+#dateChangePolicyTable > td {
+  font-weight: 500;
+}
+
+#ratePercentageTable > tr,
+#ratePercentageTable > th,
+#ratePercentageTable > td {
+  border: none;
+}
