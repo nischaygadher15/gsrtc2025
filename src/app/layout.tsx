@@ -4,9 +4,8 @@ import DefaultNavbar from "../components/common/DefaultNavbar";
 import FooterSection from "@/components/common/FooterSection";
 import FooterNavbar from "@/components/common/FooterNavbar";
 import { Analytics } from "@vercel/analytics/next";
-// import Script from "next/script";
 import { Toaster } from "react-hot-toast";
-import ProviderWrapper from "@/providers/SessionProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export const metadata: Metadata = {
   title: {
@@ -26,7 +25,9 @@ export default function RootLayout({
       <body className="bg-white z-0">
         <script src="https://www.google.com/recaptcha/api.js?render=explicit" />
 
-        <ProviderWrapper>
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+        >
           {/* Toaster */}
           <Toaster
             position="top-center"
@@ -61,7 +62,7 @@ export default function RootLayout({
           <Analytics />
           <FooterSection />
           <FooterNavbar />
-        </ProviderWrapper>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
