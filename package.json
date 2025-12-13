@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.6",
     "@mui/x-date-pickers": "^8.21.0",
     "@react-oauth/google": "^0.12.2",
+    "@reduxjs/toolkit": "^2.11.1",
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/react-slick": "^0.23.13",
     "@vercel/analytics": "^1.6.1",
@@ -32,6 +33,7 @@
     "react-hook-form": "^7.68.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
     "react-slick": "^0.31.0",
     "slick-carousel": "^1.8.1",
     "zod": "^4.1.13"

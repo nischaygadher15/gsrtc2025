@@ -44,9 +44,14 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
 import Script from "next/script";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { sessionLogout, setSession } from "@/redux/slices/session/sessionSlice";
 
 const DefaultNavbar = () => {
   const currentLocation = usePathname();
+  const dispatch = useDispatch<AppDispatch>();
   const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
 
@@ -134,7 +139,7 @@ const DefaultNavbar = () => {
     if (captchaToken) setIAmNotRobot(true);
   }, [loginWith]);
 
-  const onMobileLogin = (data: LoginByMobileSchemaType) => {
+  const onMobileLogin = async (data: LoginByMobileSchemaType) => {
     console.log("data: ", data);
   };
 
@@ -142,130 +147,139 @@ const DefaultNavbar = () => {
     console.log("data: ", data);
   };
 
-  const handleSignInWithGoogleScirpt = () => {
-    window.google.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-      callback: (response: any) => {
-        console.log("response.credential:", response.credential);
-      },
-    });
+  const sessionId = useSelector((state: RootState) => state.session.sessionId);
+
+  useEffect(() => {
+    console.log("Current Session: ", sessionId);
+  }, [sessionId]);
+
+  const handleSignInWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: ({ code }) => {
+      console.log("Auth-code: ", code);
+      dispatch(setSession(code));
+      closeGsrctLoginDialog();
+      closeUserDrawer();
+      toast.success("You have successfully logged in!");
+    },
+    onError: () => {
+      console.log("Login with Google failed");
+      toast.error("Login with Google failed");
+    },
+  });
+
+  const SessionLogout = () => {
+    dispatch(sessionLogout());
+    closeUserDrawer();
   };
 
-  const handleSignInWithGoogle = () => window.google.accounts.id.prompt();
-
   return (
-    <>
-      <Script
-        src="https://accounts.google.com/gsi/client"
-        strategy="afterInteractive"
-        onLoad={handleSignInWithGoogle}
-      />
-
-      <nav
-        className={`myContainer ${
-          currentLocation !== "/search"
-            ? "sticky top-0 left-0 right-0 z-40 flex shadow-md"
-            : "relative border-b border-b-slate-200 z-40 hidden lg:flex"
-        }  min-w-full bg-white justify-between py-3`}
-      >
-        {/* GSRTC Logo */}
-        <Link href="#">
-          <div className="lg:min-w-[360px] flex flex-nowrap gap-x-2 items-center">
-            <Image
-              src={navbarLogo}
-              alt="GSRTC Navbar LOGO"
-              width={60}
-              quality={100}
-              unoptimized
-              className="object-contain"
-              priority
-            />
-            <div className="">
-              <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
-                Gujarat State Road Transport Corporation
-              </p>
-              <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-tight tracking-wider text-[#212153]">
-                ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
-              </p>
-              <hr className="border-px border-slate-200 my-[2px]" />
-              <p className="text-nowrap text-lg text-[#cc0000] font-semibold font-allura leading-none tracking-widest">
-                Steering miles with smiles
-              </p>
-            </div>
+    <nav
+      className={`myContainer ${
+        currentLocation !== "/search"
+          ? "sticky top-0 left-0 right-0 z-40 flex shadow-md"
+          : "relative border-b border-b-slate-200 z-40 hidden lg:flex"
+      }  min-w-full bg-white justify-between py-3`}
+    >
+      {/* GSRTC Logo */}
+      <Link href="#">
+        <div className="lg:min-w-[360px] flex flex-nowrap gap-x-2 items-center">
+          <Image
+            src={navbarLogo}
+            alt="GSRTC Navbar LOGO"
+            width={60}
+            quality={100}
+            unoptimized
+            className="object-contain"
+            priority
+          />
+          <div className="">
+            <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
+              Gujarat State Road Transport Corporation
+            </p>
+            <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-tight tracking-wider text-[#212153]">
+              ગુજરાત રાજ્ય માર્ગ વાહન વ્યવહાર નિગમ
+            </p>
+            <hr className="border-px border-slate-200 my-[2px]" />
+            <p className="text-nowrap text-lg text-[#cc0000] font-semibold font-allura leading-none tracking-widest">
+              Steering miles with smiles
+            </p>
           </div>
-        </Link>
+        </div>
+      </Link>
 
-        {/* Navbar links */}
-        <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-2 sm:gap-x-3 xl:gap-x-5">
-          <li>
-            <Link
-              href="/bookings"
-              className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
-                currentLocation === "/bookings" ? "text-primary" : "text-black"
-              }`}
-            >
-              <IoListOutline className="w-6 h-6" />
-              <span>Bookings</span>
-            </Link>
-          </li>
+      {/* Navbar links */}
+      <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-2 sm:gap-x-3 xl:gap-x-5">
+        <li>
+          <Link
+            href="/bookings"
+            className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+              currentLocation === "/bookings" ? "text-primary" : "text-black"
+            }`}
+          >
+            <IoListOutline className="w-6 h-6" />
+            <span>Bookings</span>
+          </Link>
+        </li>
 
-          <li>
-            <Link
-              href="#"
-              className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
-                currentLocation === "/help" ? "text-primary" : "text-black"
-              }`}
-            >
-              <BiHelpCircle className="w-6 h-6" />
-              <span>Help</span>
-            </Link>
-          </li>
-          <li className="">
-            <a
-              href="https://yatradham.gujarat.gov.in/Booking"
-              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
-            >
-              <span>Sharvan</span>
-              <span>Tirth Darshan</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.soutickets.in/#/gsrtc-booking"
-              className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
-            >
-              <span>Unity</span>
-              <span>Booking</span>
-            </a>
-          </li>
-          <li className="">
+        <li>
+          <Link
+            href="#"
+            className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+              currentLocation === "/help" ? "text-primary" : "text-black"
+            }`}
+          >
+            <BiHelpCircle className="w-6 h-6" />
+            <span>Help</span>
+          </Link>
+        </li>
+        <li className="">
+          <a
+            href="https://yatradham.gujarat.gov.in/Booking"
+            className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
+          >
+            <span>Sharvan</span>
+            <span>Tirth Darshan</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://www.soutickets.in/#/gsrtc-booking"
+            className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
+          >
+            <span>Unity</span>
+            <span>Booking</span>
+          </a>
+        </li>
+        <li className="">
+          <button
+            type="button"
+            onClick={handleUserDrawer}
+            className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1 cursor-pointer"
+          >
+            <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
+            <span className="text-xs">Account</span>
+          </button>
+        </li>
+      </ul>
+
+      {/* <=============== Drawer and Dialogs ===============> */}
+
+      {/* Account Drawer */}
+      <Drawer anchor="right" open={anchor1} onClose={closeUserDrawer}>
+        <div className="w-[360px]">
+          <div className="relative p-4 border-b-[1px] border-slate-200 flex items-center justify-between ">
+            <span className="font-semibold">Account</span>
             <button
               type="button"
-              onClick={handleUserDrawer}
-              className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1"
+              onClick={closeUserDrawer}
+              className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer px-3.5 py-2 rounded-s-full rounded-e-full bg-white hover:bg-slate-200"
             >
-              <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
-              <span className="text-xs">Account</span>
+              <CloseIcon sx={{ fontSize: 24 }} />
             </button>
-          </li>
-        </ul>
+          </div>
 
-        {/* <=============== Drawer and Dialogs ===============> */}
-
-        {/* Account Drawer */}
-        <Drawer anchor="right" open={anchor1} onClose={closeUserDrawer}>
-          <div className="w-[360px]">
-            <div className="relative p-4 border-b-[1px] border-slate-200 flex items-center justify-between ">
-              <span className="font-semibold">Account</span>
-              <button
-                type="button"
-                onClick={closeUserDrawer}
-                className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer px-3.5 py-2 rounded-s-full rounded-e-full bg-white hover:bg-slate-200"
-              >
-                <CloseIcon sx={{ fontSize: 24 }} />
-              </button>
-            </div>
-
+          {sessionId ? (
             <>
               {/* My Details */}
               <div className="">
@@ -296,7 +310,7 @@ const DefaultNavbar = () => {
                 </Link>
               </div>
             </>
-
+          ) : (
             <>
               {/* Login/Sign up */}
               <div className="px-4">
@@ -306,7 +320,8 @@ const DefaultNavbar = () => {
                 <button
                   type="button"
                   onClick={openGsrctLoginDialog}
-                  className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full"
+                  className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer
+                "
                 >
                   GSRCT Log In
                 </button>
@@ -395,170 +410,171 @@ const DefaultNavbar = () => {
                 </AccordionDetails>
               </Accordion>
             </>
+          )}
 
-            {/* Wallet */}
-            <div className="">
-              <p className="p-4 text-[22px] font-bold leading-tight py-7">
-                Payments
-              </p>
+          {/* Wallet */}
+          <div className="">
+            <p className="p-4 text-[22px] font-bold leading-tight py-7">
+              Payments
+            </p>
 
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <AccountBalanceWalletOutlinedIcon sx={{ fontSize: 24 }} />
-                    <span>Wallet</span>
-                  </div>
-
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <AccountBalanceWalletOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Wallet</span>
                 </div>
-              </Link>
-            </div>
 
-            {/* More */}
-            <div className="">
-              <p className="p-4 text-[22px] font-bold leading-tight py-7">
-                More
-              </p>
-              {/* Offer */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
-                    <span>Offer</span>
-                  </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+          </div>
 
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+          {/* More */}
+          <div className="">
+            <p className="p-4 text-[22px] font-bold leading-tight py-7">More</p>
+            {/* Offer */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Offer</span>
                 </div>
-              </Link>
 
-              {/* Know about GSRTC */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <InfoOutlinedIcon sx={{ fontSize: 24 }} />
-                    <span>Know about GSRTC</span>
-                  </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
 
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+            {/* Know about GSRTC */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <InfoOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Know about GSRTC</span>
                 </div>
-              </Link>
 
-              {/* Help */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <HelpOutlineOutlinedIcon sx={{ fontSize: 24 }} />
-                    <span>Help</span>
-                  </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
 
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+            {/* Help */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <HelpOutlineOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Help</span>
                 </div>
-              </Link>
 
-              {/* Cancel Ticket */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <TbTicketOff style={{ fontSize: 30 }} />
-                    <span>Cancel Ticket</span>
-                  </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
 
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+            {/* Cancel Ticket */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <TbTicketOff style={{ fontSize: 30 }} />
+                  <span>Cancel Ticket</span>
                 </div>
-              </Link>
 
-              {/* Reschedule Ticket */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <CalendarTodayIcon sx={{ fontSize: 24 }} />
-                    <span>Reschedule Ticket</span>
-                  </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
 
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+            {/* Reschedule Ticket */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <CalendarTodayIcon sx={{ fontSize: 24 }} />
+                  <span>Reschedule Ticket</span>
                 </div>
-              </Link>
 
-              {/* Search Ticket */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <BsTicketDetailed style={{ fontSize: 30 }} />
-                    <span>Search Ticket</span>
-                  </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
 
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+            {/* Search Ticket */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <BsTicketDetailed style={{ fontSize: 30 }} />
+                  <span>Search Ticket</span>
                 </div>
-              </Link>
 
-              {/* Langauge */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <RiFontSize style={{ fontSize: 30 }} />
-                    <div>
-                      <span>Langauge</span>
-                      <span>English</span>
-                    </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Langauge */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <RiFontSize style={{ fontSize: 30 }} />
+                  <div>
+                    <span>Langauge</span>
+                    <span>English</span>
                   </div>
-
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
                 </div>
-              </Link>
 
-              {/* Notifications */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <NotificationsActiveOutlinedIcon sx={{ fontSize: 24 }} />
-                    <span>Notifications</span>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Notifications */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <NotificationsActiveOutlinedIcon sx={{ fontSize: 24 }} />
+                  <span>Notifications</span>
+                </div>
+
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* State */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
+                <div className="flex items-center gap-x-3">
+                  <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
+                  <div>
+                    <span>State</span>
+                    <span>Gujarat</span>
                   </div>
-
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
                 </div>
-              </Link>
 
-              {/* State */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
-                  <div className="flex items-center gap-x-3">
-                    <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
-                    <div>
-                      <span>State</span>
-                      <span>Gujarat</span>
-                    </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
+
+            {/* Booking for women */}
+            <Link href="/wallet">
+              <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400 mb-7">
+                <div className="flex items-center gap-x-3">
+                  <Image
+                    src={womenSvg}
+                    height={24}
+                    width={24}
+                    alt="Booking for women"
+                  />
+                  <div className="flex flex-col">
+                    <span>Booking for women</span>
+                    <span className="text-gray-500 text-sm font-normal">
+                      {false ? "Yes" : "No"}
+                    </span>
                   </div>
-
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
                 </div>
-              </Link>
 
-              {/* Booking for women */}
-              <Link href="/wallet">
-                <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400 mb-7">
-                  <div className="flex items-center gap-x-3">
-                    <Image
-                      src={womenSvg}
-                      height={24}
-                      width={24}
-                      alt="Booking for women"
-                    />
-                    <div className="flex flex-col">
-                      <span>Booking for women</span>
-                      <span className="text-gray-500 text-sm font-normal">
-                        {false ? "Yes" : "No"}
-                      </span>
-                    </div>
-                  </div>
+                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+              </div>
+            </Link>
 
-                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-                </div>
-              </Link>
-
-              {/* Logout */}
+            {/* Logout */}
+            {sessionId && (
               <button
                 type="button"
                 className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400 cursor-pointer"
+                onClick={SessionLogout}
               >
                 <div className="flex items-center gap-x-3">
                   <BiLogOut className="w-6 h-6" />
@@ -567,138 +583,67 @@ const DefaultNavbar = () => {
 
                 <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
               </button>
-            </div>
+            )}
           </div>
-        </Drawer>
+        </div>
+      </Drawer>
 
-        {/* GSRTC Login/Sign up Dialog */}
-        <Dialog
-          onClose={closeGsrctLoginDialog}
-          open={gsrtcLoginDialog}
-          sx={{
-            "& .MuiDialog-paper": {
-              borderRadius: "16px",
-              margin: 0,
-              overflow: "hidden",
-              maxHeight: "calc(100% - 32px)",
-            },
-          }}
-        >
-          <div className="relative w-xl min-h-[calc(100vh-32px)] max-h-[calc(100vh-32px)] flex flex-col bg-white overflow-y-auto hideScrollBar">
-            {/* Header */}
-            <div className="sticky top-0 left-0 right-0 z-999 p-4 bg-white flex justify-between items-center">
-              <p className="text-xl font-bold">Login to GSRTC</p>
-              <button
-                type="button"
-                className="rounded-s-full rounded-e-full p-2 hover:bg-slate-200 cursor-pointer"
-                onClick={closeGsrctLoginDialog}
-              >
-                <IoMdClose className="text-2xl" />
-              </button>
-            </div>
+      {/* GSRTC Login/Sign up Dialog */}
+      <Dialog
+        onClose={closeGsrctLoginDialog}
+        open={gsrtcLoginDialog}
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: "16px",
+            margin: 0,
+            overflow: "hidden",
+            maxHeight: "calc(100% - 32px)",
+          },
+        }}
+      >
+        <div className="relative w-xl min-h-[calc(100vh-32px)] max-h-[calc(100vh-32px)] flex flex-col bg-white overflow-y-auto hideScrollBar">
+          {/* Header */}
+          <div className="sticky top-0 left-0 right-0 z-999 p-4 bg-white flex justify-between items-center">
+            <p className="text-xl font-bold">Login to GSRTC</p>
+            <button
+              type="button"
+              className="rounded-s-full rounded-e-full p-2 hover:bg-slate-200 cursor-pointer"
+              onClick={closeGsrctLoginDialog}
+            >
+              <IoMdClose className="text-2xl" />
+            </button>
+          </div>
 
-            <div className="px-4">
-              {loginWith === "mobile" ? (
-                <form onSubmit={mobileSubmit(onMobileLogin)}>
-                  {/* Mobile no. */}
-                  <div>
-                    <p className="text-lg font-bold mb-1">
-                      What's your mobile number?
-                    </p>
-                    <div className="flex">
-                      <button
-                        type="button"
-                        disabled
-                        className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
-                      >
-                        <p className="text-xs text-[#1d1d1da3]">Country Code</p>
-                        <p className="flex items-center gap-x-1 font-semibold">
-                          <span>+91 (IND)</span>
-                          <IoMdArrowDropdown className="text-xl" />
-                        </p>
-                      </button>
-
-                      <Controller
-                        name="userMobileNo"
-                        control={mobileControl}
-                        render={({ field: { onChange, name, value } }) => (
-                          <div className="flex-1 border rounded-se-lg rounded-ee-lg">
-                            <TextField
-                              type="text"
-                              label="Mobile number"
-                              placeholder="Enter mobile no."
-                              variant="filled"
-                              name={name}
-                              value={value}
-                              onChange={onChange}
-                              error={false}
-                              sx={{
-                                width: "100%",
-                                "& .MuiFilledInput-root": {
-                                  fontWeight: "700 !important",
-                                  backgroundColor: "white !important",
-                                  borderTopLeftRadius: "0px",
-                                  borderTopRightRadius: "8px",
-                                  borderBottomRightRadius: "8px",
-                                },
-                                "& .MuiInputLabel-root": {
-                                  color: "#1d1d1da3 !important",
-                                },
-                                "& ::before": {
-                                  display: "none",
-                                },
-                                "& ::after": {
-                                  display: "none",
-                                },
-                              }}
-                            />
-                          </div>
-                        )}
-                      />
-                    </div>
-                    <p className="my-1 text-xs text-red-600 min-h-5">
-                      {mobileErrors.userMobileNo
-                        ? mobileErrors.userMobileNo.message
-                        : ""}
-                    </p>
-                  </div>
-
-                  <div>
-                    {/* Recatcha */}
-                    {!iAmNotRobot && (
-                      <div className="flex justify-center py-4">
-                        <ReCAPTCHA
-                          sitekey={CaptchaClientKey}
-                          onChange={onCaptchSuccess}
-                          onErrored={onCaptchaFailed}
-                          onExpired={onCaptchaExpired}
-                        />
-                      </div>
-                    )}
-
+          <div className="px-4">
+            {loginWith === "mobile" ? (
+              <form onSubmit={mobileSubmit(onMobileLogin)}>
+                {/* Mobile no. */}
+                <div>
+                  <p className="text-lg font-bold mb-1">
+                    What's your mobile number?
+                  </p>
+                  <div className="flex">
                     <button
-                      type="submit"
-                      disabled={captchaToken ? false : true}
-                      className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:bg-gray-200 disabled:hover:bg-gray-300 disabled:text-gray-500"
+                      type="button"
+                      disabled
+                      className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
                     >
-                      Generate OTP
+                      <p className="text-xs text-[#1d1d1da3]">Country Code</p>
+                      <p className="flex items-center gap-x-1 font-semibold">
+                        <span>+91 (IND)</span>
+                        <IoMdArrowDropdown className="text-xl" />
+                      </p>
                     </button>
-                  </div>
-                </form>
-              ) : (
-                <form onSubmit={emailSubmit(onEmailLogin)}>
-                  {/* Email */}
-                  <div>
-                    <p className="text-lg font-bold mb-1">Email</p>
+
                     <Controller
-                      name="userEmail"
-                      control={emailControl}
+                      name="userMobileNo"
+                      control={mobileControl}
                       render={({ field: { onChange, name, value } }) => (
-                        <div className="flex-1 border rounded-lg">
+                        <div className="flex-1 border rounded-se-lg rounded-ee-lg">
                           <TextField
                             type="text"
-                            label="Email"
-                            placeholder="Enter email id."
+                            label="Mobile number"
+                            placeholder="Enter mobile no."
                             variant="filled"
                             name={name}
                             value={value}
@@ -707,9 +652,11 @@ const DefaultNavbar = () => {
                             sx={{
                               width: "100%",
                               "& .MuiFilledInput-root": {
-                                fontWeight: "500 !important",
+                                fontWeight: "700 !important",
                                 backgroundColor: "white !important",
-                                borderRadius: "8px",
+                                borderTopLeftRadius: "0px",
+                                borderTopRightRadius: "8px",
+                                borderBottomRightRadius: "8px",
                               },
                               "& .MuiInputLabel-root": {
                                 color: "#1d1d1da3 !important",
@@ -725,187 +672,252 @@ const DefaultNavbar = () => {
                         </div>
                       )}
                     />
-
-                    <p className="my-1 text-xs text-red-600 min-h-5">
-                      {emailErrors.userEmail
-                        ? emailErrors.userEmail.message
-                        : ""}
-                    </p>
                   </div>
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {mobileErrors.userMobileNo
+                      ? mobileErrors.userMobileNo.message
+                      : ""}
+                  </p>
+                </div>
 
-                  {/* Password */}
-                  <div>
-                    <p className="text-lg font-bold mb-1">Password</p>
-                    <Controller
-                      name="userPass"
-                      control={emailControl}
-                      render={({ field: { onChange, name, value } }) => (
-                        <div className="flex-1 border rounded-lg">
-                          <TextField
-                            type={loginPassEye ? "text" : "password"}
-                            label="Password"
-                            placeholder="Enter password."
-                            variant="filled"
-                            name={name}
-                            value={value}
-                            onChange={onChange}
-                            error={false}
-                            slotProps={{
-                              input: {
-                                endAdornment: (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setLoginPassEye(!loginPassEye)
-                                    }
-                                    className="cursor-pointer"
-                                  >
-                                    {loginPassEye ? (
-                                      <VisibilityOff />
-                                    ) : (
-                                      <Visibility />
-                                    )}
-                                  </button>
-                                ),
-                              },
-                            }}
-                            sx={{
-                              width: "100%",
-                              "& .MuiFilledInput-root": {
-                                fontWeight: "500 !important",
-                                backgroundColor: "white !important",
-                                borderRadius: "8px",
-                              },
-                              "& .MuiInputLabel-root": {
-                                color: "#1d1d1da3 !important",
-                              },
-                              "& ::before": {
-                                display: "none",
-                              },
-                              "& ::after": {
-                                display: "none",
-                              },
-                            }}
-                          />
-                        </div>
-                      )}
-                    />
+                <div>
+                  {/* Recatcha */}
+                  {!iAmNotRobot && (
+                    <div className="flex justify-center py-4">
+                      <ReCAPTCHA
+                        sitekey={CaptchaClientKey}
+                        onChange={onCaptchSuccess}
+                        onErrored={onCaptchaFailed}
+                        onExpired={onCaptchaExpired}
+                      />
+                    </div>
+                  )}
 
-                    <p className="my-1 text-xs text-red-600 min-h-5">
-                      {emailErrors.userPass ? emailErrors.userPass.message : ""}
-                    </p>
-                  </div>
-
-                  <div>
-                    {/* Recatcha */}
-                    {!iAmNotRobot && (
-                      <div className="flex justify-center py-4">
-                        <ReCAPTCHA
-                          sitekey={CaptchaClientKey}
-                          onChange={onCaptchSuccess}
-                          onErrored={onCaptchaFailed}
-                          onExpired={onCaptchaExpired}
+                  <button
+                    type="submit"
+                    disabled={captchaToken ? false : true}
+                    className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:bg-gray-200 disabled:hover:bg-gray-300 disabled:text-gray-500"
+                  >
+                    Generate OTP
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={emailSubmit(onEmailLogin)}>
+                {/* Email */}
+                <div>
+                  <p className="text-lg font-bold mb-1">Email</p>
+                  <Controller
+                    name="userEmail"
+                    control={emailControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-lg">
+                        <TextField
+                          type="text"
+                          label="Email"
+                          placeholder="Enter email id."
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          error={false}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              fontWeight: "500 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3 !important",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
                         />
                       </div>
                     )}
+                  />
 
-                    <button
-                      type="submit"
-                      disabled={captchaToken ? false : true}
-                      className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:bg-gray-200 disabled:hover:bg-gray-300 disabled:text-gray-500"
-                    >
-                      Login
-                    </button>
-
-                    <div className="flex gap-7">
-                      <button type="button">Get session</button>
-                      <button type="button">Logout</button>
-                    </div>
-                  </div>
-                </form>
-              )}
-
-              <p className="flex justify-center items-center gap-2 py-5">
-                <span className="w-1/2 h-px bg-slate-200"></span>
-                <span className="text-slate-500 text-sm text-nowrap">
-                  Or Login/Signup With
-                </span>
-                <span className="w-1/2 h-px bg-slate-200"></span>
-              </p>
-
-              <div className="flex justify-center gap-4">
-                {/* Login with google */}
-                <button
-                  type="button"
-                  className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
-                  onClick={() => handleSignInWithGoogle()}
-                >
-                  <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
-                    <Image
-                      src={googleIcon}
-                      width={24}
-                      height={24}
-                      alt="Google Sign In Icon"
-                    />
-                  </div>
-
-                  <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                    Sign in with Google
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {emailErrors.userEmail ? emailErrors.userEmail.message : ""}
                   </p>
-                </button>
+                </div>
 
-                {loginWith === "mobile" ? (
-                  <>
-                    {/* Login with Email */}
-                    <button
-                      type="button"
-                      className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
-                      onClick={() => {
-                        setLoginWith("email");
-                      }}
-                    >
-                      <MdOutlineEmail className="w-7 h-7 text-white" />
-                      <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                        Sign in with Email
-                      </p>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    {/* Login with Email */}
-                    <button
-                      type="button"
-                      className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
-                      onClick={() => {
-                        setLoginWith("mobile");
-                      }}
-                    >
-                      <FaMobileAlt className="w-7 h-7 text-white" />
-                      <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                        Sign in with Mobile No.
-                      </p>
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
+                {/* Password */}
+                <div>
+                  <p className="text-lg font-bold mb-1">Password</p>
+                  <Controller
+                    name="userPass"
+                    control={emailControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-lg">
+                        <TextField
+                          type={loginPassEye ? "text" : "password"}
+                          label="Password"
+                          placeholder="Enter password."
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          error={false}
+                          slotProps={{
+                            input: {
+                              endAdornment: (
+                                <button
+                                  type="button"
+                                  onClick={() => setLoginPassEye(!loginPassEye)}
+                                  className="cursor-pointer"
+                                >
+                                  {loginPassEye ? (
+                                    <VisibilityOff />
+                                  ) : (
+                                    <Visibility />
+                                  )}
+                                </button>
+                              ),
+                            },
+                          }}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              fontWeight: "500 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3 !important",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
 
-            <div className="w-full p-3 flex justify-center items-center gap-2 mb-4">
-              <p className="text-sm text-center">By logging in, I agree</p>
-              <p className="text-sm flex justify-center items-center gap-2">
-                <a href="#" className="text-blue-500">
-                  Terms & Conditions
-                </a>
-                <span>&</span>
-                <a href="#" className="text-blue-500">
-                  Privacy Policy
-                </a>
-              </p>
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {emailErrors.userPass ? emailErrors.userPass.message : ""}
+                  </p>
+                </div>
+
+                <div>
+                  {/* Recatcha */}
+                  {!iAmNotRobot && (
+                    <div className="flex justify-center py-4">
+                      <ReCAPTCHA
+                        sitekey={CaptchaClientKey}
+                        onChange={onCaptchSuccess}
+                        onErrored={onCaptchaFailed}
+                        onExpired={onCaptchaExpired}
+                      />
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={captchaToken ? false : true}
+                    className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:bg-gray-200 disabled:hover:bg-gray-300 disabled:text-gray-500"
+                  >
+                    Login
+                  </button>
+
+                  <div className="flex gap-7">
+                    <button type="button">Get session</button>
+                    <button type="button">Logout</button>
+                  </div>
+                </div>
+              </form>
+            )}
+
+            <p className="flex justify-center items-center gap-2 py-5">
+              <span className="w-1/2 h-px bg-slate-200"></span>
+              <span className="text-slate-500 text-sm text-nowrap">
+                Or Login/Signup With
+              </span>
+              <span className="w-1/2 h-px bg-slate-200"></span>
+            </p>
+
+            <div className="flex justify-center gap-4">
+              {/* Login with google */}
+              <button
+                type="button"
+                className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
+                onClick={() => handleSignInWithGoogle()}
+              >
+                <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
+                  <Image
+                    src={googleIcon}
+                    width={24}
+                    height={24}
+                    alt="Google Sign In Icon"
+                  />
+                </div>
+
+                <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                  Sign in with Google
+                </p>
+              </button>
+
+              {loginWith === "mobile" ? (
+                <>
+                  {/* Login with Email */}
+                  <button
+                    type="button"
+                    className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                    onClick={() => {
+                      setLoginWith("email");
+                    }}
+                  >
+                    <MdOutlineEmail className="w-7 h-7 text-white" />
+                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                      Sign in with Email
+                    </p>
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Login with Email */}
+                  <button
+                    type="button"
+                    className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                    onClick={() => {
+                      setLoginWith("mobile");
+                    }}
+                  >
+                    <FaMobileAlt className="w-7 h-7 text-white" />
+                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                      Sign in with Mobile No.
+                    </p>
+                  </button>
+                </>
+              )}
             </div>
           </div>
-        </Dialog>
-      </nav>
-    </>
+
+          <div className="w-full p-3 flex justify-center items-center gap-2 mb-4">
+            <p className="text-sm text-center">By logging in, I agree</p>
+            <p className="text-sm flex justify-center items-center gap-2">
+              <a href="#" className="text-blue-500">
+                Terms & Conditions
+              </a>
+              <span>&</span>
+              <a href="#" className="text-blue-500">
+                Privacy Policy
+              </a>
+            </p>
+          </div>
+        </div>
+      </Dialog>
+    </nav>
   );
 };
 

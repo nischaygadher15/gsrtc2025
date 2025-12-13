@@ -6,6 +6,7 @@ import FooterNavbar from "@/components/common/FooterNavbar";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import ReduxProvider from "@/lib/providers/reduxProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -24,45 +25,46 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-white z-0">
         <script src="https://www.google.com/recaptcha/api.js?render=explicit" />
-
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
-        >
-          {/* Toaster */}
-          <Toaster
-            position="top-center"
-            reverseOrder={false}
-            gutter={8}
-            containerClassName=""
-            containerStyle={{}}
-            toasterId="default"
-            toastOptions={{
-              // Define default options
-              className: "",
-              duration: 5000,
-              removeDelay: 1000,
-              style: {
-                background: "#363636",
-                color: "#fff",
-              },
-
-              // Default options for specific types
-              success: {
-                duration: 3000,
-                iconTheme: {
-                  primary: "green",
-                  secondary: "black",
+        <ReduxProvider>
+          <GoogleOAuthProvider
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+          >
+            {/* Toaster */}
+            <Toaster
+              position="top-center"
+              reverseOrder={false}
+              gutter={8}
+              containerClassName=""
+              containerStyle={{}}
+              toasterId="default"
+              toastOptions={{
+                // Define default options
+                className: "",
+                duration: 5000,
+                removeDelay: 1000,
+                style: {
+                  background: "#363636",
+                  color: "#fff",
                 },
-              },
-            }}
-          />
 
-          <DefaultNavbar />
-          {children}
-          <Analytics />
-          <FooterSection />
-          <FooterNavbar />
-        </GoogleOAuthProvider>
+                // Default options for specific types
+                success: {
+                  duration: 3000,
+                  iconTheme: {
+                    primary: "green",
+                    secondary: "black",
+                  },
+                },
+              }}
+            />
+
+            <DefaultNavbar />
+            {children}
+            <Analytics />
+            <FooterSection />
+            <FooterNavbar />
+          </GoogleOAuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
