@@ -568,6 +568,12 @@ export default function Home() {
     ],
   };
 
+  useEffect(() => {
+    toast.success("testing...", {
+      duration: 10000,
+    });
+  }, []);
+
   return (
     <div className="min-h-screen">
       <div className="flex flex-col justify-between">
