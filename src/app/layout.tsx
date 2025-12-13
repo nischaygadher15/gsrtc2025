@@ -43,7 +43,7 @@ export default function RootLayout({
                 duration: 5000,
                 removeDelay: 1000,
                 style: {
-                  background: "#363636",
+                  background: "#173c62",
                   color: "#fff",
                 },
 

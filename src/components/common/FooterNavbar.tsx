@@ -173,6 +173,7 @@ const FooterNavbar = () => {
   const SessionLogout = () => {
     dispatch(sessionLogout());
     closeUserDrawer();
+    toast.success("You have successfully logged out!");
   };
 
   return (
