@@ -24,8 +24,8 @@ const Bookings = () => {
 
   return (
     <div className="bg-[#f2f2f8]">
-      <div className="flex items-stretch">
-        <div className="w-[240px] ps-4 py-7">
+      <div className="flex min-h-[calc(100vh-84px)] items-stretch border-b border-b-slate-300">
+        <div className="w-[240px] border-e border-e-[#d1d5dc] ps-4 py-7">
           {/* User photo */}
           <div className="flex items-center gap-4 mb-7">
             <Image
@@ -52,6 +52,9 @@ const Bookings = () => {
                 },
                 "& .MuiTab-root": {
                   padding: "24px 16px",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  alignItems: "flex-start",
                   borderBottom: "1px solid #d1d5dc",
                 },
               }}
@@ -77,110 +80,112 @@ const Bookings = () => {
         </div>
 
         {/* Tabs Content */}
-        <div className="flex-1">
-          {/* My Profile */}
-          <div></div>
-
+        <div className="flex-1 px-24">
           {/* My Trip */}
-          <div>
-            <p className="font-semibold text-xl py-7">My Trips</p>
-            <div className="pb-7">
-              <div className="mb-7">
-                <Tabs
-                  value={bookingTab}
-                  onChange={handleBookingTbs}
-                  aria-label="basic tabs example"
-                  variant={winSize > 640 ? "standard" : "fullWidth"}
-                  sx={{
-                    "& .MuiTab-root": {
-                      // marginRight: winSize > 640 ? "100px" : "",
-                      textAlign: "left",
-                      // padding: 0,
-                      fontSize: 20,
-                      textTransform: "capitalize",
-                      fontWeight: 500,
-                    },
-                    "& .MuiTabs-indicator": {
-                      backgroundColor: "#173c62",
-                    },
-                    "& .Mui-selected": {
-                      color: "#173c62 !important",
-                    },
-                    "& .MuiTabs-list": {
-                      gap: "30px",
-                    },
-                  }}
-                >
-                  <Tab label="Upcoming" />
-                  <Tab label="Cancelled" />
-                  <Tab label="Completed" />
-                </Tabs>
+          {mainTab === 0 && (
+            <div>
+              <p className="font-semibold text-xl py-7">My Trips</p>
+              <div className="pb-7">
+                <div className="mb-7">
+                  <Tabs
+                    value={bookingTab}
+                    onChange={handleBookingTbs}
+                    aria-label="basic tabs example"
+                    variant={winSize > 640 ? "standard" : "fullWidth"}
+                    sx={{
+                      "& .MuiTab-root": {
+                        // marginRight: winSize > 640 ? "100px" : "",
+                        textAlign: "left",
+                        // padding: 0,
+                        fontSize: 20,
+                        textTransform: "capitalize",
+                        fontWeight: 500,
+                      },
+                      "& .MuiTabs-indicator": {
+                        backgroundColor: "#173c62",
+                      },
+                      "& .Mui-selected": {
+                        color: "#173c62 !important",
+                      },
+                      "& .MuiTabs-list": {
+                        gap: "30px",
+                      },
+                    }}
+                  >
+                    <Tab label="Upcoming" />
+                    <Tab label="Cancelled" />
+                    <Tab label="Completed" />
+                  </Tabs>
+                </div>
+
+                {/* Upcoming */}
+                {bookingTab == 0 && (
+                  <ul className="flex flex-col gap-3">
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                  </ul>
+                )}
+
+                {/* Cancelled */}
+                {bookingTab == 1 && (
+                  <ul className="flex flex-col gap-3">
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                  </ul>
+                )}
+
+                {/* Completed */}
+                {bookingTab == 2 && (
+                  <ul className="flex flex-col gap-3">
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                    <li>
+                      <BookingCard />
+                    </li>
+                  </ul>
+                )}
               </div>
-
-              {/* Upcoming */}
-              {bookingTab == 0 && (
-                <ul className="flex flex-col gap-3">
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                </ul>
-              )}
-
-              {/* Cancelled */}
-              {bookingTab == 1 && (
-                <ul className="flex flex-col gap-3">
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                </ul>
-              )}
-
-              {/* Completed */}
-              {bookingTab == 2 && (
-                <ul className="flex flex-col gap-3">
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                  <li>
-                    <BookingCard />
-                  </li>
-                </ul>
-              )}
             </div>
-          </div>
+          )}
+
+          {/* My Profile */}
+          {mainTab === 1 && <div></div>}
         </div>
       </div>
     </div>

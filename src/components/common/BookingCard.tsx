@@ -41,14 +41,14 @@ const BookingCard = () => {
                     <p className="text-4xl text-primary text-center font-semibold leading-none">
                       20
                     </p>
-                    <p className="sm:text-nowrap">Nov 2025</p>
+                    <p className="sm:text-nowrap">December 2025</p>
                     <p className="font-semibold text-center">Friday</p>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1 w-[60%]">
-                  <p className="font-semibold text-right md:text-left">
-                    AHMEDABAD - SURAT
+                  <p className="font-semibold text-xl text-right md:text-left">
+                    Ahmedabad - Surat
                   </p>
                   <p className="font-medium text-sm text-right md:text-left">
                     GSRTC
@@ -58,15 +58,15 @@ const BookingCard = () => {
 
               <div className="w-full md:w-1/2 flex justify-between gap-5">
                 <div className="w-[60%]">
-                  <p className="font-semibold text-left">Boarding</p>
-                  <p className="font-medium text-left text-[#1d1d1da3]">
+                  <p className="font-semibold text-sm text-left">Boarding</p>
+                  <p className="font-medium text-sm text-left text-[#1d1d1da3]">
                     Ahmedabad
                   </p>
                 </div>
 
                 <div className="flex flex-col items-end w-[40%]">
-                  <p className="font-semibold text-left">Completed</p>
-                  <p className="sm:text-nowrap font-medium text-right text-[#1d1d1da3]">
+                  <p className="font-semibold text-sm text-left">Completed</p>
+                  <p className="sm:text-nowrap text-sm font-medium text-right text-[#1d1d1da3]">
                     PNR No: {"XXXXXXXXX"}
                   </p>
                 </div>
