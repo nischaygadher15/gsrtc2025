@@ -4,7 +4,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { SlArrowDown } from "react-icons/sl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -12,7 +12,7 @@ import useWindowSize from "@/Hooks/useWindowSize";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import Drawer from "@mui/material/Drawer";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdStar } from "react-icons/io";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { useRouter } from "next/navigation";
 import { FaFacebook } from "react-icons/fa";
@@ -22,35 +22,189 @@ import gsrtcAppQR from "@/assets/images/GSRTC_App_QR.svg";
 import gStore from "@/assets/images/playstore.svg";
 import appStore from "@/assets/images/appstore.svg";
 import { LuDot } from "react-icons/lu";
-import { MdChatBubbleOutline } from "react-icons/md";
+import { MdChatBubbleOutline, MdOutlineEmail } from "react-icons/md";
+import customerCare from "@/assets/images/customer-assistance.jpg";
+import { Rating } from "@mui/material";
+import StarIcon from "@mui/icons-material/Star";
+import toast from "react-hot-toast";
+import { IoCall } from "react-icons/io5";
+
+interface TagType {
+  tagTitle: string;
+  isActive: boolean;
+}
 
 const ViewTicket = () => {
   const router = useRouter();
   const windowSize = useWindowSize();
-  const [ticketDrawer, setTicketDrawer] = useState<boolean>(false);
+  const customerFeedbackMsg = useRef<HTMLTextAreaElement>(null);
+  const [tripRate, setTripRate] = useState<number>(0);
+  const [tagList, setTagList] = useState<TagType[]>([]);
   const [returnTicketDrawer, setReturnTicketDrawer] = useState<boolean>(false);
   const [returnDate, setReturnDate] = useState<Date>(
     new Date(Date.now() + 24 * 60 * 60 * 1000)
   );
+
+  const RatingState: {
+    status: string;
+    color: string;
+  }[] = [
+    {
+      status: "Very poor",
+      color: "text-red-600",
+    },
+    {
+      status: "Poor",
+      color: "text-red-500",
+    },
+    {
+      status: "Okay",
+      color: "text-blue-600",
+    },
+    {
+      status: "Good",
+      color: "text-green-500",
+    },
+    {
+      status: "Excellent",
+      color: "text-green-600",
+    },
+  ];
 
   const footerSocialIcons: {
     icon: React.ReactNode;
     link: string;
   }[] = [
     {
-      icon: <FaFacebook className="w-10 h-10 text-[#006699]" />,
+      icon: (
+        <FaFacebook className="w-10 h-10 text-[#006699]/95 hover:text-[#006699]" />
+      ),
       link: "https://www.facebook.com/GSRTCOFFICIAL",
     },
     {
-      icon: <FaSquareXTwitter className="w-10 h-10 " />,
+      icon: (
+        <FaSquareXTwitter className="w-10 h-10 text-black/90 hover:text-black" />
+      ),
       link: "https://twitter.com/OfficialGsrtc",
     },
   ];
+
+  const initFeedbackTagState: Record<string, TagType[]> = {
+    poor: [
+      { tagTitle: "Bus Location was wrong", isActive: false },
+      { tagTitle: "Boarding Point Location was wrong", isActive: false },
+      { tagTitle: "Bus Location on map did not update", isActive: false },
+      { tagTitle: "Estimated time of Arrival was wrong", isActive: false },
+      { tagTitle: "Any Other", isActive: false },
+    ],
+    okay: [
+      { tagTitle: "Bus Location accuracy", isActive: false },
+      { tagTitle: "Boarding Point Location accuracy", isActive: false },
+      {
+        tagTitle: "Bus Location on map need to be update faster",
+        isActive: false,
+      },
+      {
+        tagTitle: "Estimated time of arrival can be more accurate",
+        isActive: false,
+      },
+      { tagTitle: "Any Other", isActive: false },
+    ],
+
+    good: [
+      { tagTitle: "Bus Location accuracy", isActive: false },
+      { tagTitle: "Correct Boarding Point Location", isActive: false },
+      {
+        tagTitle: "Bus Location on map updated at good frequency",
+        isActive: false,
+      },
+      { tagTitle: "Estimated time of arrival was accurate", isActive: false },
+      { tagTitle: "Any Other", isActive: false },
+    ],
+  };
+
+  const [customerFeedbacks, setCustomerFeedbacks] =
+    useState<Record<string, TagType[]>>(initFeedbackTagState);
 
   const closeReturnDrawer = () => {
     setReturnTicketDrawer(false);
     router.push("/");
   };
+
+  const handleTripRate = (newValue: number | null) => {
+    if (newValue) {
+      setTripRate(newValue);
+      if (newValue < 3) setTagList(customerFeedbacks.poor);
+      else if (newValue == 3) {
+        setTagList(customerFeedbacks.okay);
+      } else setTagList(customerFeedbacks.good);
+    }
+  };
+
+  const handleFeedbackTag = (rate: number, tagTitle: string) => {
+    let rateStatus = rate < 3 ? "poor" : rate == 3 ? "okay" : "good";
+    customerFeedbacks[rateStatus].map((tag) => {
+      if (tag.tagTitle === tagTitle) {
+        tag.isActive = !tag.isActive;
+      }
+    });
+    setCustomerFeedbacks({ ...customerFeedbacks });
+  };
+
+  const handleFeedbackSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    let selectedTags: string[] = [];
+
+    // Calclated selected tags
+    Object.keys(customerFeedbacks).map((key) => {
+      customerFeedbacks[key].map((tag) => {
+        if (tag.isActive) {
+          selectedTags.push(tag.tagTitle);
+        }
+      });
+    });
+
+    const feedbackData: {
+      feedbackRate: number;
+      feedbackTags: string[];
+      feedbackMsg?: string;
+    } = {
+      feedbackRate: tripRate,
+      feedbackTags: selectedTags,
+    };
+
+    if (
+      customerFeedbackMsg.current &&
+      customerFeedbackMsg.current.value.length > 0
+    ) {
+      feedbackData["feedbackMsg"] = customerFeedbackMsg.current.value;
+    }
+
+    console.log("Feedback: ", feedbackData);
+
+    toast.success("Thank you for valuable feedback");
+
+    clearFeedbackTags();
+
+    if (customerFeedbackMsg.current) {
+      customerFeedbackMsg.current.value = "";
+    }
+  };
+
+  const clearFeedbackTags = () => {
+    Object.keys(customerFeedbacks).map((key) => {
+      customerFeedbacks[key].map((tag) => {
+        tag.isActive = false;
+      });
+    });
+
+    setCustomerFeedbacks({ ...customerFeedbacks });
+  };
+
+  useEffect(() => {
+    clearFeedbackTags();
+  }, [tripRate]);
 
   return (
     <div className="w-full h-full myContainer bg-[#f2f2f8] py-10 flex flex-col lg:flex-row gap-7">
@@ -81,19 +235,20 @@ const ViewTicket = () => {
             </div>
 
             <div className="flex flex-col gap-1">
-              <a
-                href="/sample.pdf"
-                className="text-right cursor-pointer text-blue-500"
-                download
-                onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.stopPropagation();
-                }}
-              >
-                Print/Download
-              </a>
+              <p className="text-right">
+                <a
+                  href="/sample.pdf"
+                  className="inline-block px-3 py-1 rounded-sm text-right cursor-pointer bg-primary/95 hover:bg-primary text-white  mb-4"
+                  download
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  Download
+                </a>
+              </p>
               <p className="font-semibold text-right">PNR No: XXXXXXXXX</p>
-              <p className="font-semibold text-right">Trip Code: XXXXXXXXX</p>
-              <p className="font-semibold text-right">Route No: XXXXXXXXX</p>
+              <p className="font-semibold text-right">Ref. No: XXXXXXXXX</p>
             </div>
           </div>
 
@@ -242,7 +397,7 @@ const ViewTicket = () => {
                 <td colSpan={2} className="border px-4 py-2 text-center">
                   <button
                     type="button"
-                    className="w-full sm:w-[240px] rounded-s-full rounded-e-full py-2 cursor-pointer bg-primary rounded text-center text-white"
+                    className="w-full sm:w-[240px] rounded-s-full rounded-e-full py-2 cursor-pointer bg-primary/95 hover:bg-primary rounded text-center text-white"
                   >
                     Track your bus
                   </button>
@@ -261,6 +416,14 @@ const ViewTicket = () => {
         >
           <p className="text-xl font-semibold mb-4">Customer Care</p>
 
+          <Image
+            src={customerCare}
+            width={100}
+            height={150}
+            alt="Customer Care Logo"
+            className="mx-auto"
+          />
+
           <p className="text-lg font-semibold text-center my-5">
             Need any help?
           </p>
@@ -277,13 +440,118 @@ const ViewTicket = () => {
             <span>Multilingual</span>
           </p>
 
-          <button
-            type="button"
-            className="w-full sm:w-[240px] mx-auto rounded-s-full rounded-e-full px-10 bg-primary text-center text-white flex justify-center items-center gap-4 py-2 cursor-pointer"
-          >
-            <MdChatBubbleOutline className="text-xl" />
-            <span>Chat with us</span>
-          </button>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-5 mb-5">
+            <a
+              href="tel:1800233666666"
+              className="w-full sm:w-[200px] rounded-s-full rounded-e-full px-10 bg-primary/95 hover:bg-primary text-center text-white flex justify-center items-center gap-4 py-2 cursor-pointer"
+            >
+              <IoCall className="text-xl" />
+              <span>Call us</span>
+            </a>
+            <a
+              href="mailto:feedback@gsrtc.in"
+              className="w-full sm:w-[200px] rounded-s-full rounded-e-full px-10 bg-primary/95 hover:bg-primary text-center text-white flex justify-center items-center gap-4 py-2 cursor-pointer"
+            >
+              <MdOutlineEmail className="text-xl" />
+              <span>Mail us</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Trip Rating */}
+        <div
+          className="p-4 bg-white rounded-sm"
+          style={{
+            boxShadow: "0 0 10px rgba(0,0,0,0.3)",
+          }}
+        >
+          <p className="text-xl font-semibold mb-4">Rate this trip</p>
+
+          <div className="flex flex-col items-center gap-y-3 mb-4">
+            <Rating
+              name="tripRatting"
+              value={tripRate}
+              size="large"
+              precision={1}
+              // getLabelText={getLabelText}
+              onChange={(event, newVaule) => handleTripRate(newVaule)}
+              emptyIcon={
+                <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
+              }
+              sx={{
+                "& .MuiSvgIcon-root": {
+                  width: "45px",
+                  height: "45px",
+                },
+              }}
+            />
+
+            <p className="flex items-center gap-2">
+              <span className="flex items-center text-sm leading-none">
+                <IoMdStar className="text-xl text-[#faaf00]" />
+                {tripRate}
+              </span>
+              <span className="text-sm leading-none">-</span>
+              <span
+                className={`text-sm leading-none ${
+                  RatingState[tripRate - 1]?.color
+                }`}
+              >
+                {RatingState[tripRate - 1]?.status ?? "No rating"}
+              </span>
+            </p>
+          </div>
+
+          {/* Feedback form */}
+          {tripRate > 0 && (
+            <form className="" onSubmit={handleFeedbackSubmit}>
+              <p className="font-semibold mb-3">
+                {tripRate < 3 && "What did you not like?"}
+
+                {tripRate == 3 && "What can be improved?"}
+
+                {tripRate > 3 && "What do you like?"}
+              </p>
+
+              <ul className="flex flex-col gap-3 mb-4">
+                {tagList &&
+                  tagList.map((tag, inx) => (
+                    <li key={`feedback-tag-${inx}`}>
+                      <button
+                        type="button"
+                        className={`inline py-1 px-1.5 text-xs border rounded-sm cursor-pointer ${
+                          tag.isActive
+                            ? "bg-primary text-white border-primary font-semibold"
+                            : "border-black/80 text-black bg-white"
+                        }`}
+                        onClick={() =>
+                          handleFeedbackTag(tripRate, tag.tagTitle)
+                        }
+                      >
+                        {tag.tagTitle}
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+
+              <textarea
+                name="customerFeedback"
+                rows={4}
+                className="p-3 w-full border rounded-md text-sm mb-5"
+                placeholder="Tell us more about your experience (optional)"
+                ref={customerFeedbackMsg}
+              />
+
+              <div className="text-center">
+                <button
+                  type="submit"
+                  className="w-full sm:w-[240px] py-2 bg-primary/95 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
 
@@ -295,7 +563,7 @@ const ViewTicket = () => {
             boxShadow: "0 0 10px rgba(0,0,0,0.3)",
           }}
         >
-          <p>RETURN TRIP</p>
+          <p className="text-xl font-semibold mb-4">Return trip</p>
           <p>Surat - Ahmedabad</p>
           <div>
             {windowSize > 1024 ? (
@@ -424,7 +692,7 @@ const ViewTicket = () => {
             boxShadow: "0 0 10px rgba(0,0,0,0.3)",
           }}
         >
-          <p className="font-medium">You can follows us on :</p>
+          <p className="text-xl font-semibold mb-4">You can follows us on :</p>
           <ul className="flex items-center gap-x-5">
             {footerSocialIcons &&
               footerSocialIcons.map((icon, inx) => {
@@ -441,12 +709,12 @@ const ViewTicket = () => {
 
         {/* download gsrtc app */}
         <div
-          className="bg-white p-4 flex flex-col gap-2 rounded"
+          className="bg-white p-4 flex flex-col gap-4 items-center gap-2 rounded"
           style={{
             boxShadow: "0 0 10px rgba(0,0,0,0.3)",
           }}
         >
-          <p className="font-semibold">Download the App</p>
+          <p className="w-full text-xl font-semibold">Download the App</p>
 
           <table className="max-w-[400px]">
             <tbody>

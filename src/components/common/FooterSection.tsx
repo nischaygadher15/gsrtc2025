@@ -431,7 +431,7 @@ const FooterSection = () => {
       </div>
 
       {/* Footer Social Logos */}
-      <div className="flex justify-between items-center pt-7">
+      <div className="flex justify-between items-center py-7">
         <p className="text-[#1d1d1da3] text-sm">
           &copy; GSRTC. All rights reserved
         </p>
