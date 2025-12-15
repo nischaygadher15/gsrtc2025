@@ -709,7 +709,7 @@ const ViewTicket = () => {
 
         {/* download gsrtc app */}
         <div
-          className="bg-white p-4 flex flex-col gap-4 items-center gap-2 rounded"
+          className="bg-white p-4 flex flex-col gap-4 items-center rounded"
           style={{
             boxShadow: "0 0 10px rgba(0,0,0,0.3)",
           }}

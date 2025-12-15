@@ -37,19 +37,20 @@ const BookingCard = () => {
               <p className="font-medium text-sm text-right md:text-left">
                 GSRTC
               </p>
+              <p className="text-[#1d1d1da3] text-sm">Non AC Seater (2+1)</p>
             </div>
           </div>
 
           <div className="w-full md:w-1/2 flex justify-between gap-5">
             <div className="w-[40%]">
-              <p className="font-semibold text-sm text-left">Boarding</p>
+              <p className="font-semibold text-sm text-left mb-1">Boarding</p>
               <p className="font-medium text-sm text-left text-[#1d1d1da3]">
                 Ahmedabad
               </p>
             </div>
 
             <div className="flex flex-col items-end md:items-start w-[60%]">
-              <p className="font-semibold text-sm text-left">Completed</p>
+              <p className="font-semibold text-sm text-left mb-1">Completed</p>
               <p className="flex flex-col sm:flex-row text-sm font-medium text-right text-[#1d1d1da3]">
                 <span>PNR No:</span>
                 <span>{"XXXXXXXXX"}</span>
