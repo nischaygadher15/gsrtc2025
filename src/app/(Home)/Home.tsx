@@ -63,7 +63,6 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { motion } from "motion/react";
 import toast from "react-hot-toast";
-import IOSSwitch from "@/components/common/IOSSwitch";
 
 export default function Home() {
   const windowSize = useWindowSize();
