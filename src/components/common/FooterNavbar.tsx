@@ -207,10 +207,10 @@ const FooterNavbar = () => {
             <span>Bookings</span>
           </Link>
         </li>
-
+        {/* Jay shree krishna */}
         <li>
           <Link
-            href="#"
+            href="/help"
             className={`h-full w-full flex flex-col justify-center items-center gap-y-1.5 ${
               currentRoute === "/help" ? "text-primary" : "text-[#1d1d1da3]"
             }`}
