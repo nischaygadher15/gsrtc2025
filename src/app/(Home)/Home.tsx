@@ -63,6 +63,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { motion } from "motion/react";
 import toast from "react-hot-toast";
+import IOSSwitch from "@/components/common/IOSSwitch";
 
 export default function Home() {
   const windowSize = useWindowSize();
@@ -1272,12 +1273,8 @@ export default function Home() {
             </div>
 
             {/* Women booking */}
-            <div className="relative w-full xl:w-[22%] flex items-center border rounded-2xl border-slate-400">
-              <button
-                type="button"
-                className="w-full p-3.5 pe-0  flex items-center gap-x-2 cursor-pointer outline-none"
-                // onClick={openDestPopover}
-              >
+            <label className="relative p-2.5 md:p-3.5 pe-0! w-full xl:w-[22%] flex justify-between items-center border rounded-2xl border-slate-400">
+              <div className="flex items-center gap-3">
                 <Image
                   src={womenSvg}
                   height={26}
@@ -1290,12 +1287,12 @@ export default function Home() {
                   </p>
                   <Link
                     href="/"
-                    className="block text-left text-xs font-semibold text-blue-600 underline"
+                    className="inline-block text-left text-xs font-semibold text-blue-600 underline"
                   >
                     Know more
                   </Link>
                 </div>
-              </button>
+              </div>
 
               <Controller
                 name="isWomen"
@@ -1304,7 +1301,7 @@ export default function Home() {
                   <Switch color="primary" checked={value} onChange={onChange} />
                 )}
               />
-            </div>
+            </label>
           </div>
 
           {/* Submit button */}

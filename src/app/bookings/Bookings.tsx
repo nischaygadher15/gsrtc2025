@@ -179,9 +179,7 @@ const Bookings = () => {
                   {trips &&
                     trips.map((trip) => (
                       <li key={`upcomming-${trip}`}>
-                        <Link href={`/ticket/view/${trip}`}>
-                          <BookingCard />
-                        </Link>
+                        <BookingCard />
                       </li>
                     ))}
                 </ul>
@@ -193,9 +191,7 @@ const Bookings = () => {
                   {trips &&
                     trips.map((trip) => (
                       <li key={`cancelled-${trip}`}>
-                        <Link href={`/ticket/view/${trip}`}>
-                          <BookingCard />
-                        </Link>
+                        <BookingCard />
                       </li>
                     ))}
                 </ul>
@@ -207,9 +203,7 @@ const Bookings = () => {
                   {trips &&
                     trips.map((trip) => (
                       <li key={`completed-${trip}`}>
-                        <Link href={`/ticket/view/${trip}`}>
-                          <BookingCard />
-                        </Link>
+                        <BookingCard />
                       </li>
                     ))}
                 </ul>
