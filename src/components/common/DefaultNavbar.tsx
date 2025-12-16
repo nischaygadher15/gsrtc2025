@@ -840,11 +840,6 @@ const DefaultNavbar = () => {
                   >
                     Login
                   </button>
-
-                  <div className="flex gap-7">
-                    <button type="button">Get session</button>
-                    <button type="button">Logout</button>
-                  </div>
                 </div>
               </form>
             )}

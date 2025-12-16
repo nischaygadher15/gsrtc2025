@@ -246,18 +246,25 @@ const Bookings = () => {
 
       {/* GSRTC Login/Sign up Dialog */}
       <Dialog
+        fullScreen={winSize < 640 ? true : false}
         onClose={closeGsrctLoginDialog}
         open={gsrtcLoginDialog}
         sx={{
           "& .MuiDialog-paper": {
-            borderRadius: "16px",
+            borderRadius: winSize < 640 ? "0px" : "16px",
             margin: 0,
             overflow: "hidden",
-            maxHeight: "calc(100% - 32px)",
+            maxHeight: winSize < 640 ? "100vh" : "calc(100% - 32px)",
           },
         }}
       >
-        <div className="relative w-xl min-h-[calc(100vh-32px)] max-h-[calc(100vh-32px)] flex flex-col bg-white overflow-y-auto hideScrollBar">
+        <div
+          className={`relative ${
+            winSize > 640
+              ? "w-xl min-h-[calc(100vh-32px)] max-h-[calc(100vh-32px)]"
+              : "w-screen h-screen"
+          } flex flex-col bg-white overflow-y-auto hideScrollBar`}
+        >
           {/* Header */}
           <div className="sticky top-0 left-0 right-0 z-999 p-4 bg-white flex justify-between items-center">
             <p className="text-xl font-bold">Login to GSRTC</p>
@@ -485,11 +492,6 @@ const Bookings = () => {
                   >
                     Login
                   </button>
-
-                  <div className="flex gap-7">
-                    <button type="button">Get session</button>
-                    <button type="button">Logout</button>
-                  </div>
                 </div>
               </form>
             )}
