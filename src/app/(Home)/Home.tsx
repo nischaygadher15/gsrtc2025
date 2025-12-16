@@ -256,6 +256,8 @@ export default function Home() {
     },
   ];
 
+  const busSearchBox = useRef<HTMLFormElement | null>(null);
+
   // Source popover
   const [fromPlace, setFromPlace] = useState<HTMLElement | null>(null);
   const [fromPlaceDialog, setFromPlaceDialog] = useState<boolean>(false);
@@ -644,13 +646,14 @@ export default function Home() {
           }}
           viewport={{ once: true }}
           className="md:mx-8 lg:mx-[75px] md:mt-7 mb-7 md:mb-14 bg-white rounded-3xl md:shadow-[0_0_16px_rgba(0,0,0,0.3)]"
-          onClick={(e) => {
-            const eleCoord = e.currentTarget.getBoundingClientRect();
-            scrollBy({
-              top: eleCoord.top - 100,
-              behavior: "smooth",
-            });
-          }}
+          // onClick={(e) => {
+          //   const eleCoord = e.currentTarget.getBoundingClientRect();
+          //   scrollBy({
+          //     top: eleCoord.top - 100,
+          //     behavior: "smooth",
+          //   });
+          // }}
+          ref={busSearchBox}
           onSubmit={handleSubmit(onSearchBuses)}
         >
           <p className="md:hidden px-4 pt-5 font-bold text-[22px]">
@@ -665,6 +668,15 @@ export default function Home() {
                     type="button"
                     className="w-full p-2.5 md:p-3.5 border border-b-0 lg:border-b-[1px] rounded-se-2xl md:rounded-se-none rounded-ss-2xl lg:rounded-s-2xl border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
                     onClick={(e) => {
+                      if (busSearchBox.current) {
+                        const eleCoord =
+                          busSearchBox.current.getBoundingClientRect();
+                        scrollBy({
+                          top: eleCoord.top - 100,
+                          behavior: "instant",
+                        });
+                      }
+
                       if (windowSize > 768) openFormPopover(e);
                       else setFromPlaceDialog(true);
                     }}
@@ -868,6 +880,14 @@ export default function Home() {
                     type="button"
                     className="w-full p-2.5 md:p-3.5 border-s md:border-s-0 border-e lg:border-e-0 border-t border-b-none lg:border-b md:rounded-se-2xl lg:rounded-se-none border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
                     onClick={(e) => {
+                      if (busSearchBox.current) {
+                        const eleCoord =
+                          busSearchBox.current.getBoundingClientRect();
+                        scrollBy({
+                          top: eleCoord.top - 100,
+                          behavior: "instant",
+                        });
+                      }
                       if (windowSize > 768) openDestPopover(e);
                       else setDestPlaceDialog(true);
                     }}
@@ -1073,6 +1093,15 @@ export default function Home() {
                   type="button"
                   className="w-full p-2.5 md:p-3.5 border rounded-es-2xl lg:rounded-es-none rounded-ee-2xl lg:rounded-e-2xl border-slate-400 flex justify-between gap-x-1.5 items-center cursor-pointer outline-none"
                   onClick={(event: React.MouseEvent<HTMLElement>) => {
+                    if (busSearchBox.current) {
+                      const eleCoord =
+                        busSearchBox.current.getBoundingClientRect();
+                      scrollBy({
+                        top: eleCoord.top - 100,
+                        behavior: "instant",
+                      });
+                    }
+
                     if (windowSize > 768) openJourneyDatePopover(event);
                     else setJourneyDate(true);
                   }}

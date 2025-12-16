@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { RefObject, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import bus_offer_test from "@/assets/images/bus-offer-test.png";
@@ -22,6 +22,10 @@ import { FaDog } from "react-icons/fa6";
 import { TbBottleOff } from "react-icons/tb";
 import { FaRegClock } from "react-icons/fa";
 import { IoMdArrowBack } from "react-icons/io";
+import bus_front from "@/assets/images/bus/front.jpg";
+import bus_side from "@/assets/images/bus/side.jpg";
+import bus_side2 from "@/assets/images/bus/side2.jpg";
+import bus_back from "@/assets/images/bus/back.jpg";
 
 const BusAndRouteInfo = ({
   parentRef,
@@ -35,7 +39,13 @@ const BusAndRouteInfo = ({
   const BusInfoParentRef2 = useRef<HTMLDivElement | null>(null);
   const BusInfoSectionsRef = useRef<HTMLDivElement | null>(null);
 
-  const busPhotos: string[] = ["o1", "o1", "o1", "o1", "o1"];
+  const busPhotos: StaticImageData[] = [
+    bus_front,
+    bus_side,
+    bus_side2,
+    bus_back,
+    bus_back,
+  ];
 
   const handleBusInfoTabChange = (
     event: React.SyntheticEvent,
@@ -273,7 +283,7 @@ const BusAndRouteInfo = ({
                 className={inx === 0 ? "ps-0 py-2" : "ps-2 py-2"}
               >
                 <Image
-                  src={bus_offer_test}
+                  src={bus}
                   alt="Bus Offer Photo"
                   className="min-w-[245px] max-w-[245px] min-h-[160px] max-h-[160px] rounded-2xl"
                 />
