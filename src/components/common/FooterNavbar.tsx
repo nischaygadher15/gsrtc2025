@@ -809,11 +809,11 @@ const FooterNavbar = () => {
               <span className="w-1/2 h-px bg-slate-200"></span>
             </p>
 
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-stretch justify-center gap-4">
               {/* Login with google */}
               <button
                 type="button"
-                className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
+                className="inline-flex justify-center bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-s-full rounded-e-full sm:rounded-sm cursor-pointer"
                 onClick={() => handleSignInWithGoogle()}
               >
                 <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
@@ -825,7 +825,7 @@ const FooterNavbar = () => {
                   />
                 </div>
 
-                <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                <p className="sm:flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
                   Sign in with Google
                 </p>
               </button>
@@ -835,13 +835,13 @@ const FooterNavbar = () => {
                   {/* Login with Email */}
                   <button
                     type="button"
-                    className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                    className="min-h-11 inline-flex justify-center items-center bg-primary/90 hover:bg-primary p-1  rounded-s-full rounded-e-full sm:rounded-sm cursor-pointer"
                     onClick={() => {
                       setLoginWith("email");
                     }}
                   >
                     <MdOutlineEmail className="w-7 h-7 text-white" />
-                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                    <p className="sm:flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
                       Sign in with Email
                     </p>
                   </button>
@@ -857,7 +857,7 @@ const FooterNavbar = () => {
                     }}
                   >
                     <FaMobileAlt className="w-7 h-7 text-white" />
-                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                    <p className="sm:flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
                       Sign in with Mobile No.
                     </p>
                   </button>
@@ -866,7 +866,7 @@ const FooterNavbar = () => {
             </div>
           </div>
 
-          <div className="w-full p-3 flex justify-center items-center gap-2 mb-4">
+          <div className="w-full p-3 flex flex-wrap justify-center items-center gap-2 mb-4">
             <p className="text-sm text-center">By logging in, I agree</p>
             <p className="text-sm flex justify-center items-center gap-2">
               <a href="#" className="text-blue-500">
