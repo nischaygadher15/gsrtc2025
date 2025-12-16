@@ -25,7 +25,7 @@ import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsAc
 import womenSvg from "@/assets/images/female.svg";
 import { usePathname } from "next/navigation";
 import Dialog from "@mui/material/Dialog";
-import { IoMdArrowDropdown, IoMdClose } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdClose, IoMdHome } from "react-icons/io";
 import ReCAPTCHA from "react-google-recaptcha";
 import googleIcon from "@/assets/images/google-sing-In.svg";
 import { IoListOutline } from "react-icons/io5";
@@ -210,7 +210,18 @@ const DefaultNavbar = () => {
       </Link>
 
       {/* Navbar links */}
-      <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-2 sm:gap-x-3 xl:gap-x-5">
+      <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-1.5 xl:gap-x-5">
+        <li>
+          <Link
+            href="/"
+            className={`p-3 h-full w-full flex justify-center items-center gap-1.5 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+              currentLocation === "/" ? "text-primary" : "text-[#1d1d1da3]"
+            }`}
+          >
+            <IoMdHome className="w-6 h-6" />
+            <span>Home</span>
+          </Link>
+        </li>
         <li>
           <Link
             href="/bookings"
@@ -222,10 +233,9 @@ const DefaultNavbar = () => {
             <span>Bookings</span>
           </Link>
         </li>
-
         <li>
           <Link
-            href="#"
+            href="/help"
             className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
               currentLocation === "/help" ? "text-primary" : "text-black"
             }`}
@@ -239,8 +249,8 @@ const DefaultNavbar = () => {
             href="https://yatradham.gujarat.gov.in/Booking"
             className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
           >
-            <span>Sharvan</span>
-            <span>Tirth Darshan</span>
+            <span>Sharvan Tirth</span>
+            <span>Darshan</span>
           </a>
         </li>
         <li>

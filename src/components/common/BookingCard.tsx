@@ -37,7 +37,9 @@ const BookingCard = () => {
               <p className="font-medium text-sm text-right md:text-left">
                 GSRTC
               </p>
-              <p className="text-[#1d1d1da3] text-sm">Non AC Seater (2+1)</p>
+              <p className="text-[#1d1d1da3] text-sm text-right md:text-left">
+                Non AC Seater (2+1)
+              </p>
             </div>
           </div>
 
