@@ -569,7 +569,7 @@ const FooterNavbar = () => {
           },
         }}
       >
-        <div className="relative w-full h-full flex flex-col bg-white overflow-y-auto hideScrollBar">
+        <div className="relative w-screen h-screen flex flex-col bg-white overflow-y-auto hideScrollBar">
           {/* Header */}
           <div className="sticky top-0 left-0 right-0 z-999 p-4 bg-white flex justify-between items-center">
             <p className="text-xl font-bold">Login to GSRTC</p>

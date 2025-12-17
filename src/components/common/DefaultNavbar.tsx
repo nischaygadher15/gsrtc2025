@@ -210,7 +210,7 @@ const DefaultNavbar = () => {
       </Link>
 
       {/* Navbar links */}
-      <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-1.5 xl:gap-x-5">
+      <ul className="list-none !text-xs !font-medium hidden lg:flex justify-end items-center gap-x-1.5 xl:gap-x-3">
         <li>
           <Link
             href="/"

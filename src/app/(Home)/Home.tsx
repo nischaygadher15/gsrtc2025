@@ -63,6 +63,17 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { motion } from "motion/react";
 import toast from "react-hot-toast";
+import offerImg1 from "@/assets/images/offers/imgi_10_Android-iOS.png";
+import offerImg2 from "@/assets/images/offers/imgi_11_Android-iOS.png";
+import offerImg3 from "@/assets/images/offers/imgi_12_296x200.png";
+import offerImg4 from "@/assets/images/offers/imgi_38_Android-iOS-296-200.png";
+import offerImg5 from "@/assets/images/offers/imgi_43_Android-iOS-296x200.png";
+import { MdOutlineLocalOffer } from "react-icons/md";
+import whatsNew1 from "@/assets/images/whatsnew/imgi_20_btt_app_card.png";
+import whatsNew2 from "@/assets/images/whatsnew/imgi_21_FlexiTicket.png";
+import whatsNew3 from "@/assets/images/whatsnew/imgi_42_Banner-1.webp";
+import whatsNew4 from "@/assets/images/whatsnew/imgi_46_rap.webp";
+import whatsNew5 from "@/assets/images/whatsnew/imgi_47_referAndEarn.webp";
 
 export default function Home() {
   const windowSize = useWindowSize();
@@ -150,18 +161,72 @@ export default function Home() {
     "Veraval",
   ];
 
-  const offers: string[] = [
-    "o1",
-    "o1",
-    "o1",
-    "o1",
-    "o1",
-    "o1",
-    "o1",
-    "o1",
-    "o1",
-    "o1",
-    "o1",
+  interface OffersDataType {
+    title: string;
+    validTill: Date;
+    offerCode: string;
+    bgImage: StaticImageData;
+  }
+
+  const offers: OffersDataType[] = [
+    {
+      title: "Save up to Rs 300 on bus tickets",
+      validTill: new Date("03/06/2026"),
+      offerCode: "FESTIVE300",
+      bgImage: offerImg1,
+    },
+    {
+      title: "Save up to Rs 300 on bus tickets",
+      validTill: new Date("12/31/2025"),
+      offerCode: "SHAADI300",
+      bgImage: offerImg2,
+    },
+    {
+      title: "Save up to Rs 500 on bus tickets",
+      validTill: new Date("12/31/2025"),
+      offerCode: "RED500",
+      bgImage: offerImg3,
+    },
+    {
+      title: "Enjoy 10% off on Karnataka routes.",
+      validTill: new Date("12/06/2026"),
+      offerCode: "NAMMA101",
+      bgImage: offerImg4,
+    },
+    {
+      title: "Get upto Rs 400 on bus tickets",
+      validTill: new Date("12/31/2025"),
+      offerCode: "STUDENT",
+      bgImage: offerImg5,
+    },
+  ];
+
+  const whatsNew = [whatsNew1, whatsNew2, whatsNew3, whatsNew4, whatsNew5];
+
+  const testimonials: {
+    cusName: string;
+    text: string;
+  }[] = [
+    {
+      text: "Comfortable and great journey",
+      cusName: "Ravi Kumar",
+    },
+    {
+      text: "On time journey and cheap ticket",
+      cusName: "Vishva devi",
+    },
+    {
+      text: "Safest journey of India",
+      cusName: "Anil Sharma",
+    },
+    {
+      text: "Cool journey and supportive staff",
+      cusName: "Rekha Ahir",
+    },
+    {
+      text: "I like this journey, I will try again sometime",
+      cusName: "Gopal Kher",
+    },
   ];
 
   const topDestinations: {
@@ -1496,15 +1561,39 @@ export default function Home() {
 
         {/* Offers Carousel */}
         <div className="relative !overflow-hidden" ref={offersCarouselRef}>
-          <div className="flex">
+          <div className="flex py-2">
             {offers &&
-              offers.map((o, inx) => (
-                <a href="#" key={`offer-${inx}`} className="ps-2">
+              offers.map((ofr, inx) => (
+                <a
+                  href="#"
+                  key={`offer-${inx}`}
+                  className="ms-2 relative shadow-md rounded-2xl"
+                >
                   <Image
-                    src={bus_offer_test}
+                    src={ofr.bgImage}
                     alt="Bus Offer Photo"
                     className="min-w-[300px] min-h-[200px] rounded-2xl"
                   />
+                  <div className="absolute inset-0 w-full h-full px-4 py-7 flex flex-col justify-between rounded-2xl">
+                    <div>
+                      <p className="font-semibold mb-3">{ofr.title}</p>
+                      <p className="text-xs text-black/70">
+                        Valid till {DateFormater(ofr.validTill)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <button
+                        type="button"
+                        className=" bg-white py-2 px-3 flex items-center gap-2 rounded-s-full rounded-e-full"
+                      >
+                        <MdOutlineLocalOffer className="text-2xl" />
+                        <span className="font-semibold text-sm">
+                          {ofr.offerCode}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
                 </a>
               ))}
           </div>
@@ -1545,14 +1634,14 @@ export default function Home() {
 
         {/* What's new Carousel */}
         <div className="relative !overflow-hidden" ref={whatNewCarouselRef}>
-          <div className="flex">
-            {offers &&
-              offers.map((o, inx) => (
+          <div className="flex py-2">
+            {whatsNew &&
+              whatsNew.map((wn, inx) => (
                 <a href="#" key={`offer-${inx}`} className="ps-2">
                   <Image
-                    src={bus_whats_new}
+                    src={wn}
                     alt="bus_whats_new"
-                    className="min-w-[300px] min-h-[200px] rounded-2xl"
+                    className="min-w-[300px] min-h-[200px] rounded-[20px] shadow-md"
                   />
                 </a>
               ))}
@@ -1590,7 +1679,10 @@ export default function Home() {
         viewport={{ once: true }}
         className="myContainer mb-7"
       >
-        <p className="font-bold text-[22px] mb-5">Testimonials</p>
+        <p className="font-bold text-[22px]">Testimonials</p>
+        <p className="text-xs text-[#1d1d1da3] mb-5">
+          Hear from our satisfied customers
+        </p>
 
         {/* Testimonials Carousel */}
         <div
@@ -1598,14 +1690,18 @@ export default function Home() {
           ref={testimonialsCarouselRef}
         >
           <div className="flex">
-            {offers &&
-              offers.map((o, inx) => (
-                <a href="#" key={`offer-${inx}`} className="ps-2">
-                  <Image
-                    src={bus_testimoni}
-                    alt="bus_testimoni"
-                    className="min-w-[300px] min-h-[200px] rounded-2xl"
-                  />
+            {testimonials &&
+              testimonials.map((tsmn, inx) => (
+                <a
+                  href="#"
+                  key={`offer-${inx}`}
+                  className="ms-2 min-w-[250px] min-h-[180px] px-4 py-7 border border-slate-300 shadow-md rounded-xl flex flex-col justify-between"
+                >
+                  <p className="">
+                    "&nbsp;{tsmn.text.substring(0, 50)}...&nbsp;"
+                  </p>
+
+                  <p className="font-semibold text-sm">{tsmn.cusName}</p>
                 </a>
               ))}
           </div>
