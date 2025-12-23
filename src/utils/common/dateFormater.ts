@@ -1,6 +1,5 @@
 export const DateFormater = (date: Date) => {
   const argDate = new Date(date);
-  console.log("argDate:", argDate);
   const day = argDate.getDate();
   const month = argDate.getMonth();
   const year = argDate.getFullYear();

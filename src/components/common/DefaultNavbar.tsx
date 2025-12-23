@@ -1,6 +1,6 @@
 "use client";
 import navbarLogo from "@/assets/images/Logos/gsrtcLogo2.svg";
-import { Drawer, TextField } from "@mui/material";
+import { CircularProgress, Drawer, TextField } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -48,6 +48,8 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { sessionLogout, setSession } from "@/redux/slices/session/sessionSlice";
+import { loginWithMobile } from "@/services/auth.service";
+import OtpInput from "react-otp-input";
 
 const DefaultNavbar = () => {
   const currentLocation = usePathname();
@@ -57,6 +59,8 @@ const DefaultNavbar = () => {
 
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [optSent, setOptSent] = useState<boolean>(false);
 
   // User Account Dropdown
   const [anchor1, setAnchor1] = useState<boolean>(false);
@@ -106,10 +110,26 @@ const DefaultNavbar = () => {
   const {
     handleSubmit: mobileSubmit,
     reset: mobileReset,
+    getValues: mobileGetValues,
     control: mobileControl,
     formState: { errors: mobileErrors },
   } = useForm<LoginByMobileSchemaType>({
     resolver: zodResolver(LoginByMobileSchema),
+    defaultValues: {
+      userMobileNo: "8141409448",
+    },
+  });
+
+  const {
+    handleSubmit: otpSubmit,
+    reset: otpReset,
+    getValues: otpGetValues,
+    control: otpControl,
+    formState: { errors: otpErrors },
+  } = useForm({
+    defaultValues: {
+      userLoginOTP: "",
+    },
   });
 
   const {
@@ -140,7 +160,20 @@ const DefaultNavbar = () => {
   }, [loginWith]);
 
   const onMobileLogin = async (data: LoginByMobileSchemaType) => {
+    setLoading(true);
     console.log("data: ", data);
+    try {
+      const MobileLoginRes = await loginWithMobile(data.userMobileNo);
+
+      console.log("MobileLoginRes: ", MobileLoginRes);
+      if (MobileLoginRes) {
+        setOptSent(true);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onEmailLogin = (data: LoginByEmailSchemaType) => {
@@ -195,7 +228,7 @@ const DefaultNavbar = () => {
             priority
           />
           <div className="">
-            <p className="text-xs sm:text-sm text-nowrap font-semibold leading-tight tracking-tight text-[#212153]">
+            <p className="text-xs sm:text-sm text-nowrap font-semibold leading-snug tracking-normal text-[#212153]">
               Gujarat State Road Transport Corporation
             </p>
             <p className="text-sm sm:text-base text-nowrap font-noto-guj font-semibold leading-tight tracking-wider text-[#212153]">
@@ -625,94 +658,219 @@ const DefaultNavbar = () => {
             </button>
           </div>
 
-          <div className="px-4">
+          {/* Forms */}
+          <div className="px-4 flex-1">
             {loginWith === "mobile" ? (
-              <form onSubmit={mobileSubmit(onMobileLogin)}>
-                {/* Mobile no. */}
-                <div>
-                  <p className="text-lg font-bold mb-1">
-                    What's your mobile number?
+              <>
+                {/* OPT Verification form */}
+                <form
+                  className={`${
+                    optSent ? "" : "w-0 h-0 overflow-hidden -z-10 opacity-0"
+                  }`}
+                >
+                  {/* onSubmit={otpSubmit(onOtpSubmit)} */}
+                  <p className="text-[22px] font-bold">
+                    Enter the OTP we just sent you
                   </p>
-                  <div className="flex">
+
+                  <div className="flex justify-between items-center my-7">
+                    <p className="flex flex-col">
+                      <span className="text-sm">Mobile number</span>
+                      <span className="font-semibold">
+                        +91 {mobileGetValues("userMobileNo")}
+                      </span>
+                    </p>
+
                     <button
                       type="button"
-                      disabled
-                      className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                      className="px-3 py-1.5 rounded-s-full rounded-e-full font-semibold text-sm underline underline-offset-1 hover:bg-slate-200"
                     >
-                      <p className="text-xs text-[#1d1d1da3]">Country Code</p>
-                      <p className="flex items-center gap-x-1 font-semibold">
-                        <span>+91 (IND)</span>
-                        <IoMdArrowDropdown className="text-xl" />
-                      </p>
+                      Edit
                     </button>
+                  </div>
 
+                  <div className="mb-4">
                     <Controller
-                      name="userMobileNo"
-                      control={mobileControl}
-                      render={({ field: { onChange, name, value } }) => (
-                        <div className="flex-1 border rounded-se-lg rounded-ee-lg">
-                          <TextField
-                            type="text"
-                            label="Mobile number"
-                            placeholder="Enter mobile no."
-                            variant="filled"
-                            name={name}
+                      name="userLoginOTP"
+                      control={otpControl}
+                      render={({ field: { value, onChange } }) => (
+                        <div>
+                          <p className="text-sm mb-2">Enter OTP</p>
+                          <OtpInput
                             value={value}
                             onChange={onChange}
-                            error={false}
-                            sx={{
-                              width: "100%",
-                              "& .MuiFilledInput-root": {
-                                fontWeight: "700 !important",
-                                backgroundColor: "white !important",
-                                borderTopLeftRadius: "0px",
-                                borderTopRightRadius: "8px",
-                                borderBottomRightRadius: "8px",
-                              },
-                              "& .MuiInputLabel-root": {
-                                color: "#1d1d1da3 !important",
-                              },
-                              "& ::before": {
-                                display: "none",
-                              },
-                              "& ::after": {
-                                display: "none",
-                              },
-                            }}
+                            numInputs={6}
+                            containerStyle="flex gap-2"
+                            inputStyle="min-w-12 h-14 rounded-lg border focus:border-2 text-2xl font-semibold focus:outline-4 outline-primary/20"
+                            renderInput={(props) => <input {...props} />}
                           />
                         </div>
                       )}
                     />
                   </div>
-                  <p className="my-1 text-xs text-red-600 min-h-5">
-                    {mobileErrors.userMobileNo
-                      ? mobileErrors.userMobileNo.message
-                      : ""}
-                  </p>
-                </div>
 
-                <div>
-                  {/* Recatcha */}
-                  {!iAmNotRobot && (
-                    <div className="flex justify-center py-4">
-                      <ReCAPTCHA
-                        sitekey={CaptchaClientKey}
-                        onChange={onCaptchSuccess}
-                        onErrored={onCaptchaFailed}
-                        onExpired={onCaptchaExpired}
-                      />
-                    </div>
-                  )}
-
+                  {/* Submit */}
                   <button
                     type="submit"
-                    disabled={captchaToken ? false : true}
-                    className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:bg-gray-200 disabled:hover:bg-gray-300 disabled:text-gray-500"
+                    disabled={loading ? true : false}
+                    className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
+                     disabled:bg-gray-200 disabled:text-gray-500`}
                   >
-                    Generate OTP
+                    {loading ? (
+                      <>
+                        <CircularProgress
+                          size={25}
+                          sx={{
+                            "&.MuiCircularProgress-root": {
+                              color: "#6a7282",
+                            },
+                          }}
+                        />
+                        <span>Verifying...</span>
+                      </>
+                    ) : (
+                      "Verify OTP"
+                    )}
                   </button>
-                </div>
-              </form>
+
+                  <div className="py-4 flex items-center gap-2">
+                    <p className="text-sm">Didn't receive the OTP? Retry in</p>
+                    <div>00:00</div>
+                  </div>
+
+                  {/* Resend button */}
+                  <button
+                    type="button"
+                    disabled={loading ? true : false}
+                    className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
+                     disabled:bg-gray-200 disabled:text-gray-500`}
+                  >
+                    {loading ? (
+                      <>
+                        <CircularProgress
+                          size={25}
+                          sx={{
+                            "&.MuiCircularProgress-root": {
+                              color: "#6a7282",
+                            },
+                          }}
+                        />
+                        <span>Resending...</span>
+                      </>
+                    ) : (
+                      "Resend OTP"
+                    )}
+                  </button>
+                </form>
+
+                {/* Mobile login form */}
+                <form
+                  onSubmit={mobileSubmit(onMobileLogin)}
+                  className={`${
+                    optSent ? "w-0 h-0 overflow-hidden -z-10 opacity-0" : ""
+                  }`}
+                >
+                  {/* Mobile no. */}
+                  <div>
+                    <p className="text-lg font-bold mb-1">
+                      What's your mobile number?
+                    </p>
+                    <div className="flex">
+                      <button
+                        type="button"
+                        disabled
+                        className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                      >
+                        <p className="text-xs text-[#1d1d1da3]">Country Code</p>
+                        <p className="flex items-center gap-x-1 font-semibold">
+                          <span>+91 (IND)</span>
+                          <IoMdArrowDropdown className="text-xl" />
+                        </p>
+                      </button>
+
+                      <Controller
+                        name="userMobileNo"
+                        control={mobileControl}
+                        render={({ field: { onChange, name, value } }) => (
+                          <div className="flex-1 border rounded-se-lg rounded-ee-lg">
+                            <TextField
+                              type="text"
+                              label="Mobile number"
+                              placeholder="Enter mobile no."
+                              variant="filled"
+                              name={name}
+                              value={value}
+                              onChange={onChange}
+                              error={false}
+                              sx={{
+                                width: "100%",
+                                "& .MuiFilledInput-root": {
+                                  fontWeight: "700 !important",
+                                  backgroundColor: "white !important",
+                                  borderTopLeftRadius: "0px",
+                                  borderTopRightRadius: "8px",
+                                  borderBottomRightRadius: "8px",
+                                },
+                                "& .MuiInputLabel-root": {
+                                  color: "#1d1d1da3 !important",
+                                },
+                                "& ::before": {
+                                  display: "none",
+                                },
+                                "& ::after": {
+                                  display: "none",
+                                },
+                              }}
+                            />
+                          </div>
+                        )}
+                      />
+                    </div>
+                    <p className="my-1 text-xs text-red-600 min-h-5">
+                      {mobileErrors.userMobileNo
+                        ? mobileErrors.userMobileNo.message
+                        : ""}
+                    </p>
+                  </div>
+
+                  {/* Recatcha */}
+                  <div>
+                    {!iAmNotRobot && (
+                      <div className="flex justify-center py-4">
+                        <ReCAPTCHA
+                          sitekey={CaptchaClientKey}
+                          onChange={onCaptchSuccess}
+                          onErrored={onCaptchaFailed}
+                          onExpired={onCaptchaExpired}
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={loading || !captchaToken ? true : false}
+                      className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
+                     disabled:bg-gray-200 disabled:text-gray-500`}
+                    >
+                      {loading ? (
+                        <>
+                          <CircularProgress
+                            size={25}
+                            sx={{
+                              "&.MuiCircularProgress-root": {
+                                color: "#6a7282",
+                              },
+                            }}
+                          />
+                          <span>Generating...</span>
+                        </>
+                      ) : (
+                        "Generate OTP"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </>
             ) : (
               <form onSubmit={emailSubmit(onEmailLogin)}>
                 {/* Email */}
@@ -843,7 +1001,10 @@ const DefaultNavbar = () => {
                 </div>
               </form>
             )}
+          </div>
 
+          {/* Footer */}
+          <div>
             <p className="flex justify-center items-center gap-2 py-5">
               <span className="w-1/2 h-px bg-slate-200"></span>
               <span className="text-slate-500 text-sm text-nowrap">
@@ -891,7 +1052,7 @@ const DefaultNavbar = () => {
                 </>
               ) : (
                 <>
-                  {/* Login with Email */}
+                  {/* Login with Mobile No. */}
                   <button
                     type="button"
                     className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
@@ -907,19 +1068,19 @@ const DefaultNavbar = () => {
                 </>
               )}
             </div>
-          </div>
 
-          <div className="w-full p-3 flex justify-center items-center gap-2 mb-4">
-            <p className="text-sm text-center">By logging in, I agree</p>
-            <p className="text-sm flex justify-center items-center gap-2">
-              <a href="#" className="text-blue-500">
-                Terms & Conditions
-              </a>
-              <span>&</span>
-              <a href="#" className="text-blue-500">
-                Privacy Policy
-              </a>
-            </p>
+            <div className="w-full p-3 flex justify-center items-center gap-2 mb-4">
+              <p className="text-sm text-center">By logging in, I agree</p>
+              <p className="text-sm flex justify-center items-center gap-2">
+                <a href="#" className="text-blue-500">
+                  Terms & Conditions
+                </a>
+                <span>&</span>
+                <a href="#" className="text-blue-500">
+                  Privacy Policy
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </Dialog>
