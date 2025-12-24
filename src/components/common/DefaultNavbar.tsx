@@ -40,6 +40,8 @@ import {
   LoginByEmailSchemaType,
   LoginByMobileSchema,
   LoginByMobileSchemaType,
+  OtpVerificationSchema,
+  OtpVerificationSchemaType,
 } from "@/lib/schema/auth/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -48,8 +50,14 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { sessionLogout, setSession } from "@/redux/slices/session/sessionSlice";
-import { loginWithMobile } from "@/services/auth.service";
+import {
+  loginWithMobileAPI,
+  otpVerificationAPI,
+  sendOtpAPI,
+} from "@/services/auth.service";
 import OtpInput from "react-otp-input";
+import LocalTimer from "./LocalTimer";
+import { AxiosResponse } from "axios";
 
 const DefaultNavbar = () => {
   const currentLocation = usePathname();
@@ -61,6 +69,7 @@ const DefaultNavbar = () => {
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<boolean>(false);
+  const [otpCounting, setOtpCounting] = useState<boolean>(false);
 
   // User Account Dropdown
   const [anchor1, setAnchor1] = useState<boolean>(false);
@@ -91,7 +100,7 @@ const DefaultNavbar = () => {
   const onCaptchSuccess = (capchaToken: string | null) => {
     if (!capchaToken) onCaptchaFailed();
     else {
-      console.log("Captcha is done.", capchaToken);
+      // console.log("Captcha is done.", capchaToken);
       setCaptchaToken(capchaToken);
     }
   };
@@ -126,7 +135,8 @@ const DefaultNavbar = () => {
     getValues: otpGetValues,
     control: otpControl,
     formState: { errors: otpErrors },
-  } = useForm({
+  } = useForm<OtpVerificationSchemaType>({
+    resolver: zodResolver(OtpVerificationSchema),
     defaultValues: {
       userLoginOTP: "",
     },
@@ -163,11 +173,12 @@ const DefaultNavbar = () => {
     setLoading(true);
     console.log("data: ", data);
     try {
-      const MobileLoginRes = await loginWithMobile(data.userMobileNo);
+      const MobileLoginRes = await loginWithMobileAPI(data.userMobileNo);
 
       console.log("MobileLoginRes: ", MobileLoginRes);
       if (MobileLoginRes) {
         setOptSent(true);
+        toast.success(`OTP sent successfully on ${data.userMobileNo}.`);
       }
     } catch (error) {
       console.log(error);
@@ -175,6 +186,48 @@ const DefaultNavbar = () => {
       setLoading(false);
     }
   };
+
+  const onOtpSubmit = async (data: any) => {
+    console.log("OTP: ", data);
+    try {
+      const otpVerifyRes = await otpVerificationAPI(data.userLoginOTP);
+
+      if (otpVerifyRes.message === "success") {
+        toast.success("OTP verified successfully.");
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    const userMobileNo = mobileGetValues("userMobileNo");
+
+    if (!userMobileNo) {
+      toast.error("Mobile no. do not found");
+    }
+
+    try {
+      const resendOtpRes = await sendOtpAPI(userMobileNo);
+
+      console.log("resendOtpRes: ", resendOtpRes);
+
+      if (resendOtpRes.message === "success") {
+        setOtpCounting(true);
+        toast.success(`OTP sent successfully on ${userMobileNo}.`);
+      }
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (optSent) {
+      setOtpCounting(true);
+    } else {
+      setOtpCounting(false);
+    }
+  }, [optSent]);
 
   const onEmailLogin = (data: LoginByEmailSchemaType) => {
     console.log("data: ", data);
@@ -667,13 +720,14 @@ const DefaultNavbar = () => {
                   className={`${
                     optSent ? "" : "w-0 h-0 overflow-hidden -z-10 opacity-0"
                   }`}
+                  onSubmit={otpSubmit(onOtpSubmit)}
                 >
                   {/* onSubmit={otpSubmit(onOtpSubmit)} */}
                   <p className="text-[22px] font-bold">
                     Enter the OTP we just sent you
                   </p>
 
-                  <div className="flex justify-between items-center my-7">
+                  <div className="flex justify-between items-center my-6">
                     <p className="flex flex-col">
                       <span className="text-sm">Mobile number</span>
                       <span className="font-semibold">
@@ -689,7 +743,7 @@ const DefaultNavbar = () => {
                     </button>
                   </div>
 
-                  <div className="mb-4">
+                  <div className="mb-3">
                     <Controller
                       name="userLoginOTP"
                       control={otpControl}
@@ -704,6 +758,12 @@ const DefaultNavbar = () => {
                             inputStyle="min-w-12 h-14 rounded-lg border focus:border-2 text-2xl font-semibold focus:outline-4 outline-primary/20"
                             renderInput={(props) => <input {...props} />}
                           />
+
+                          <p className="mt-1 min-h-5 text-sm text-red-700">
+                            {otpErrors.userLoginOTP
+                              ? otpErrors.userLoginOTP.message
+                              : " "}
+                          </p>
                         </div>
                       )}
                     />
@@ -733,9 +793,15 @@ const DefaultNavbar = () => {
                     )}
                   </button>
 
-                  <div className="py-4 flex items-center gap-2">
-                    <p className="text-sm">Didn't receive the OTP? Retry in</p>
-                    <div>00:00</div>
+                  <div className="py-5 flex items-center gap-2">
+                    <p className="text-sm font-medium">
+                      Didn't receive the OTP? Retry in
+                    </p>
+                    <LocalTimer
+                      time={15}
+                      isCounting={otpCounting}
+                      setIsCounting={setOtpCounting}
+                    />
                   </div>
 
                   {/* Resend button */}
@@ -744,6 +810,7 @@ const DefaultNavbar = () => {
                     disabled={loading ? true : false}
                     className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
                      disabled:bg-gray-200 disabled:text-gray-500`}
+                    onClick={handleResendOtp}
                   >
                     {loading ? (
                       <>
@@ -868,6 +935,70 @@ const DefaultNavbar = () => {
                         "Generate OTP"
                       )}
                     </button>
+                  </div>
+
+                  <p className="flex justify-center items-center gap-2 py-5">
+                    <span className="w-10 h-px bg-slate-200"></span>
+                    <span className="text-slate-500 text-sm text-nowrap">
+                      Login/Signup With
+                    </span>
+                    <span className="w-10 h-px bg-slate-200"></span>
+                  </p>
+
+                  <div className="flex justify-center gap-4">
+                    {/* Login with google */}
+                    <button
+                      type="button"
+                      className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
+                      onClick={() => handleSignInWithGoogle()}
+                    >
+                      <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
+                        <Image
+                          src={googleIcon}
+                          width={24}
+                          height={24}
+                          alt="Google Sign In Icon"
+                        />
+                      </div>
+
+                      <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                        Sign in with Google
+                      </p>
+                    </button>
+
+                    {loginWith === "mobile" ? (
+                      <>
+                        {/* Login with Email */}
+                        <button
+                          type="button"
+                          className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                          onClick={() => {
+                            setLoginWith("email");
+                          }}
+                        >
+                          <MdOutlineEmail className="w-7 h-7 text-white" />
+                          <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                            Sign in with Email
+                          </p>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {/* Login with Mobile No. */}
+                        <button
+                          type="button"
+                          className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                          onClick={() => {
+                            setLoginWith("mobile");
+                          }}
+                        >
+                          <FaMobileAlt className="w-7 h-7 text-white" />
+                          <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                            Sign in with Mobile No.
+                          </p>
+                        </button>
+                      </>
+                    )}
                   </div>
                 </form>
               </>
@@ -1004,83 +1135,17 @@ const DefaultNavbar = () => {
           </div>
 
           {/* Footer */}
-          <div>
-            <p className="flex justify-center items-center gap-2 py-5">
-              <span className="w-1/2 h-px bg-slate-200"></span>
-              <span className="text-slate-500 text-sm text-nowrap">
-                Or Login/Signup With
-              </span>
-              <span className="w-1/2 h-px bg-slate-200"></span>
+          <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
+            <p className="text-xs text-center">By logging in, I agree</p>
+            <p className="text-xs flex justify-center items-center gap-2">
+              <a href="#" className="text-blue-500 hover:underline">
+                Terms & Conditions
+              </a>
+              <span>&</span>
+              <a href="#" className="text-blue-500 hover:underline">
+                Privacy Policy
+              </a>
             </p>
-
-            <div className="flex justify-center gap-4">
-              {/* Login with google */}
-              <button
-                type="button"
-                className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
-                onClick={() => handleSignInWithGoogle()}
-              >
-                <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
-                  <Image
-                    src={googleIcon}
-                    width={24}
-                    height={24}
-                    alt="Google Sign In Icon"
-                  />
-                </div>
-
-                <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                  Sign in with Google
-                </p>
-              </button>
-
-              {loginWith === "mobile" ? (
-                <>
-                  {/* Login with Email */}
-                  <button
-                    type="button"
-                    className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
-                    onClick={() => {
-                      setLoginWith("email");
-                    }}
-                  >
-                    <MdOutlineEmail className="w-7 h-7 text-white" />
-                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                      Sign in with Email
-                    </p>
-                  </button>
-                </>
-              ) : (
-                <>
-                  {/* Login with Mobile No. */}
-                  <button
-                    type="button"
-                    className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
-                    onClick={() => {
-                      setLoginWith("mobile");
-                    }}
-                  >
-                    <FaMobileAlt className="w-7 h-7 text-white" />
-                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                      Sign in with Mobile No.
-                    </p>
-                  </button>
-                </>
-              )}
-            </div>
-
-            <div className="w-full p-3 flex justify-center items-center gap-2 mb-4">
-              <p className="text-sm text-center">By logging in, I agree</p>
-              <p className="text-sm flex justify-center items-center gap-2">
-                <a href="#" className="text-blue-500">
-                  Terms & Conditions
-                </a>
-                <span>&</span>
-                <a href="#" className="text-blue-500">
-                  Privacy Policy
-                </a>
-              </p>
-            </div>
           </div>
         </div>
       </Dialog>
