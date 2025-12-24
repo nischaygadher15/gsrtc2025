@@ -6,12 +6,14 @@ const LocalTimer = ({
   time,
   isCounting,
   setIsCounting,
+  expiry,
 }: {
   time: number;
   isCounting: boolean;
   setIsCounting: Dispatch<SetStateAction<boolean>>;
+  expiry: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [count, setCount] = useState<number>(0);
+  const [count, setCount] = useState<number>(time);
   let timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopTimer = () => {
@@ -19,7 +21,6 @@ const LocalTimer = ({
       clearInterval(timerRef.current);
       console.log("stopTimer");
     }
-    setCount(0);
   };
 
   const startTimer = () => {
@@ -46,8 +47,11 @@ const LocalTimer = ({
   }, [isCounting]);
 
   useEffect(() => {
+    console.log("count", count);
     if (count <= 0) {
+      console.log("OTP Expired!");
       setIsCounting(false);
+      expiry(true);
     }
   }, [count]);
 

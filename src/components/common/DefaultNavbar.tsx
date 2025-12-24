@@ -70,6 +70,7 @@ const DefaultNavbar = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<boolean>(false);
   const [otpCounting, setOtpCounting] = useState<boolean>(false);
+  const [otpExpired, setOtpExpired] = useState<boolean>(false);
 
   // User Account Dropdown
   const [anchor1, setAnchor1] = useState<boolean>(false);
@@ -102,6 +103,7 @@ const DefaultNavbar = () => {
     else {
       // console.log("Captcha is done.", capchaToken);
       setCaptchaToken(capchaToken);
+      setIAmNotRobot(true);
     }
   };
 
@@ -161,6 +163,12 @@ const DefaultNavbar = () => {
     setIAmNotRobot(false);
     mobileReset();
     emailReset();
+
+    // OPT Form
+    otpReset();
+    setLoading(false);
+    setOptSent(false);
+    setOtpExpired(false);
   };
 
   useEffect(() => {
@@ -738,6 +746,11 @@ const DefaultNavbar = () => {
                     <button
                       type="button"
                       className="px-3 py-1.5 rounded-s-full rounded-e-full font-semibold text-sm underline underline-offset-1 hover:bg-slate-200"
+                      onClick={() => {
+                        setOptSent(false);
+                        otpReset();
+                        setOtpCounting(false);
+                      }}
                     >
                       Edit
                     </button>
@@ -801,33 +814,36 @@ const DefaultNavbar = () => {
                       time={15}
                       isCounting={otpCounting}
                       setIsCounting={setOtpCounting}
+                      expiry={setOtpExpired}
                     />
                   </div>
 
                   {/* Resend button */}
-                  <button
-                    type="button"
-                    disabled={loading ? true : false}
-                    className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
+                  {otpExpired && (
+                    <button
+                      type="button"
+                      disabled={loading ? true : false}
+                      className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
                      disabled:bg-gray-200 disabled:text-gray-500`}
-                    onClick={handleResendOtp}
-                  >
-                    {loading ? (
-                      <>
-                        <CircularProgress
-                          size={25}
-                          sx={{
-                            "&.MuiCircularProgress-root": {
-                              color: "#6a7282",
-                            },
-                          }}
-                        />
-                        <span>Resending...</span>
-                      </>
-                    ) : (
-                      "Resend OTP"
-                    )}
-                  </button>
+                      onClick={handleResendOtp}
+                    >
+                      {loading ? (
+                        <>
+                          <CircularProgress
+                            size={25}
+                            sx={{
+                              "&.MuiCircularProgress-root": {
+                                color: "#6a7282",
+                              },
+                            }}
+                          />
+                          <span>Resending...</span>
+                        </>
+                      ) : (
+                        "Resend OTP"
+                      )}
+                    </button>
+                  )}
                 </form>
 
                 {/* Mobile login form */}
@@ -902,16 +918,20 @@ const DefaultNavbar = () => {
 
                   {/* Recatcha */}
                   <div>
-                    {!iAmNotRobot && (
-                      <div className="flex justify-center py-4">
-                        <ReCAPTCHA
-                          sitekey={CaptchaClientKey}
-                          onChange={onCaptchSuccess}
-                          onErrored={onCaptchaFailed}
-                          onExpired={onCaptchaExpired}
-                        />
-                      </div>
-                    )}
+                    <div
+                      className={`${
+                        iAmNotRobot
+                          ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
+                          : "py-4 flex justify-center"
+                      }`}
+                    >
+                      <ReCAPTCHA
+                        sitekey={CaptchaClientKey}
+                        onChange={onCaptchSuccess}
+                        onErrored={onCaptchaFailed}
+                        onExpired={onCaptchaExpired}
+                      />
+                    </div>
 
                     <button
                       type="submit"
@@ -936,77 +956,13 @@ const DefaultNavbar = () => {
                       )}
                     </button>
                   </div>
-
-                  <p className="flex justify-center items-center gap-2 py-5">
-                    <span className="w-10 h-px bg-slate-200"></span>
-                    <span className="text-slate-500 text-sm text-nowrap">
-                      Login/Signup With
-                    </span>
-                    <span className="w-10 h-px bg-slate-200"></span>
-                  </p>
-
-                  <div className="flex justify-center gap-4">
-                    {/* Login with google */}
-                    <button
-                      type="button"
-                      className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
-                      onClick={() => handleSignInWithGoogle()}
-                    >
-                      <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
-                        <Image
-                          src={googleIcon}
-                          width={24}
-                          height={24}
-                          alt="Google Sign In Icon"
-                        />
-                      </div>
-
-                      <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                        Sign in with Google
-                      </p>
-                    </button>
-
-                    {loginWith === "mobile" ? (
-                      <>
-                        {/* Login with Email */}
-                        <button
-                          type="button"
-                          className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
-                          onClick={() => {
-                            setLoginWith("email");
-                          }}
-                        >
-                          <MdOutlineEmail className="w-7 h-7 text-white" />
-                          <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                            Sign in with Email
-                          </p>
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        {/* Login with Mobile No. */}
-                        <button
-                          type="button"
-                          className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
-                          onClick={() => {
-                            setLoginWith("mobile");
-                          }}
-                        >
-                          <FaMobileAlt className="w-7 h-7 text-white" />
-                          <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
-                            Sign in with Mobile No.
-                          </p>
-                        </button>
-                      </>
-                    )}
-                  </div>
                 </form>
               </>
             ) : (
               <form onSubmit={emailSubmit(onEmailLogin)}>
                 {/* Email */}
                 <div>
-                  <p className="text-lg font-bold mb-1">Email</p>
+                  {/* <p className="text-lg font-bold mb-1">Email</p> */}
                   <Controller
                     name="userEmail"
                     control={emailControl}
@@ -1050,7 +1006,7 @@ const DefaultNavbar = () => {
 
                 {/* Password */}
                 <div>
-                  <p className="text-lg font-bold mb-1">Password</p>
+                  {/* <p className="text-lg font-bold mb-1">Password</p> */}
                   <Controller
                     name="userPass"
                     control={emailControl}
@@ -1111,16 +1067,20 @@ const DefaultNavbar = () => {
 
                 <div>
                   {/* Recatcha */}
-                  {!iAmNotRobot && (
-                    <div className="flex justify-center py-4">
-                      <ReCAPTCHA
-                        sitekey={CaptchaClientKey}
-                        onChange={onCaptchSuccess}
-                        onErrored={onCaptchaFailed}
-                        onExpired={onCaptchaExpired}
-                      />
-                    </div>
-                  )}
+                  <div
+                    className={`${
+                      iAmNotRobot
+                        ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
+                        : "py-4 flex justify-center"
+                    }`}
+                  >
+                    <ReCAPTCHA
+                      sitekey={CaptchaClientKey}
+                      onChange={onCaptchSuccess}
+                      onErrored={onCaptchaFailed}
+                      onExpired={onCaptchaExpired}
+                    />
+                  </div>
 
                   <button
                     type="submit"
@@ -1131,6 +1091,74 @@ const DefaultNavbar = () => {
                   </button>
                 </div>
               </form>
+            )}
+
+            {!optSent && (
+              <>
+                <p className="flex justify-center items-center gap-2 py-5">
+                  <span className="w-10 h-px bg-slate-200"></span>
+                  <span className="text-slate-500 text-sm text-nowrap">
+                    Login/Signup With
+                  </span>
+                  <span className="w-10 h-px bg-slate-200"></span>
+                </p>
+
+                <div className="flex justify-center gap-4">
+                  {/* Login with google */}
+                  <button
+                    type="button"
+                    className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
+                    onClick={() => handleSignInWithGoogle()}
+                  >
+                    <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
+                      <Image
+                        src={googleIcon}
+                        width={24}
+                        height={24}
+                        alt="Google Sign In Icon"
+                      />
+                    </div>
+
+                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                      Sign in with Google
+                    </p>
+                  </button>
+
+                  {loginWith === "mobile" ? (
+                    <>
+                      {/* Login with Email */}
+                      <button
+                        type="button"
+                        className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                        onClick={() => {
+                          setLoginWith("email");
+                        }}
+                      >
+                        <MdOutlineEmail className="w-7 h-7 text-white" />
+                        <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                          Sign in with Email
+                        </p>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {/* Login with Mobile No. */}
+                      <button
+                        type="button"
+                        className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                        onClick={() => {
+                          setLoginWith("mobile");
+                        }}
+                      >
+                        <FaMobileAlt className="w-7 h-7 text-white" />
+                        <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                          Sign in with Mobile No.
+                        </p>
+                      </button>
+                    </>
+                  )}
+                </div>
+              </>
             )}
           </div>
 
