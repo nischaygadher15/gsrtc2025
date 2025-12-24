@@ -21,3 +21,21 @@ export const otpVerificationAPI = (
     userLoginOTP,
   });
 };
+
+export const loginWithEmailAPI = (data: {
+  userEmail: string;
+  userPass: string;
+}): Promise<{ status: boolean; message: string }> => {
+  return API.post("/auth/login/email", {
+    userEmail: data.userEmail,
+    userPass: data.userPass,
+  });
+};
+
+export const loginWithGoogleAPI = (
+  code: string
+): Promise<{ status: boolean; message: string }> => {
+  return API.post("/auth/login/google", {
+    authCode: code,
+  });
+};

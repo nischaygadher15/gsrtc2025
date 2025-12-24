@@ -51,6 +51,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { sessionLogout, setSession } from "@/redux/slices/session/sessionSlice";
 import {
+  loginWithEmailAPI,
+  loginWithGoogleAPI,
   loginWithMobileAPI,
   otpVerificationAPI,
   sendOtpAPI,
@@ -170,6 +172,7 @@ const DefaultNavbar = ({
     setGsrctLoginDialog(false);
     setCaptchaToken("");
     setIAmNotRobot(false);
+    setLoginWith("mobile");
     mobileReset();
     emailReset();
 
@@ -246,8 +249,23 @@ const DefaultNavbar = ({
     }
   }, [optSent]);
 
-  const onEmailLogin = (data: LoginByEmailSchemaType) => {
+  const onEmailLogin = async (data: LoginByEmailSchemaType) => {
     console.log("data: ", data);
+
+    try {
+      const EmailLoginRes = await loginWithEmailAPI(data);
+
+      console.log("EmailLoginRes: ", EmailLoginRes);
+      if (EmailLoginRes.status) {
+        toast.success(EmailLoginRes.message);
+        closeGsrctLoginDialog();
+        closeUserDrawer();
+      } else {
+        toast.error(EmailLoginRes.message);
+      }
+    } catch (error) {
+      console.log("error: ", error);
+    }
   };
 
   const sessionId = useSelector((state: RootState) => state.session.sessionId);
@@ -258,12 +276,19 @@ const DefaultNavbar = ({
 
   const handleSignInWithGoogle = useGoogleLogin({
     flow: "auth-code",
-    onSuccess: ({ code }) => {
+    onSuccess: async ({ code }) => {
       console.log("Auth-code: ", code);
-      dispatch(setSession(code));
-      closeGsrctLoginDialog();
-      closeUserDrawer();
-      toast.success("You have successfully logged in!");
+      try {
+        const GoogleSignInRes = await loginWithGoogleAPI(code);
+
+        console.log("GoogleSignInRes: ", GoogleSignInRes);
+      } catch (error) {
+        console.log("error: ", error);
+      }
+      // dispatch(setSession(code));
+      // closeGsrctLoginDialog();
+      // closeUserDrawer();
+      // toast.success("You have successfully logged in!");
     },
     onError: () => {
       console.log("Login with Google failed");
@@ -1119,11 +1144,15 @@ const DefaultNavbar = ({
                   <span className="w-10 h-px bg-slate-200"></span>
                 </p>
 
-                <div className="flex justify-center gap-4">
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
                   {/* Login with google */}
                   <button
                     type="button"
-                    className="flex bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer"
+                    className={`min-h-12 flex justify-center items-center bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer ${
+                      winSize <= 640
+                        ? "rounded-s-full rounded-e-full"
+                        : "rounded-sm"
+                    }`}
                     onClick={() => handleSignInWithGoogle()}
                   >
                     <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
@@ -1135,7 +1164,7 @@ const DefaultNavbar = ({
                       />
                     </div>
 
-                    <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                    <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
                       Sign in with Google
                     </p>
                   </button>
@@ -1145,13 +1174,17 @@ const DefaultNavbar = ({
                       {/* Login with Email */}
                       <button
                         type="button"
-                        className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1 cursor-pointer ${
+                          winSize <= 640
+                            ? "rounded-s-full rounded-e-full"
+                            : "rounded-sm"
+                        }`}
                         onClick={() => {
                           setLoginWith("email");
                         }}
                       >
                         <MdOutlineEmail className="w-7 h-7 text-white" />
-                        <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                        <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
                           Sign in with Email
                         </p>
                       </button>
@@ -1161,13 +1194,17 @@ const DefaultNavbar = ({
                       {/* Login with Mobile No. */}
                       <button
                         type="button"
-                        className="flex items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer"
+                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer ${
+                          winSize <= 640
+                            ? "rounded-s-full rounded-e-full"
+                            : "rounded-sm"
+                        }`}
                         onClick={() => {
                           setLoginWith("mobile");
                         }}
                       >
                         <FaMobileAlt className="w-7 h-7 text-white" />
-                        <p className="flex-1 flex justify-center items-center font-semibold text-white text-sm px-2">
+                        <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
                           Sign in with Mobile No.
                         </p>
                       </button>

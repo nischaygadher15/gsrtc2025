@@ -24,19 +24,7 @@ export type OtpVerificationSchemaType = z.infer<typeof OtpVerificationSchema>;
 
 export const LoginByEmailSchema = z.object({
   userEmail: z.string("Email is required.").email("Invalid format"),
-  userPass: z
-    .string("Password is required.")
-    .regex(/\d/g, "Password must have 1 digit")
-    .regex(/[a-z]/g, "Password must have 1 small alphabet")
-    .regex(/[A-Z]/g, "Password must have 1 capital alphabet")
-    .regex(
-      /[~`!@#$%\^&\*\(\)_\-+=\{\}\[\]:;"'<,>\.\?\/\|\\]/g,
-      "Password must have 1 special character"
-    )
-    .refine(
-      (val) => val.length >= 6,
-      "Password must have at least 6 characters"
-    ),
+  userPass: z.string("Password is required."),
 });
 
 export type LoginByEmailSchemaType = z.infer<typeof LoginByEmailSchema>;
