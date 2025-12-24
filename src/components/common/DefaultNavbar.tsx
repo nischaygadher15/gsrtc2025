@@ -2,7 +2,7 @@
 import navbarLogo from "@/assets/images/Logos/gsrtcLogo2.svg";
 import { CircularProgress, Drawer, TextField } from "@mui/material";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import Link from "next/link";
@@ -57,11 +57,20 @@ import {
 } from "@/services/auth.service";
 import OtpInput from "react-otp-input";
 import LocalTimer from "./LocalTimer";
-import { AxiosResponse } from "axios";
+import useWindowSize from "@/Hooks/useWindowSize";
 
-const DefaultNavbar = () => {
+const DefaultNavbar = ({
+  accDrawer,
+}: {
+  accDrawer: {
+    userAccDrawer: boolean;
+    setUserAccDrawer: Dispatch<SetStateAction<boolean>>;
+  };
+}) => {
+  const { userAccDrawer, setUserAccDrawer } = accDrawer;
   const currentLocation = usePathname();
   const dispatch = useDispatch<AppDispatch>();
+  const winSize = useWindowSize();
   const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
 
@@ -73,12 +82,12 @@ const DefaultNavbar = () => {
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
 
   // User Account Dropdown
-  const [anchor1, setAnchor1] = useState<boolean>(false);
+  // const [userAccDrawer, setUserAccDrawer] = useState<boolean>(false);
   const handleUserDrawer = () => {
-    setAnchor1(true);
+    setUserAccDrawer(true);
   };
   const closeUserDrawer = () => {
-    setAnchor1(false);
+    setUserAccDrawer(false);
   };
 
   // // Agent Login Dropdown
@@ -371,8 +380,8 @@ const DefaultNavbar = () => {
       {/* <=============== Drawer and Dialogs ===============> */}
 
       {/* Account Drawer */}
-      <Drawer anchor="right" open={anchor1} onClose={closeUserDrawer}>
-        <div className="w-[360px]">
+      <Drawer anchor="right" open={userAccDrawer} onClose={closeUserDrawer}>
+        <div className={`${winSize <= 640 ? "w-screen" : "w-[360px]"}`}>
           <div className="relative p-4 border-b-[1px] border-slate-200 flex items-center justify-between ">
             <span className="font-semibold">Account</span>
             <button
@@ -695,18 +704,25 @@ const DefaultNavbar = () => {
 
       {/* GSRTC Login/Sign up Dialog */}
       <Dialog
+        fullScreen={winSize <= 640 ? true : false}
         onClose={closeGsrctLoginDialog}
         open={gsrtcLoginDialog}
         sx={{
           "& .MuiDialog-paper": {
-            borderRadius: "16px",
+            borderRadius: winSize <= 640 ? "0px" : "16px",
             margin: 0,
             overflow: "hidden",
-            maxHeight: "calc(100% - 32px)",
+            maxHeight: winSize <= 640 ? "none" : "calc(100% - 32px)",
           },
         }}
       >
-        <div className="relative w-xl min-h-[calc(100vh-32px)] max-h-[calc(100vh-32px)] flex flex-col bg-white overflow-y-auto hideScrollBar">
+        <div
+          className={`relative flex flex-col bg-white overflow-y-auto hideScrollBar ${
+            winSize <= 640
+              ? "w-full h-full"
+              : "w-xl min-h-[calc(100vh-32px)] max-h-[calc(100vh-32px)]"
+          }`}
+        >
           {/* Header */}
           <div className="sticky top-0 left-0 right-0 z-999 p-4 bg-white flex justify-between items-center">
             <p className="text-xl font-bold">Login to GSRTC</p>
@@ -731,7 +747,7 @@ const DefaultNavbar = () => {
                   onSubmit={otpSubmit(onOtpSubmit)}
                 >
                   {/* onSubmit={otpSubmit(onOtpSubmit)} */}
-                  <p className="text-[22px] font-bold">
+                  <p className="text-lg sm:text-[22px] font-bold">
                     Enter the OTP we just sent you
                   </p>
 
@@ -768,7 +784,7 @@ const DefaultNavbar = () => {
                             onChange={onChange}
                             numInputs={6}
                             containerStyle="flex gap-2"
-                            inputStyle="min-w-12 h-14 rounded-lg border focus:border-2 text-2xl font-semibold focus:outline-4 outline-primary/20"
+                            inputStyle="min-w-8 sm:min-w-12 h-10 sm:h-14 rounded-sm sm:rounded-lg border focus:border-2 text-xl sm:text-2xl font-semibold focus:outline-4 outline-primary/20"
                             renderInput={(props) => <input {...props} />}
                           />
 
@@ -916,13 +932,13 @@ const DefaultNavbar = () => {
                     </p>
                   </div>
 
-                  {/* Recatcha */}
+                  {/* Recaptcha */}
                   <div>
                     <div
                       className={`${
                         iAmNotRobot
                           ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
-                          : "py-4 flex justify-center"
+                          : "pb-4 flex justify-center"
                       }`}
                     >
                       <ReCAPTCHA
@@ -1066,12 +1082,12 @@ const DefaultNavbar = () => {
                 </div>
 
                 <div>
-                  {/* Recatcha */}
+                  {/* Recaptcha */}
                   <div
                     className={`${
                       iAmNotRobot
                         ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
-                        : "py-4 flex justify-center"
+                        : "pb-4 flex justify-center"
                     }`}
                   >
                     <ReCAPTCHA

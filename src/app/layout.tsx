@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import ReduxProvider from "@/lib/providers/reduxProvider";
+import PageLayout from "./pageLayout";
 
 export const metadata: Metadata = {
   title: {
@@ -29,6 +30,9 @@ export default function RootLayout({
           <GoogleOAuthProvider
             clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
           >
+            {/* Vercel analytics */}
+            <Analytics />
+
             {/* Toaster */}
             <Toaster
               position="top-center"
@@ -58,11 +62,7 @@ export default function RootLayout({
               }}
             />
 
-            <DefaultNavbar />
-            {children}
-            <Analytics />
-            <FooterSection />
-            <FooterNavbar />
+            <PageLayout>{children}</PageLayout>
           </GoogleOAuthProvider>
         </ReduxProvider>
       </body>
