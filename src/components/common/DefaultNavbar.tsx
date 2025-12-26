@@ -78,6 +78,7 @@ const DefaultNavbar = ({
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<boolean>(false);
   const [otpCounting, setOtpCounting] = useState<boolean>(false);
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
@@ -269,18 +270,23 @@ const DefaultNavbar = ({
       console.log("Auth-code: ", code);
       try {
         const GoogleSignInRes = await loginWithGoogleAPI(code);
-
         console.log("GoogleSignInRes: ", GoogleSignInRes);
+        if (GoogleSignInRes.status) {
+          setLoadingGoogle(false);
+          toast.success(GoogleSignInRes.message);
+          dispatch(setSession(code));
+          closeGsrctLoginDialog();
+          closeUserDrawer();
+        }
       } catch (error) {
         console.log("error: ", error);
+        toast.success("Something went wrong!!");
+      } finally {
+        setLoadingGoogle(false);
       }
-
-      // dispatch(setSession(code));
-      // closeGsrctLoginDialog();
-      // closeUserDrawer();
-      // toast.success("You have successfully logged in!");
     },
     onError: () => {
+      setLoadingGoogle(false);
       console.log("Login with Google failed");
       toast.error("Login with Google failed");
     },
@@ -1138,14 +1144,27 @@ const DefaultNavbar = ({
                   {/* Login with google */}
                   <button
                     type="button"
-                    className={`min-h-12 flex justify-center items-center bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1 rounded-sm cursor-pointer ${
+                    className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 rounded-sm cursor-pointer ${
                       winSize <= 640
                         ? "rounded-s-full rounded-e-full"
                         : "rounded-sm"
                     }`}
-                    onClick={() => handleSignInWithGoogle()}
+                    onClick={() => {
+                      handleSignInWithGoogle();
+                      setLoadingGoogle(true);
+                    }}
                   >
-                    <div className="bg-white p-1.5 rounded-ss-sm rounded-es-sm">
+                    {loadingGoogle && (
+                      <CircularProgress
+                        size={25}
+                        sx={{
+                          "&.MuiCircularProgress-root": {
+                            color: "white",
+                          },
+                        }}
+                      />
+                    )}
+                    <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
                       <Image
                         src={googleIcon}
                         width={24}
@@ -1154,7 +1173,7 @@ const DefaultNavbar = ({
                       />
                     </div>
 
-                    <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
+                    <p className="flex justify-center items-center font-semibold text-white text-sm">
                       Sign in with Google
                     </p>
                   </button>
@@ -1164,7 +1183,7 @@ const DefaultNavbar = ({
                       {/* Login with Email */}
                       <button
                         type="button"
-                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1 cursor-pointer ${
+                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 cursor-pointer ${
                           winSize <= 640
                             ? "rounded-s-full rounded-e-full"
                             : "rounded-sm"
@@ -1184,7 +1203,7 @@ const DefaultNavbar = ({
                       {/* Login with Mobile No. */}
                       <button
                         type="button"
-                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1 rounded-sm cursor-pointer ${
+                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 rounded-sm cursor-pointer ${
                           winSize <= 640
                             ? "rounded-s-full rounded-e-full"
                             : "rounded-sm"
