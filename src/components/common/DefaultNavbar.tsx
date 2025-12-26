@@ -266,6 +266,7 @@ const DefaultNavbar = ({
 
   const handleSignInWithGoogle = useGoogleLogin({
     flow: "auth-code",
+    scope: "openid email profile",
     onSuccess: async ({ code }) => {
       console.log("Auth-code: ", code);
       try {
@@ -280,7 +281,7 @@ const DefaultNavbar = ({
         }
       } catch (error) {
         console.log("error: ", error);
-        toast.success("Something went wrong!!");
+        toast.error("Something went wrong!!");
       } finally {
         setLoadingGoogle(false);
       }
