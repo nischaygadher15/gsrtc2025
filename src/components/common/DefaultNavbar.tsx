@@ -45,7 +45,6 @@ import {
 } from "@/lib/schema/auth/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
-import Script from "next/script";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -91,16 +90,6 @@ const DefaultNavbar = ({
   const closeUserDrawer = () => {
     setUserAccDrawer(false);
   };
-
-  // // Agent Login Dropdown
-  // const [anchor2, setAnchor2] = useState<null | HTMLElement>(null);
-  // const openAnchor2 = Boolean(anchor2);
-  // const handleClickAnchor2 = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   setAnchor2(event.currentTarget);
-  // };
-  // const handleCloseAnchor2 = () => {
-  //   setAnchor2(null);
-  // };
 
   //GSRTC Login
   const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
@@ -285,6 +274,7 @@ const DefaultNavbar = ({
       } catch (error) {
         console.log("error: ", error);
       }
+
       // dispatch(setSession(code));
       // closeGsrctLoginDialog();
       // closeUserDrawer();
