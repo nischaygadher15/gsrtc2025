@@ -28,3 +28,16 @@ export const LoginByEmailSchema = z.object({
 });
 
 export type LoginByEmailSchemaType = z.infer<typeof LoginByEmailSchema>;
+
+// Sign up schema
+
+export const SignUpSchema = z.object({
+  firstName: z.string("First name is required."),
+  lastName: z.string("Last name is required."),
+  userDob: z.string("Date of birth is required."),
+  userMobileNo: z.string("Mobile no. is required."),
+  userEmail: z.string("Email is required.").email("Invalid email format"),
+  userPass: z.string("Password is required."),
+});
+
+export type SignUpSchemaSchemaType = z.infer<typeof SignUpSchema>;

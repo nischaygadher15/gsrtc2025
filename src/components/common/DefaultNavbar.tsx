@@ -42,6 +42,8 @@ import {
   LoginByMobileSchemaType,
   OtpVerificationSchema,
   OtpVerificationSchemaType,
+  SignUpSchema,
+  SignUpSchemaSchemaType,
 } from "@/lib/schema/auth/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -59,6 +61,10 @@ import {
 import OtpInput from "react-otp-input";
 import LocalTimer from "./LocalTimer";
 import useWindowSize from "@/Hooks/useWindowSize";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 const DefaultNavbar = ({
   accDrawer,
@@ -79,9 +85,12 @@ const DefaultNavbar = ({
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
+  const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
+  const [otpResending, setOtpResending] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<boolean>(false);
   const [otpCounting, setOtpCounting] = useState<boolean>(false);
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
+  const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState(false);
 
   // User Account Dropdown
   // const [userAccDrawer, setUserAccDrawer] = useState<boolean>(false);
@@ -169,8 +178,12 @@ const DefaultNavbar = ({
     // OPT Form
     otpReset();
     setLoading(false);
+    setLoadingGoogle(false);
+    setOtpVerifying(false);
+    setOtpResending(false);
     setOptSent(false);
     setOtpExpired(false);
+    setOtpCounting(false);
   };
 
   useEffect(() => {
@@ -187,26 +200,41 @@ const DefaultNavbar = ({
 
       console.log("MobileLoginRes: ", MobileLoginRes);
       if (MobileLoginRes) {
-        setOptSent(true);
+        setTimeout(() => {
+          setOptSent(true);
+        }, 300);
+
         toast.success(`OTP sent successfully on ${data.userMobileNo}.`);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
   };
 
   const onOtpSubmit = async (data: any) => {
+    setOtpVerifying(true);
     console.log("OTP: ", data);
     try {
       const otpVerifyRes = await otpVerificationAPI(data.userLoginOTP);
 
       if (otpVerifyRes.message === "success") {
-        toast.success("OTP verified successfully.");
+        setTimeout(() => {
+          dispatch(setSession("1234567890"));
+          closeGsrctLoginDialog();
+          closeUserDrawer();
+          toast.success("OTP verified successfully.");
+          setOtpVerifying(false);
+        }, 300);
       }
     } catch (error) {
       console.log("error", error);
+      setTimeout(() => {
+        setOtpVerifying(false);
+      }, 300);
     }
   };
 
@@ -218,6 +246,7 @@ const DefaultNavbar = ({
     }
 
     try {
+      setOtpResending(true);
       const resendOtpRes = await sendOtpAPI(userMobileNo);
 
       console.log("resendOtpRes: ", resendOtpRes);
@@ -228,6 +257,10 @@ const DefaultNavbar = ({
       }
     } catch (error) {
       console.log("error:", error);
+    } finally {
+      setTimeout(() => {
+        setOtpResending(false);
+      }, 300);
     }
   };
 
@@ -243,18 +276,27 @@ const DefaultNavbar = ({
     console.log("data: ", data);
 
     try {
+      setLoading(true);
       const EmailLoginRes = await loginWithEmailAPI(data);
 
       console.log("EmailLoginRes: ", EmailLoginRes);
       if (EmailLoginRes.status) {
-        toast.success(EmailLoginRes.message);
-        closeGsrctLoginDialog();
-        closeUserDrawer();
+        setTimeout(() => {
+          setLoading(false);
+          toast.success(EmailLoginRes.message);
+          dispatch(setSession("1234567890"));
+          closeGsrctLoginDialog();
+          closeUserDrawer();
+        }, 300);
       } else {
         toast.error(EmailLoginRes.message);
       }
     } catch (error) {
       console.log("error: ", error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
   };
 
@@ -266,6 +308,7 @@ const DefaultNavbar = ({
 
   const handleSignInWithGoogle = useGoogleLogin({
     flow: "auth-code",
+    ux_mode: "popup",
     scope: "openid email profile",
     onSuccess: async ({ code }) => {
       console.log("Auth-code: ", code);
@@ -273,7 +316,6 @@ const DefaultNavbar = ({
         const GoogleSignInRes = await loginWithGoogleAPI(code);
         console.log("GoogleSignInRes: ", GoogleSignInRes);
         if (GoogleSignInRes.status) {
-          setLoadingGoogle(false);
           toast.success(GoogleSignInRes.message);
           dispatch(setSession(code));
           closeGsrctLoginDialog();
@@ -282,12 +324,9 @@ const DefaultNavbar = ({
       } catch (error) {
         console.log("error: ", error);
         toast.error("Something went wrong!!");
-      } finally {
-        setLoadingGoogle(false);
       }
     },
     onError: () => {
-      setLoadingGoogle(false);
       console.log("Login with Google failed");
       toast.error("Login with Google failed");
     },
@@ -297,6 +336,28 @@ const DefaultNavbar = ({
     dispatch(sessionLogout());
     closeUserDrawer();
     toast.success("You have successfully logged out!");
+  };
+
+  // GSRTC Sign up form
+  const {
+    handleSubmit: signUpSubmit,
+    reset: signUpReset,
+    control: signUpControl,
+    formState: { errors: signUpErrors },
+  } = useForm<SignUpSchemaSchemaType>({
+    resolver: zodResolver(SignUpSchema),
+  });
+
+  const openGsrctSignUpDialog = () => {
+    setGsrtcSignUpDialog(true);
+  };
+  const closeGsrctSignUpDialog = () => {
+    setGsrtcSignUpDialog(false);
+    signUpReset();
+  };
+
+  const onSignUp = (data: SignUpSchemaSchemaType) => {
+    console.log("data: ", data);
   };
 
   return (
@@ -372,7 +433,7 @@ const DefaultNavbar = ({
         <li className="">
           <a
             href="https://yatradham.gujarat.gov.in/Booking"
-            className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
+            className="p-3 text-black rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
           >
             <span>Sharvan Tirth</span>
             <span>Darshan</span>
@@ -381,7 +442,7 @@ const DefaultNavbar = ({
         <li>
           <a
             href="https://www.soutickets.in/#/gsrtc-booking"
-            className="p-3 rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
+            className="p-3 text-black rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
           >
             <span>Unity</span>
             <span>Booking</span>
@@ -391,7 +452,7 @@ const DefaultNavbar = ({
           <button
             type="button"
             onClick={handleUserDrawer}
-            className="p-3 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1 cursor-pointer"
+            className="p-3 text-black rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1 cursor-pointer"
           >
             <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
             <span className="text-xs">Account</span>
@@ -423,7 +484,7 @@ const DefaultNavbar = ({
                   My Details
                 </p>
 
-                <Link href="/bookings">
+                <Link href="/bookings" onClick={closeUserDrawer}>
                   <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                     <div className="flex items-center gap-x-3">
                       <IoListOutline className="w-6 h-6" />
@@ -434,7 +495,7 @@ const DefaultNavbar = ({
                   </div>
                 </Link>
 
-                <Link href="#">
+                <Link href="#" onClick={closeUserDrawer}>
                   <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                     <div className="flex items-center gap-x-3">
                       <FaUser className="w-6 h-6" />
@@ -466,6 +527,7 @@ const DefaultNavbar = ({
                   <button
                     type="button"
                     className="text-sm underline font-bold hover:bg-slate-200 py-2 px-3 rounded-s-full rounded-e-full"
+                    onClick={openGsrctSignUpDialog}
                   >
                     Sign up
                   </button>
@@ -554,7 +616,7 @@ const DefaultNavbar = ({
               Payments
             </p>
 
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <AccountBalanceWalletOutlinedIcon sx={{ fontSize: 24 }} />
@@ -566,11 +628,11 @@ const DefaultNavbar = ({
             </Link>
           </div>
 
-          {/* More */}
+          {/* Offer */}
           <div className="">
             <p className="p-4 text-[22px] font-bold leading-tight py-7">More</p>
             {/* Offer */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
@@ -582,7 +644,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Know about GSRTC */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <InfoOutlinedIcon sx={{ fontSize: 24 }} />
@@ -594,7 +656,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Help */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <HelpOutlineOutlinedIcon sx={{ fontSize: 24 }} />
@@ -606,7 +668,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Cancel Ticket */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <TbTicketOff style={{ fontSize: 30 }} />
@@ -618,7 +680,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Reschedule Ticket */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <CalendarTodayIcon sx={{ fontSize: 24 }} />
@@ -630,7 +692,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Search Ticket */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <BsTicketDetailed style={{ fontSize: 30 }} />
@@ -642,7 +704,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Langauge */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <RiFontSize style={{ fontSize: 30 }} />
@@ -657,7 +719,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Notifications */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <NotificationsActiveOutlinedIcon sx={{ fontSize: 24 }} />
@@ -669,7 +731,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* State */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
@@ -684,7 +746,7 @@ const DefaultNavbar = ({
             </Link>
 
             {/* Booking for women */}
-            <Link href="/wallet">
+            <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400 mb-7">
                 <div className="flex items-center gap-x-3">
                   <Image
@@ -724,7 +786,7 @@ const DefaultNavbar = ({
         </div>
       </Drawer>
 
-      {/* GSRTC Login/Sign up Dialog */}
+      {/* GSRTC Login Dialog */}
       <Dialog
         fullScreen={winSize <= 640 ? true : false}
         onClose={closeGsrctLoginDialog}
@@ -823,11 +885,11 @@ const DefaultNavbar = ({
                   {/* Submit */}
                   <button
                     type="submit"
-                    disabled={loading ? true : false}
+                    disabled={otpVerifying ? true : false}
                     className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
                      disabled:bg-gray-200 disabled:text-gray-500`}
                   >
-                    {loading ? (
+                    {otpVerifying ? (
                       <>
                         <CircularProgress
                           size={25}
@@ -860,12 +922,12 @@ const DefaultNavbar = ({
                   {otpExpired && (
                     <button
                       type="button"
-                      disabled={loading ? true : false}
+                      disabled={otpResending ? true : false}
                       className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
                      disabled:bg-gray-200 disabled:text-gray-500`}
                       onClick={handleResendOtp}
                     >
-                      {loading ? (
+                      {otpResending ? (
                         <>
                           <CircularProgress
                             size={25}
@@ -1122,10 +1184,24 @@ const DefaultNavbar = ({
 
                   <button
                     type="submit"
-                    disabled={captchaToken ? false : true}
-                    className="w-full py-3 font-semibold text-center bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:bg-gray-200 disabled:hover:bg-gray-300 disabled:text-gray-500"
+                    disabled={loading || !captchaToken ? true : false}
+                    className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
                   >
-                    Login
+                    {loading ? (
+                      <>
+                        <CircularProgress
+                          size={25}
+                          sx={{
+                            "&.MuiCircularProgress-root": {
+                              color: "#6a7282",
+                            },
+                          }}
+                        />
+                        <span>Logging...</span>
+                      </>
+                    ) : (
+                      "Login"
+                    )}
                   </button>
                 </div>
               </form>
@@ -1145,26 +1221,13 @@ const DefaultNavbar = ({
                   {/* Login with google */}
                   <button
                     type="button"
-                    className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 rounded-sm cursor-pointer ${
+                    className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
                       winSize <= 640
                         ? "rounded-s-full rounded-e-full"
                         : "rounded-sm"
                     }`}
-                    onClick={() => {
-                      handleSignInWithGoogle();
-                      setLoadingGoogle(true);
-                    }}
+                    onClick={handleSignInWithGoogle}
                   >
-                    {loadingGoogle && (
-                      <CircularProgress
-                        size={25}
-                        sx={{
-                          "&.MuiCircularProgress-root": {
-                            color: "white",
-                          },
-                        }}
-                      />
-                    )}
                     <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
                       <Image
                         src={googleIcon}
@@ -1228,6 +1291,443 @@ const DefaultNavbar = ({
           {/* Footer */}
           <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
             <p className="text-xs text-center">By logging in, I agree</p>
+            <p className="text-xs flex justify-center items-center gap-2">
+              <a href="#" className="text-blue-500 hover:underline">
+                Terms & Conditions
+              </a>
+              <span>&</span>
+              <a href="#" className="text-blue-500 hover:underline">
+                Privacy Policy
+              </a>
+            </p>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* GSRTC Sign up Dialog */}
+      <Dialog
+        fullScreen={winSize <= 640 ? true : false}
+        onClose={closeGsrctSignUpDialog}
+        open={gsrtcSignUpDialog}
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: winSize <= 640 ? "0px" : "16px",
+            margin: 0,
+            overflow: "hidden",
+            maxHeight: winSize <= 640 ? "none" : "calc(100% - 32px)",
+          },
+        }}
+      >
+        <div
+          className={`relative flex flex-col bg-white overflow-y-auto hideScrollBar ${
+            winSize <= 640
+              ? "w-full h-full"
+              : "w-xl min-h-[calc(100vh-32px)] max-h-[calc(100vh-32px)]"
+          }`}
+        >
+          {/* Header */}
+          <div className="sticky top-0 left-0 right-0 z-999 p-4 bg-white flex justify-between items-center">
+            <p className="text-xl font-bold">Sign Up to GSRTC</p>
+            <button
+              type="button"
+              className="rounded-s-full rounded-e-full p-2 hover:bg-slate-200 cursor-pointer"
+              onClick={closeGsrctSignUpDialog}
+            >
+              <IoMdClose className="text-2xl" />
+            </button>
+          </div>
+
+          {/* Forms */}
+          <div className="px-4 flex-1">
+            <form onSubmit={signUpSubmit(onSignUp)}>
+              {/* Full name */}
+              <div className="flex gap-4">
+                {/* First Name */}
+                <div className="w-1/2">
+                  <Controller
+                    name="firstName"
+                    control={signUpControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-lg">
+                        <TextField
+                          type="text"
+                          label="First name"
+                          placeholder="Enter first name"
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          error={false}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              fontWeight: "500 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3 !important",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {signUpErrors.firstName
+                      ? signUpErrors.firstName.message
+                      : ""}
+                  </p>
+                </div>
+
+                {/* Last Name */}
+                <div className="w-1/2">
+                  <Controller
+                    name="lastName"
+                    control={signUpControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-lg">
+                        <TextField
+                          type="text"
+                          label="Last name"
+                          placeholder="Enter last name"
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          error={false}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              fontWeight: "500 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3 !important",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {signUpErrors.lastName ? signUpErrors.lastName.message : ""}
+                  </p>
+                </div>
+              </div>
+
+              {/* Date of birth */}
+              <div>
+                <Controller
+                  name="userDob"
+                  control={signUpControl}
+                  render={({ field: { onChange, name, value } }) => (
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        label="Date of birth"
+                        name={name}
+                        value={dayjs(value)}
+                        onChange={onChange}
+                        sx={{
+                          "&.MuiPickersTextField-root": {
+                            width: "100%",
+                          },
+                          "& .MuiPickersOutlinedInput-notchedOutline": {
+                            borderColor: "black",
+                            borderRadius: "8px",
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
+                  )}
+                />
+
+                <p className="my-1 text-xs text-red-600 min-h-5">
+                  {signUpErrors.userDob ? signUpErrors.userDob.message : ""}
+                </p>
+              </div>
+
+              {/* Mobile no. */}
+              <div>
+                <div className="flex">
+                  <button
+                    type="button"
+                    disabled
+                    className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                  >
+                    <p className="text-xs text-[#1d1d1da3]">Country Code</p>
+                    <p className="flex items-center gap-x-1 font-semibold">
+                      <span>+91 (IND)</span>
+                      <IoMdArrowDropdown className="text-xl" />
+                    </p>
+                  </button>
+
+                  <Controller
+                    name="userMobileNo"
+                    control={signUpControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-se-lg rounded-ee-lg">
+                        <TextField
+                          type="text"
+                          label="Mobile number"
+                          placeholder="Enter mobile no."
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              backgroundColor: "white !important",
+                              borderTopLeftRadius: "0px",
+                              borderTopRightRadius: "8px",
+                              borderBottomRightRadius: "8px",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3 !important",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
+                </div>
+
+                <p className="my-1 text-xs text-red-600 min-h-5">
+                  {signUpErrors.userMobileNo
+                    ? signUpErrors.userMobileNo.message
+                    : ""}
+                </p>
+              </div>
+
+              {/* Email */}
+              <div>
+                <Controller
+                  name="userEmail"
+                  control={emailControl}
+                  render={({ field: { onChange, name, value } }) => (
+                    <div className="flex-1 border rounded-lg">
+                      <TextField
+                        type="text"
+                        label="Email"
+                        placeholder="Enter email id."
+                        variant="filled"
+                        name={name}
+                        value={value}
+                        onChange={onChange}
+                        error={false}
+                        sx={{
+                          width: "100%",
+                          "& .MuiFilledInput-root": {
+                            fontWeight: "500 !important",
+                            backgroundColor: "white !important",
+                            borderRadius: "8px",
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "#1d1d1da3 !important",
+                          },
+                          "& ::before": {
+                            display: "none",
+                          },
+                          "& ::after": {
+                            display: "none",
+                          },
+                        }}
+                      />
+                    </div>
+                  )}
+                />
+
+                <p className="my-1 text-xs text-red-600 min-h-5">
+                  {signUpErrors.userEmail ? signUpErrors.userEmail.message : ""}
+                </p>
+              </div>
+
+              {/* Password */}
+              <div>
+                <Controller
+                  name="userPass"
+                  control={emailControl}
+                  render={({ field: { onChange, name, value } }) => (
+                    <div className="flex-1 border rounded-lg">
+                      <TextField
+                        type={loginPassEye ? "text" : "password"}
+                        label="Password"
+                        placeholder="Enter password."
+                        variant="filled"
+                        name={name}
+                        value={value}
+                        onChange={onChange}
+                        error={false}
+                        slotProps={{
+                          input: {
+                            endAdornment: (
+                              <button
+                                type="button"
+                                onClick={() => setLoginPassEye(!loginPassEye)}
+                                className="cursor-pointer"
+                              >
+                                {loginPassEye ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </button>
+                            ),
+                          },
+                        }}
+                        sx={{
+                          width: "100%",
+                          "& .MuiFilledInput-root": {
+                            fontWeight: "500 !important",
+                            backgroundColor: "white !important",
+                            borderRadius: "8px",
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "#1d1d1da3 !important",
+                          },
+                          "& ::before": {
+                            display: "none",
+                          },
+                          "& ::after": {
+                            display: "none",
+                          },
+                        }}
+                      />
+                    </div>
+                  )}
+                />
+
+                <p className="my-1 text-xs text-red-600 min-h-5">
+                  {signUpErrors.userPass ? signUpErrors.userPass.message : ""}
+                </p>
+              </div>
+
+              {/* Recaptcha */}
+              <div
+                className={`${
+                  iAmNotRobot
+                    ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
+                    : "pb-4 flex justify-center"
+                }`}
+              >
+                <ReCAPTCHA
+                  sitekey={CaptchaClientKey}
+                  onChange={onCaptchSuccess}
+                  onErrored={onCaptchaFailed}
+                  onExpired={onCaptchaExpired}
+                />
+              </div>
+
+              {/* Sign Up button */}
+              <div className="flex justify-center mb-5">
+                <button
+                  type="submit"
+                  disabled={loading || !captchaToken ? true : false}
+                  className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
+                >
+                  {loading ? (
+                    <>
+                      <CircularProgress
+                        size={25}
+                        sx={{
+                          "&.MuiCircularProgress-root": {
+                            color: "#6a7282",
+                          },
+                        }}
+                      />
+                      <span>Signing up...</span>
+                    </>
+                  ) : (
+                    "Sing up"
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Sign up with google */}
+            <div>
+              <p className="flex justify-center items-center gap-2 py-5">
+                <span className="w-10 h-px bg-slate-200"></span>
+                <span className="text-slate-500 text-sm text-nowrap">
+                  Login/Signup With
+                </span>
+                <span className="w-10 h-px bg-slate-200"></span>
+              </p>
+
+              <div className="flex justify-center mb-5">
+                {/* Login with google */}
+                <button
+                  type="button"
+                  className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
+                    winSize <= 640
+                      ? "rounded-s-full rounded-e-full"
+                      : "rounded-sm"
+                  }`}
+                  onClick={() => {
+                    setLoadingGoogle(true);
+                    void handleSignInWithGoogle();
+                  }}
+                >
+                  {loadingGoogle ? (
+                    <>
+                      <CircularProgress
+                        size={25}
+                        sx={{
+                          "&.MuiCircularProgress-root": {
+                            color: "white",
+                          },
+                        }}
+                      />
+                      <span className="text-white font-semibold text-sm">
+                        Signing Up...
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
+                        <Image
+                          src={googleIcon}
+                          width={24}
+                          height={24}
+                          alt="Google Sign In Icon"
+                        />
+                      </div>
+
+                      <p className="flex justify-center items-center font-semibold text-white text-sm">
+                        Sign in with Google
+                      </p>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
+            <p className="text-xs text-center">By Singing Up, I agree</p>
             <p className="text-xs flex justify-center items-center gap-2">
               <a href="#" className="text-blue-500 hover:underline">
                 Terms & Conditions
