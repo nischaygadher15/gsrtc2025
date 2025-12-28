@@ -84,7 +84,6 @@ const DefaultNavbar = ({
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
   const [otpResending, setOtpResending] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<boolean>(false);
@@ -178,7 +177,6 @@ const DefaultNavbar = ({
     // OPT Form
     otpReset();
     setLoading(false);
-    setLoadingGoogle(false);
     setOtpVerifying(false);
     setOtpResending(false);
     setOptSent(false);
@@ -1348,16 +1346,16 @@ const DefaultNavbar = ({
                     name="firstName"
                     control={signUpControl}
                     render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border rounded-lg">
+                      <div className="flex-1 border border-red-600 rounded-lg">
                         <TextField
                           type="text"
                           label="First name"
                           placeholder="Enter first name"
                           variant="filled"
+                          error={signUpErrors.firstName ? true : false}
                           name={name}
                           value={value}
                           onChange={onChange}
-                          error={false}
                           sx={{
                             width: "100%",
                             "& .MuiFilledInput-root": {
@@ -1366,7 +1364,9 @@ const DefaultNavbar = ({
                               borderRadius: "8px",
                             },
                             "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3 !important",
+                              color: signUpErrors.firstName
+                                ? "oklch(57.7% 0.245 27.325)"
+                                : "#1d1d1da3",
                             },
                             "& ::before": {
                               display: "none",
@@ -1440,9 +1440,10 @@ const DefaultNavbar = ({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         label="Date of birth"
+                        format="DD/MM/YYYY"
                         name={name}
-                        value={dayjs(value)}
-                        onChange={onChange}
+                        value={value ? dayjs(value) : null}
+                        onChange={(value) => onChange(value?.toDate())}
                         sx={{
                           "&.MuiPickersTextField-root": {
                             width: "100%",
@@ -1525,7 +1526,7 @@ const DefaultNavbar = ({
               <div>
                 <Controller
                   name="userEmail"
-                  control={emailControl}
+                  control={signUpControl}
                   render={({ field: { onChange, name, value } }) => (
                     <div className="flex-1 border rounded-lg">
                       <TextField
@@ -1536,7 +1537,6 @@ const DefaultNavbar = ({
                         name={name}
                         value={value}
                         onChange={onChange}
-                        error={false}
                         sx={{
                           width: "100%",
                           "& .MuiFilledInput-root": {
@@ -1568,7 +1568,7 @@ const DefaultNavbar = ({
               <div>
                 <Controller
                   name="userPass"
-                  control={emailControl}
+                  control={signUpControl}
                   render={({ field: { onChange, name, value } }) => (
                     <div className="flex-1 border rounded-lg">
                       <TextField
@@ -1579,7 +1579,6 @@ const DefaultNavbar = ({
                         name={name}
                         value={value}
                         onChange={onChange}
-                        error={false}
                         slotProps={{
                           input: {
                             endAdornment: (
@@ -1625,7 +1624,7 @@ const DefaultNavbar = ({
               </div>
 
               {/* Recaptcha */}
-              <div
+              {/* <div
                 className={`${
                   iAmNotRobot
                     ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
@@ -1638,13 +1637,13 @@ const DefaultNavbar = ({
                   onErrored={onCaptchaFailed}
                   onExpired={onCaptchaExpired}
                 />
-              </div>
+              </div> */}
 
               {/* Sign Up button */}
               <div className="flex justify-center mb-5">
                 <button
                   type="submit"
-                  disabled={loading || !captchaToken ? true : false}
+                  // disabled={loading || !captchaToken ? true : false}
                   className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
                 >
                   {loading ? (
@@ -1685,41 +1684,20 @@ const DefaultNavbar = ({
                       ? "rounded-s-full rounded-e-full"
                       : "rounded-sm"
                   }`}
-                  onClick={() => {
-                    setLoadingGoogle(true);
-                    void handleSignInWithGoogle();
-                  }}
+                  onClick={handleSignInWithGoogle}
                 >
-                  {loadingGoogle ? (
-                    <>
-                      <CircularProgress
-                        size={25}
-                        sx={{
-                          "&.MuiCircularProgress-root": {
-                            color: "white",
-                          },
-                        }}
-                      />
-                      <span className="text-white font-semibold text-sm">
-                        Signing Up...
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
-                        <Image
-                          src={googleIcon}
-                          width={24}
-                          height={24}
-                          alt="Google Sign In Icon"
-                        />
-                      </div>
+                  <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
+                    <Image
+                      src={googleIcon}
+                      width={24}
+                      height={24}
+                      alt="Google Sign In Icon"
+                    />
+                  </div>
 
-                      <p className="flex justify-center items-center font-semibold text-white text-sm">
-                        Sign in with Google
-                      </p>
-                    </>
-                  )}
+                  <p className="flex justify-center items-center font-semibold text-white text-sm">
+                    Sign in with Google
+                  </p>
                 </button>
               </div>
             </div>
