@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import sessionSlice from "@/redux/slices/session/sessionSlice";
+import dialogSlice from "@/redux/slices/session/dialogSlice";
 
 export const ReduxStore = configureStore({
   reducer: {
     session: sessionSlice,
+    dialog: dialogSlice,
   },
 });
 

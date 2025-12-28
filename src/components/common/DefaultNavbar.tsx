@@ -57,6 +57,7 @@ import {
   loginWithMobileAPI,
   otpVerificationAPI,
   sendOtpAPI,
+  signUpWithEmailAPI,
 } from "@/services/auth.service";
 import OtpInput from "react-otp-input";
 import LocalTimer from "./LocalTimer";
@@ -65,6 +66,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import {
+  setLoginDialog,
+  setSignUpDialog,
+} from "@/redux/slices/session/dialogSlice";
 
 const DefaultNavbar = ({
   accDrawer,
@@ -77,6 +82,12 @@ const DefaultNavbar = ({
   const { userAccDrawer, setUserAccDrawer } = accDrawer;
   const currentLocation = usePathname();
   const dispatch = useDispatch<AppDispatch>();
+  const loginDialog = useSelector(
+    (state: RootState) => state.dialog.loginDialog
+  );
+  const signUpDialog = useSelector(
+    (state: RootState) => state.dialog.signUpDialog
+  );
   const winSize = useWindowSize();
   const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
@@ -84,24 +95,22 @@ const DefaultNavbar = ({
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
   const [otpResending, setOtpResending] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<boolean>(false);
   const [otpCounting, setOtpCounting] = useState<boolean>(false);
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
-  const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState(false);
+  const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
+  const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState<boolean>(false);
 
   // User Account Dropdown
-  // const [userAccDrawer, setUserAccDrawer] = useState<boolean>(false);
   const handleUserDrawer = () => {
     setUserAccDrawer(true);
   };
   const closeUserDrawer = () => {
     setUserAccDrawer(false);
   };
-
-  //GSRTC Login
-  const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
 
   // Recaptch
   const [captchaToken, setCaptchaToken] = useState<string>("");
@@ -182,6 +191,9 @@ const DefaultNavbar = ({
     setOptSent(false);
     setOtpExpired(false);
     setOtpCounting(false);
+
+    //Redux
+    dispatch(setLoginDialog(false));
   };
 
   useEffect(() => {
@@ -311,6 +323,7 @@ const DefaultNavbar = ({
     onSuccess: async ({ code }) => {
       console.log("Auth-code: ", code);
       try {
+        setLoadingGoogle(true);
         const GoogleSignInRes = await loginWithGoogleAPI(code);
         console.log("GoogleSignInRes: ", GoogleSignInRes);
         if (GoogleSignInRes.status) {
@@ -322,9 +335,12 @@ const DefaultNavbar = ({
       } catch (error) {
         console.log("error: ", error);
         toast.error("Something went wrong!!");
+      } finally {
+        setLoadingGoogle(false);
       }
     },
     onError: () => {
+      setLoadingGoogle(false);
       console.log("Login with Google failed");
       toast.error("Login with Google failed");
     },
@@ -352,10 +368,20 @@ const DefaultNavbar = ({
   const closeGsrctSignUpDialog = () => {
     setGsrtcSignUpDialog(false);
     signUpReset();
+
+    //Redux
+    dispatch(setSignUpDialog(false));
   };
 
   const onSignUp = (data: SignUpSchemaSchemaType) => {
     console.log("data: ", data);
+    try {
+      const signUpRes = signUpWithEmailAPI(data);
+
+      console.log("signUpRes: ", signUpRes);
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 
   return (
@@ -788,7 +814,7 @@ const DefaultNavbar = ({
       <Dialog
         fullScreen={winSize <= 640 ? true : false}
         onClose={closeGsrctLoginDialog}
-        open={gsrtcLoginDialog}
+        open={gsrtcLoginDialog || loginDialog}
         sx={{
           "& .MuiDialog-paper": {
             borderRadius: winSize <= 640 ? "0px" : "16px",
@@ -1205,6 +1231,20 @@ const DefaultNavbar = ({
               </form>
             )}
 
+            <div className="mt-5 flex items-center gap-2 text-sm">
+              <p>Don't have account?</p>
+              <button
+                type="button"
+                className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                onClick={() => {
+                  closeGsrctLoginDialog();
+                  openGsrctSignUpDialog();
+                }}
+              >
+                Sign up
+              </button>
+            </div>
+
             {!optSent && (
               <>
                 <p className="flex justify-center items-center gap-2 py-5">
@@ -1226,18 +1266,36 @@ const DefaultNavbar = ({
                     }`}
                     onClick={handleSignInWithGoogle}
                   >
-                    <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
-                      <Image
-                        src={googleIcon}
-                        width={24}
-                        height={24}
-                        alt="Google Sign In Icon"
-                      />
-                    </div>
+                    {loadingGoogle ? (
+                      <>
+                        <CircularProgress
+                          size={25}
+                          sx={{
+                            "&.MuiCircularProgress-root": {
+                              color: "white",
+                            },
+                          }}
+                        />
+                        <span className="text-white font-semibold text-sm">
+                          Sign in with Google
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
+                          <Image
+                            src={googleIcon}
+                            width={24}
+                            height={24}
+                            alt="Google Sign In Icon"
+                          />
+                        </div>
 
-                    <p className="flex justify-center items-center font-semibold text-white text-sm">
-                      Sign in with Google
-                    </p>
+                        <p className="flex justify-center items-center font-semibold text-white text-sm">
+                          Sign in with Google
+                        </p>
+                      </>
+                    )}
                   </button>
 
                   {loginWith === "mobile" ? (
@@ -1306,7 +1364,7 @@ const DefaultNavbar = ({
       <Dialog
         fullScreen={winSize <= 640 ? true : false}
         onClose={closeGsrctSignUpDialog}
-        open={gsrtcSignUpDialog}
+        open={gsrtcSignUpDialog || signUpDialog}
         sx={{
           "& .MuiDialog-paper": {
             borderRadius: winSize <= 640 ? "0px" : "16px",
@@ -1683,6 +1741,20 @@ const DefaultNavbar = ({
                   )}
                 </button>
               </div>
+
+              <div className="flex items-center gap-2 text-sm">
+                <p>Already have account?</p>
+                <button
+                  type="button"
+                  className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                  onClick={() => {
+                    closeGsrctSignUpDialog();
+                    openGsrctLoginDialog();
+                  }}
+                >
+                  Login
+                </button>
+              </div>
             </form>
 
             {/* Sign up with google */}
@@ -1716,7 +1788,7 @@ const DefaultNavbar = ({
                   </div>
 
                   <p className="flex justify-center items-center font-semibold text-white text-sm">
-                    Sign in with Google
+                    Sign up with Google
                   </p>
                 </button>
               </div>
