@@ -1346,7 +1346,11 @@ const DefaultNavbar = ({
                     name="firstName"
                     control={signUpControl}
                     render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border border-red-600 rounded-lg">
+                      <div
+                        className={`flex-1 border rounded-lg ${
+                          signUpErrors.firstName ? "border-red-600" : ""
+                        }`}
+                      >
                         <TextField
                           type="text"
                           label="First name"
@@ -1358,15 +1362,13 @@ const DefaultNavbar = ({
                           onChange={onChange}
                           sx={{
                             width: "100%",
-                            "& .MuiFilledInput-root": {
+                            "& .MuiFilledInput-input": {
                               fontWeight: "500 !important",
                               backgroundColor: "white !important",
                               borderRadius: "8px",
                             },
                             "& .MuiInputLabel-root": {
-                              color: signUpErrors.firstName
-                                ? "oklch(57.7% 0.245 27.325)"
-                                : "#1d1d1da3",
+                              color: "#1d1d1da3",
                             },
                             "& ::before": {
                               display: "none",
@@ -1393,7 +1395,11 @@ const DefaultNavbar = ({
                     name="lastName"
                     control={signUpControl}
                     render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border rounded-lg">
+                      <div
+                        className={`flex-1 border rounded-lg ${
+                          signUpErrors.firstName ? "border-red-600" : ""
+                        }`}
+                      >
                         <TextField
                           type="text"
                           label="Last name"
@@ -1402,16 +1408,17 @@ const DefaultNavbar = ({
                           name={name}
                           value={value}
                           onChange={onChange}
-                          error={false}
+                          error={signUpErrors.lastName ? true : false}
                           sx={{
                             width: "100%",
-                            "& .MuiFilledInput-root": {
+                            "& .MuiFilledInput-root": {},
+                            "& .MuiFilledInput-input": {
                               fontWeight: "500 !important",
                               backgroundColor: "white !important",
                               borderRadius: "8px",
                             },
                             "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3 !important",
+                              color: "#1d1d1da3",
                             },
                             "& ::before": {
                               display: "none",
@@ -1449,7 +1456,10 @@ const DefaultNavbar = ({
                             width: "100%",
                           },
                           "& .MuiPickersOutlinedInput-notchedOutline": {
-                            borderColor: "black",
+                            borderColor: signUpErrors.userDob
+                              ? "#e7000b !important"
+                              : "black !important",
+                            borderWidth: "1px !important",
                             borderRadius: "8px",
                           },
                         }}
@@ -1465,11 +1475,15 @@ const DefaultNavbar = ({
 
               {/* Mobile no. */}
               <div>
-                <div className="flex">
+                <div
+                  className={`flex border rounded-lg ${
+                    signUpErrors.userMobileNo ? "border-red-600" : "black"
+                  }`}
+                >
                   <button
                     type="button"
                     disabled
-                    className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                    className="px-3 flex flex-col justify-center"
                   >
                     <p className="text-xs text-[#1d1d1da3]">Country Code</p>
                     <p className="flex items-center gap-x-1 font-semibold">
@@ -1482,7 +1496,11 @@ const DefaultNavbar = ({
                     name="userMobileNo"
                     control={signUpControl}
                     render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border rounded-se-lg rounded-ee-lg">
+                      <div
+                        className={`flex-1 border-s ${
+                          signUpErrors.userMobileNo ? "border-red-600" : "black"
+                        }`}
+                      >
                         <TextField
                           type="text"
                           label="Mobile number"
@@ -1493,14 +1511,11 @@ const DefaultNavbar = ({
                           onChange={onChange}
                           sx={{
                             width: "100%",
-                            "& .MuiFilledInput-root": {
+                            "& .MuiFilledInput-input": {
                               backgroundColor: "white !important",
                               borderTopLeftRadius: "0px",
                               borderTopRightRadius: "8px",
                               borderBottomRightRadius: "8px",
-                            },
-                            "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3 !important",
                             },
                             "& ::before": {
                               display: "none",
@@ -1528,7 +1543,11 @@ const DefaultNavbar = ({
                   name="userEmail"
                   control={signUpControl}
                   render={({ field: { onChange, name, value } }) => (
-                    <div className="flex-1 border rounded-lg">
+                    <div
+                      className={`flex-1 border rounded-lg ${
+                        signUpErrors.userEmail ? "border-red-600" : "black"
+                      }`}
+                    >
                       <TextField
                         type="text"
                         label="Email"
@@ -1539,13 +1558,12 @@ const DefaultNavbar = ({
                         onChange={onChange}
                         sx={{
                           width: "100%",
-                          "& .MuiFilledInput-root": {
-                            fontWeight: "500 !important",
+                          "& .MuiFilledInput-input": {
                             backgroundColor: "white !important",
                             borderRadius: "8px",
                           },
                           "& .MuiInputLabel-root": {
-                            color: "#1d1d1da3 !important",
+                            color: "#1d1d1da3",
                           },
                           "& ::before": {
                             display: "none",
@@ -1570,7 +1588,11 @@ const DefaultNavbar = ({
                   name="userPass"
                   control={signUpControl}
                   render={({ field: { onChange, name, value } }) => (
-                    <div className="flex-1 border rounded-lg">
+                    <div
+                      className={`flex-1 border rounded-lg ${
+                        signUpErrors.userPass ? "border-red-600" : "black"
+                      }`}
+                    >
                       <TextField
                         type={loginPassEye ? "text" : "password"}
                         label="Password"
@@ -1603,9 +1625,7 @@ const DefaultNavbar = ({
                             backgroundColor: "white !important",
                             borderRadius: "8px",
                           },
-                          "& .MuiInputLabel-root": {
-                            color: "#1d1d1da3 !important",
-                          },
+
                           "& ::before": {
                             display: "none",
                           },
@@ -1679,7 +1699,7 @@ const DefaultNavbar = ({
                 {/* Login with google */}
                 <button
                   type="button"
-                  className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
+                  className={`w-full sm:w-auto  min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
                     winSize <= 640
                       ? "rounded-s-full rounded-e-full"
                       : "rounded-sm"
