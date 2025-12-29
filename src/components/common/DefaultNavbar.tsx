@@ -290,6 +290,7 @@ const DefaultNavbar = ({
       const EmailLoginRes = await loginWithEmailAPI(data);
 
       console.log("EmailLoginRes: ", EmailLoginRes);
+
       if (EmailLoginRes.status) {
         setTimeout(() => {
           setLoading(false);
@@ -373,14 +374,30 @@ const DefaultNavbar = ({
     dispatch(setSignUpDialog(false));
   };
 
-  const onSignUp = (data: SignUpSchemaSchemaType) => {
+  const onSignUp = async (data: SignUpSchemaSchemaType) => {
     console.log("data: ", data);
     try {
-      const signUpRes = signUpWithEmailAPI(data);
+      setLoading(true);
+      const signUpRes = await signUpWithEmailAPI(data);
 
       console.log("signUpRes: ", signUpRes);
+
+      if (signUpRes.status) {
+        setTimeout(() => {
+          toast.success(signUpRes.message);
+          dispatch(setSession("1234567890"));
+          closeGsrctSignUpDialog();
+          closeUserDrawer();
+        }, 300);
+      } else {
+        toast.error(signUpRes.message);
+      }
     } catch (error) {
       console.log("error:", error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
   };
 
@@ -1103,13 +1120,13 @@ const DefaultNavbar = ({
                           error={false}
                           sx={{
                             width: "100%",
-                            "& .MuiFilledInput-root": {
+                            "& .MuiFilledInput-input": {
                               fontWeight: "500 !important",
                               backgroundColor: "white !important",
-                              borderRadius: "8px",
+                              borderRadius: "8px !important",
                             },
                             "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3 !important",
+                              color: "#1d1d1da3",
                             },
                             "& ::before": {
                               display: "none",
@@ -1164,13 +1181,13 @@ const DefaultNavbar = ({
                           }}
                           sx={{
                             width: "100%",
-                            "& .MuiFilledInput-root": {
+                            "& .MuiFilledInput-input": {
                               fontWeight: "500 !important",
                               backgroundColor: "white !important",
-                              borderRadius: "8px",
+                              borderRadius: "8px !important",
                             },
                             "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3 !important",
+                              color: "#1d1d1da3",
                             },
                             "& ::before": {
                               display: "none",
@@ -1423,7 +1440,7 @@ const DefaultNavbar = ({
                             "& .MuiFilledInput-input": {
                               fontWeight: "500 !important",
                               backgroundColor: "white !important",
-                              borderRadius: "8px",
+                              borderRadius: "8px !important",
                             },
                             "& .MuiInputLabel-root": {
                               color: "#1d1d1da3",
@@ -1469,11 +1486,10 @@ const DefaultNavbar = ({
                           error={signUpErrors.lastName ? true : false}
                           sx={{
                             width: "100%",
-                            "& .MuiFilledInput-root": {},
                             "& .MuiFilledInput-input": {
                               fontWeight: "500 !important",
                               backgroundColor: "white !important",
-                              borderRadius: "8px",
+                              borderRadius: "8px !important",
                             },
                             "& .MuiInputLabel-root": {
                               color: "#1d1d1da3",
