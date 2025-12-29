@@ -1694,12 +1694,11 @@ const DefaultNavbar = ({
                         }}
                         sx={{
                           width: "100%",
-                          "& .MuiFilledInput-root": {
+                          "& .MuiFilledInput-input": {
                             fontWeight: "500 !important",
                             backgroundColor: "white !important",
-                            borderRadius: "8px",
+                            borderRadius: "8px !important",
                           },
-
                           "& ::before": {
                             display: "none",
                           },
