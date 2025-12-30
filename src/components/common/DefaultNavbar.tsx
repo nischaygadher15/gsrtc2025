@@ -308,7 +308,7 @@ const DefaultNavbar = ({
 
       console.log("EmailLoginRes: ", EmailLoginRes);
 
-      if (EmailLoginRes.status) {
+      if (EmailLoginRes && EmailLoginRes.status) {
         setTimeout(() => {
           setLoading(false);
           toast.success(EmailLoginRes.message);
