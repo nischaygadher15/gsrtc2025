@@ -55,6 +55,7 @@ import {
   loginWithEmailAPI,
   loginWithGoogleAPI,
   loginWithMobileAPI,
+  logoutAPI,
   otpVerificationAPI,
   sendOtpAPI,
   signUpWithEmailAPI,
@@ -364,10 +365,24 @@ const DefaultNavbar = ({
     },
   });
 
-  const SessionLogout = () => {
-    dispatch(sessionLogout());
-    closeUserDrawer();
-    toast.success("You have successfully logged out!");
+  const handleSessionLogout = async () => {
+    try {
+      if (!sessionId) {
+        toast.error("There is no active session.");
+      } else {
+        const logoutRes = await logoutAPI();
+
+        console.log("logoutRes: ", logoutRes);
+
+        dispatch(sessionLogout());
+        closeUserDrawer();
+        toast.success("You have successfully logged out!");
+      }
+    } catch (error: unknown) {
+      let err = error as { message: string };
+      console.log("error: ", error);
+      toast.error(err.message);
+    }
   };
 
   // GSRTC Sign up form
@@ -686,7 +701,6 @@ const DefaultNavbar = ({
             </Link>
           </div>
 
-          {/* Offer */}
           <div className="">
             <p className="p-4 text-[22px] font-bold leading-tight py-7">More</p>
             {/* Offer */}
@@ -830,7 +844,7 @@ const DefaultNavbar = ({
               <button
                 type="button"
                 className="w-full flex justify-between items-center p-4 pt-0 font-semibold border-b-1 border-b-slate-400 cursor-pointer"
-                onClick={SessionLogout}
+                onClick={handleSessionLogout}
               >
                 <div className="flex items-center gap-x-3">
                   <BiLogOut className="w-6 h-6" />

@@ -1,6 +1,8 @@
 import API from "@/lib/axios";
 import { SignUpSchemaSchemaType } from "@/lib/schema/auth/auth.schema";
 
+// <=================== Login ===================>
+
 export const loginWithMobileAPI = (userMobileNo: string) => {
   return API.post("/auth/login/mobile", {
     userMobileNo,
@@ -44,6 +46,14 @@ export const loginWithGoogleAPI = (
     authCode: code,
   });
 };
+
+// <=================== Logout===================>
+
+export const logoutAPI = () => {
+  return API.get("/auth/logout");
+};
+
+// <=================== Login ===================>
 
 export const signUpWithEmailAPI = (
   signUpData: SignUpSchemaSchemaType
