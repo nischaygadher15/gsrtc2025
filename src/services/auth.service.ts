@@ -26,10 +26,12 @@ export const otpVerificationAPI = (
 export const loginWithEmailAPI = (data: {
   userEmail: string;
   userPass: string;
-}): Promise<{ status: boolean; message: string }> => {
+  userAgent: string;
+}): Promise<{ status: boolean; message: string; access_token: string }> => {
   return API.post("/auth/login/email", {
     userEmail: data.userEmail,
     userPass: data.userPass,
+    userAgent: data.userAgent,
   });
 };
 

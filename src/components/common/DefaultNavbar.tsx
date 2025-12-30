@@ -103,6 +103,7 @@ const DefaultNavbar = ({
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
   const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
   const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState<boolean>(false);
+  const sessionId = useSelector((state: RootState) => state.session?.sessionId);
 
   // User Account Dropdown
   const handleUserDrawer = () => {
@@ -169,6 +170,10 @@ const DefaultNavbar = ({
     formState: { errors: emailErrors },
   } = useForm<LoginByEmailSchemaType>({
     resolver: zodResolver(LoginByEmailSchema),
+    defaultValues: {
+      userEmail: "",
+      userPass: "",
+    },
   });
 
   const openGsrctLoginDialog = () => {
@@ -287,7 +292,11 @@ const DefaultNavbar = ({
 
     try {
       setLoading(true);
-      const EmailLoginRes = await loginWithEmailAPI(data);
+      const EmailLoginRes = await loginWithEmailAPI({
+        userEmail: data.userEmail,
+        userPass: data.userPass,
+        userAgent: navigator.userAgent,
+      });
 
       console.log("EmailLoginRes: ", EmailLoginRes);
 
@@ -295,23 +304,23 @@ const DefaultNavbar = ({
         setTimeout(() => {
           setLoading(false);
           toast.success(EmailLoginRes.message);
-          dispatch(setSession("1234567890"));
+          dispatch(setSession(EmailLoginRes.access_token));
           closeGsrctLoginDialog();
           closeUserDrawer();
         }, 300);
       } else {
         toast.error(EmailLoginRes.message);
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      let err = error as { message: string };
       console.log("error: ", error);
+      toast.error(err.message);
     } finally {
       setTimeout(() => {
         setLoading(false);
       }, 300);
     }
   };
-
-  const sessionId = useSelector((state: RootState) => state.session.sessionId);
 
   useEffect(() => {
     console.log("Current Session: ", sessionId);
@@ -1736,7 +1745,7 @@ const DefaultNavbar = ({
               <div className="flex justify-center mb-5">
                 <button
                   type="submit"
-                  // disabled={loading || !captchaToken ? true : false}
+                  disabled={loading || !captchaToken ? true : false}
                   className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
                 >
                   {loading ? (
