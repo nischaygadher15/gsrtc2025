@@ -70,6 +70,7 @@ import {
   setLoginDialog,
   setSignUpDialog,
 } from "@/redux/slices/session/dialogSlice";
+import { DeviceId } from "@/utils/common/deviceId";
 
 const DefaultNavbar = ({
   accDrawer,
@@ -103,7 +104,9 @@ const DefaultNavbar = ({
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
   const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
   const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState<boolean>(false);
-  const sessionId = useSelector((state: RootState) => state.session?.sessionId);
+  const sessionId = useSelector(
+    (state: RootState) => state.session?.access_token
+  );
 
   // User Account Dropdown
   const handleUserDrawer = () => {
@@ -292,10 +295,15 @@ const DefaultNavbar = ({
 
     try {
       setLoading(true);
+
+      // Create or Get device id
+      const deviceId = DeviceId();
+
       const EmailLoginRes = await loginWithEmailAPI({
         userEmail: data.userEmail,
         userPass: data.userPass,
         userAgent: navigator.userAgent,
+        deviceId,
       });
 
       console.log("EmailLoginRes: ", EmailLoginRes);
@@ -1726,7 +1734,7 @@ const DefaultNavbar = ({
               </div>
 
               {/* Recaptcha */}
-              {/* <div
+              <div
                 className={`${
                   iAmNotRobot
                     ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
@@ -1739,7 +1747,7 @@ const DefaultNavbar = ({
                   onErrored={onCaptchaFailed}
                   onExpired={onCaptchaExpired}
                 />
-              </div> */}
+              </div>
 
               {/* Sign Up button */}
               <div className="flex justify-center mb-5">

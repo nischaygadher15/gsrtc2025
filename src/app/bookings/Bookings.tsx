@@ -34,7 +34,9 @@ import { setLoginDialog } from "@/redux/slices/session/dialogSlice";
 
 const Bookings = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const sessionId = useSelector((state: RootState) => state.session.sessionId);
+  const sessionId = useSelector(
+    (state: RootState) => state.session.access_token
+  );
   const [bookingTab, setBookingTab] = useState<number>(0);
   let winSize = useWindowSize();
   const trips = [1, 2, 3, 4, 5];

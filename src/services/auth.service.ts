@@ -27,11 +27,13 @@ export const loginWithEmailAPI = (data: {
   userEmail: string;
   userPass: string;
   userAgent: string;
+  deviceId: string;
 }): Promise<{ status: boolean; message: string; access_token: string }> => {
   return API.post("/auth/login/email", {
     userEmail: data.userEmail,
     userPass: data.userPass,
     userAgent: data.userAgent,
+    deviceId: data.deviceId,
   });
 };
 
