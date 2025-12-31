@@ -385,6 +385,8 @@ const DefaultNavbar = ({
     }
   };
 
+  const randomUser = Math.ceil(Math.random() * 1000);
+
   // GSRTC Sign up form
   const {
     handleSubmit: signUpSubmit,
@@ -393,6 +395,13 @@ const DefaultNavbar = ({
     formState: { errors: signUpErrors },
   } = useForm<SignUpSchemaSchemaType>({
     resolver: zodResolver(SignUpSchema),
+    defaultValues: {
+      firstName: "sita",
+      lastName: "ram",
+      userMobileNo: "8141409448",
+      userEmail: `ram${randomUser}@gmail.com`,
+      userPass: `Ram@@${randomUser}`,
+    },
   });
 
   const openGsrctSignUpDialog = () => {
@@ -407,7 +416,8 @@ const DefaultNavbar = ({
   };
 
   const onSignUp = async (data: SignUpSchemaSchemaType) => {
-    console.log("data: ", data);
+    // console.log("data: ", data);
+
     try {
       setLoading(true);
       const signUpRes = await signUpWithEmailAPI(data);
@@ -1193,6 +1203,7 @@ const DefaultNavbar = ({
                           value={value}
                           onChange={onChange}
                           error={false}
+                          autoComplete="new-password"
                           slotProps={{
                             input: {
                               endAdornment: (
@@ -1212,6 +1223,10 @@ const DefaultNavbar = ({
                           }}
                           sx={{
                             width: "100%",
+                            "& .MuiFilledInput-root": {
+                              backgroundColor: "white !important",
+                              borderRadius: "8px !important",
+                            },
                             "& .MuiFilledInput-input": {
                               fontWeight: "500 !important",
                               backgroundColor: "white !important",
@@ -1555,7 +1570,11 @@ const DefaultNavbar = ({
                         format="DD/MM/YYYY"
                         name={name}
                         value={value ? dayjs(value) : null}
-                        onChange={(value) => onChange(value?.toDate())}
+                        onChange={(value) => {
+                          if (value) {
+                            onChange(value.toDate());
+                          }
+                        }}
                         sx={{
                           "&.MuiPickersTextField-root": {
                             width: "100%",
@@ -1706,6 +1725,7 @@ const DefaultNavbar = ({
                         name={name}
                         value={value}
                         onChange={onChange}
+                        autoComplete="new-password"
                         slotProps={{
                           input: {
                             endAdornment: (
@@ -1725,6 +1745,10 @@ const DefaultNavbar = ({
                         }}
                         sx={{
                           width: "100%",
+                          "& .MuiFilledInput-root": {
+                            backgroundColor: "white !important",
+                            borderRadius: "8px !important",
+                          },
                           "& .MuiFilledInput-input": {
                             fontWeight: "500 !important",
                             backgroundColor: "white !important",

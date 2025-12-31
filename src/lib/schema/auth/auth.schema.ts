@@ -54,7 +54,7 @@ export const SignUpSchema = z.object({
     ),
   userDob: z
     .date("Date of birth is required")
-    .max(MAX_AGE_DATE, "User must be 14 years."),
+    .max(MAX_AGE_DATE, "User must be 14 years old."),
   userMobileNo: z
     .string("Mobile no. is required.")
     .refine(
