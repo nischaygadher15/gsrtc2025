@@ -1,5 +1,6 @@
 import API from "@/lib/axios";
 import { SignUpSchemaSchemaType } from "@/lib/schema/auth/auth.schema";
+import { EmailLoginPayloadType } from "../../types/auth/auth.type";
 
 // <=================== Login ===================>
 
@@ -25,17 +26,16 @@ export const otpVerificationAPI = (
   });
 };
 
-export const loginWithEmailAPI = (data: {
-  userEmail: string;
-  userPass: string;
-  userAgent: string;
-  deviceId: string;
-}): Promise<{ status: boolean; message: string; access_token: string }> => {
+export const loginWithEmailAPI = (
+  data: EmailLoginPayloadType
+): Promise<{ status: boolean; message: string; access_token: string }> => {
   return API.post("/auth/login/email", {
     userEmail: data.userEmail,
     userPass: data.userPass,
-    userAgent: data.userAgent,
     deviceId: data.deviceId,
+    deviceIp: data.deviceIp,
+    deviceLat: data.deviceLat,
+    deviceLong: data.deviceLong,
   });
 };
 

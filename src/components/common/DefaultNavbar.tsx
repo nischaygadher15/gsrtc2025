@@ -71,7 +71,7 @@ import {
   setLoginDialog,
   setSignUpDialog,
 } from "@/redux/slices/session/dialogSlice";
-import { DeviceId } from "@/utils/common/deviceId";
+import { GetDeviceInfo } from "@/utils/common/deviceInfo";
 
 const DefaultNavbar = ({
   accDrawer,
@@ -175,8 +175,8 @@ const DefaultNavbar = ({
   } = useForm<LoginByEmailSchemaType>({
     resolver: zodResolver(LoginByEmailSchema),
     defaultValues: {
-      userEmail: "",
-      userPass: "",
+      userEmail: "ram50@gmail.com",
+      userPass: "Ram@@5050",
     },
   });
 
@@ -298,13 +298,17 @@ const DefaultNavbar = ({
       setLoading(true);
 
       // Create or Get device id
-      const deviceId = DeviceId();
+      const deviceInfo = await GetDeviceInfo();
+
+      console.log("deviceInfo: ", deviceInfo);
 
       const EmailLoginRes = await loginWithEmailAPI({
         userEmail: data.userEmail,
         userPass: data.userPass,
-        userAgent: navigator.userAgent,
-        deviceId,
+        deviceId: deviceInfo.device_id,
+        deviceIp: deviceInfo.device_ip,
+        deviceLat: deviceInfo.device_lat,
+        deviceLong: deviceInfo.device_long,
       });
 
       console.log("EmailLoginRes: ", EmailLoginRes);
@@ -1254,7 +1258,7 @@ const DefaultNavbar = ({
 
                 <div>
                   {/* Recaptcha */}
-                  <div
+                  {/* <div
                     className={`${
                       iAmNotRobot
                         ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
@@ -1267,11 +1271,11 @@ const DefaultNavbar = ({
                       onErrored={onCaptchaFailed}
                       onExpired={onCaptchaExpired}
                     />
-                  </div>
+                  </div> */}
 
                   <button
                     type="submit"
-                    disabled={loading || !captchaToken ? true : false}
+                    // disabled={loading || !captchaToken ? true : false}
                     className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
                   >
                     {loading ? (
