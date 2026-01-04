@@ -48,7 +48,7 @@ import { FaUsers } from "react-icons/fa6";
 import NumberFormater from "@/utils/common/numberFormater";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Dialog from "@mui/material/Dialog";
 import { IoMdClose } from "react-icons/io";
 import Drawer from "@mui/material/Drawer";
@@ -71,11 +71,20 @@ import whatsNew2 from "@/assets/images/whatsnew/imgi_21_FlexiTicket.png";
 import whatsNew3 from "@/assets/images/whatsnew/imgi_42_Banner-1.webp";
 import whatsNew4 from "@/assets/images/whatsnew/imgi_46_rap.webp";
 import whatsNew5 from "@/assets/images/whatsnew/imgi_47_referAndEarn.webp";
+import { useDispatch } from "react-redux";
+import {
+  setLoginDialog,
+  setResetPasswordDialog,
+} from "@/redux/slices/session/dialogSlice";
 
 export default function Home() {
   const windowSize = useWindowSize();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const callback = searchParams.get("callback");
+  const resetCode = searchParams.get("resetcode");
+  const dispatch = useDispatch();
 
   //Hero section carousel
   const [heroCarouselRef, heroCarouselAPI] = useEmblaCarousel(
@@ -631,6 +640,16 @@ export default function Home() {
       },
     ],
   };
+
+  // Reset password
+  useEffect(() => {
+    if (callback && resetCode) {
+      console.log("resetCode: ", resetCode);
+
+      dispatch(setLoginDialog(true));
+      dispatch(setResetPasswordDialog(true));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen">

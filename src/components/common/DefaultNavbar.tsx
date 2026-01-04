@@ -93,6 +93,9 @@ const DefaultNavbar = ({
   const signUpDialog = useSelector(
     (state: RootState) => state.dialog.signUpDialog
   );
+  const resetPasswordDialog = useSelector(
+    (state: RootState) => state.dialog.resetPassword
+  );
   const winSize = useWindowSize();
   const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
@@ -581,6 +584,8 @@ const DefaultNavbar = ({
 
       if (forgotPasswordResp.status === 200) {
         toast.success(forgotPasswordResp.message);
+        closeGsrctLoginDialog();
+        closeUserDrawer();
       } else {
         toast.error(forgotPasswordResp.message);
       }
@@ -1098,7 +1103,7 @@ const DefaultNavbar = ({
           </div>
 
           {/* Forms */}
-          {!lostPassword && (
+          {!lostPassword && !resetPasswordDialog && (
             <div className="px-4 flex-1">
               {loginWith === "mobile" ? (
                 <>
@@ -1723,188 +1728,193 @@ const DefaultNavbar = ({
             </div>
           )}
 
-          {lostPassword === "reset" && (
-            <div className="px-4 flex-1">
-              <p className="text-2xl font-semibold mb-7">Password reset</p>
+          {lostPassword === "reset" ||
+            (resetPasswordDialog && (
+              <div className="px-4 flex-1">
+                <p className="text-2xl font-semibold mb-7">Password reset</p>
 
-              <p className="text-sm mb-4">
-                Please enter a new password for your Todoist account.
-              </p>
-              <p className="text-sm mb-5">
-                This will end all active sessions for your account from all
-                devices.
-              </p>
+                <p className="text-sm mb-4">
+                  Please enter a new password for your Todoist account.
+                </p>
+                <p className="text-sm mb-5">
+                  This will end all active sessions for your account from all
+                  devices.
+                </p>
 
-              <form onSubmit={resetPassSubmit(onResetPassword)}>
-                {/* Password */}
-                <div>
-                  <Controller
-                    name="userPass"
-                    control={resetPassControl}
-                    render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border rounded-lg">
-                        <TextField
-                          type={loginPassEye ? "text" : "password"}
-                          label="Password"
-                          placeholder="Enter password."
-                          variant="filled"
-                          name={name}
-                          value={value}
-                          onChange={onChange}
-                          error={false}
-                          autoComplete="new-password"
-                          slotProps={{
-                            input: {
-                              endAdornment: (
-                                <button
-                                  type="button"
-                                  onClick={() => setLoginPassEye(!loginPassEye)}
-                                  className="cursor-pointer"
-                                >
-                                  {loginPassEye ? (
-                                    <VisibilityOff />
-                                  ) : (
-                                    <Visibility />
-                                  )}
-                                </button>
-                              ),
-                            },
-                          }}
+                <form onSubmit={resetPassSubmit(onResetPassword)}>
+                  {/* Password */}
+                  <div>
+                    <Controller
+                      name="userPass"
+                      control={resetPassControl}
+                      render={({ field: { onChange, name, value } }) => (
+                        <div className="flex-1 border rounded-lg">
+                          <TextField
+                            type={loginPassEye ? "text" : "password"}
+                            label="Password"
+                            placeholder="Enter password."
+                            variant="filled"
+                            name={name}
+                            value={value}
+                            onChange={onChange}
+                            error={false}
+                            autoComplete="new-password"
+                            slotProps={{
+                              input: {
+                                endAdornment: (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setLoginPassEye(!loginPassEye)
+                                    }
+                                    className="cursor-pointer"
+                                  >
+                                    {loginPassEye ? (
+                                      <VisibilityOff />
+                                    ) : (
+                                      <Visibility />
+                                    )}
+                                  </button>
+                                ),
+                              },
+                            }}
+                            sx={{
+                              width: "100%",
+                              "& .MuiFilledInput-root": {
+                                backgroundColor: "white !important",
+                                borderRadius: "8px !important",
+                              },
+                              "& .MuiFilledInput-input": {
+                                fontWeight: "500 !important",
+                                backgroundColor: "white !important",
+                                borderRadius: "8px !important",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: "#1d1d1da3",
+                              },
+                              "& ::before": {
+                                display: "none",
+                              },
+                              "& ::after": {
+                                display: "none",
+                              },
+                            }}
+                          />
+                        </div>
+                      )}
+                    />
+
+                    <p className="my-1 text-xs text-red-600 min-h-5">
+                      {resetPassErrors.userPass
+                        ? resetPassErrors.userPass.message
+                        : ""}
+                    </p>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div>
+                    <Controller
+                      name="userConfirmPass"
+                      control={resetPassControl}
+                      render={({ field: { onChange, name, value } }) => (
+                        <div className="flex-1 border rounded-lg">
+                          <TextField
+                            type={loginPassEye ? "text" : "password"}
+                            label="Confirm Password"
+                            placeholder="Enter confirm password"
+                            variant="filled"
+                            name={name}
+                            value={value}
+                            onChange={onChange}
+                            error={false}
+                            autoComplete="new-password"
+                            slotProps={{
+                              input: {
+                                endAdornment: (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setLoginPassEye(!loginPassEye)
+                                    }
+                                    className="cursor-pointer"
+                                  >
+                                    {loginPassEye ? (
+                                      <VisibilityOff />
+                                    ) : (
+                                      <Visibility />
+                                    )}
+                                  </button>
+                                ),
+                              },
+                            }}
+                            sx={{
+                              width: "100%",
+                              "& .MuiFilledInput-root": {
+                                backgroundColor: "white !important",
+                                borderRadius: "8px !important",
+                              },
+                              "& .MuiFilledInput-input": {
+                                fontWeight: "500 !important",
+                                backgroundColor: "white !important",
+                                borderRadius: "8px !important",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: "#1d1d1da3",
+                              },
+                              "& ::before": {
+                                display: "none",
+                              },
+                              "& ::after": {
+                                display: "none",
+                              },
+                            }}
+                          />
+                        </div>
+                      )}
+                    />
+
+                    <p className="my-1 text-xs text-red-600 min-h-5">
+                      {resetPassErrors.userPass
+                        ? resetPassErrors.userPass.message
+                        : ""}
+                    </p>
+                  </div>
+
+                  <div>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
+                    >
+                      {loading && (
+                        <CircularProgress
+                          size={25}
                           sx={{
-                            width: "100%",
-                            "& .MuiFilledInput-root": {
-                              backgroundColor: "white !important",
-                              borderRadius: "8px !important",
-                            },
-                            "& .MuiFilledInput-input": {
-                              fontWeight: "500 !important",
-                              backgroundColor: "white !important",
-                              borderRadius: "8px !important",
-                            },
-                            "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3",
-                            },
-                            "& ::before": {
-                              display: "none",
-                            },
-                            "& ::after": {
-                              display: "none",
+                            "&.MuiCircularProgress-root": {
+                              color: "#6a7282",
                             },
                           }}
                         />
-                      </div>
-                    )}
-                  />
+                      )}
+                      Reset my password
+                    </button>
+                  </div>
+                </form>
 
-                  <p className="my-1 text-xs text-red-600 min-h-5">
-                    {resetPassErrors.userPass
-                      ? resetPassErrors.userPass.message
-                      : ""}
-                  </p>
-                </div>
+                <hr className="h-px mt-7 mb-5 border-none bg-slate-300" />
 
-                {/* Confirm Password */}
-                <div>
-                  <Controller
-                    name="userConfirmPass"
-                    control={resetPassControl}
-                    render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border rounded-lg">
-                        <TextField
-                          type={loginPassEye ? "text" : "password"}
-                          label="Confirm Password"
-                          placeholder="Enter confirm password"
-                          variant="filled"
-                          name={name}
-                          value={value}
-                          onChange={onChange}
-                          error={false}
-                          autoComplete="new-password"
-                          slotProps={{
-                            input: {
-                              endAdornment: (
-                                <button
-                                  type="button"
-                                  onClick={() => setLoginPassEye(!loginPassEye)}
-                                  className="cursor-pointer"
-                                >
-                                  {loginPassEye ? (
-                                    <VisibilityOff />
-                                  ) : (
-                                    <Visibility />
-                                  )}
-                                </button>
-                              ),
-                            },
-                          }}
-                          sx={{
-                            width: "100%",
-                            "& .MuiFilledInput-root": {
-                              backgroundColor: "white !important",
-                              borderRadius: "8px !important",
-                            },
-                            "& .MuiFilledInput-input": {
-                              fontWeight: "500 !important",
-                              backgroundColor: "white !important",
-                              borderRadius: "8px !important",
-                            },
-                            "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3",
-                            },
-                            "& ::before": {
-                              display: "none",
-                            },
-                            "& ::after": {
-                              display: "none",
-                            },
-                          }}
-                        />
-                      </div>
-                    )}
-                  />
-
-                  <p className="my-1 text-xs text-red-600 min-h-5">
-                    {resetPassErrors.userPass
-                      ? resetPassErrors.userPass.message
-                      : ""}
-                  </p>
-                </div>
-
-                <div>
+                <div className="flex justify-center items-center gap-1">
+                  <p className="text-sm">Need additional help?</p>
                   <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
+                    type="button"
+                    className="text-sm text-center underline underline-offset-1 cursor-pointer font-semibold text-blue-500"
+                    // onClick={() => {}}
                   >
-                    {loading && (
-                      <CircularProgress
-                        size={25}
-                        sx={{
-                          "&.MuiCircularProgress-root": {
-                            color: "#6a7282",
-                          },
-                        }}
-                      />
-                    )}
-                    Reset my password
+                    Contact us
                   </button>
                 </div>
-              </form>
-
-              <hr className="h-px mt-7 mb-5 border-none bg-slate-300" />
-
-              <div className="flex justify-center items-center gap-1">
-                <p className="text-sm">Need additional help?</p>
-                <button
-                  type="button"
-                  className="text-sm text-center underline underline-offset-1 cursor-pointer font-semibold text-blue-500"
-                  // onClick={() => {}}
-                >
-                  Contact us
-                </button>
               </div>
-            </div>
-          )}
+            ))}
 
           {/* Footer */}
           <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
