@@ -52,6 +52,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { sessionLogout, setSession } from "@/redux/slices/session/sessionSlice";
 import {
+  forgotPasswordAPI,
   loginWithEmailAPI,
   loginWithGoogleAPI,
   loginWithMobileAPI,
@@ -96,7 +97,7 @@ const DefaultNavbar = ({
 
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
   const [lostPassword, setLostPassword] = useState<"forgot" | "reset" | null>(
-    null
+    "forgot"
   );
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -447,6 +448,48 @@ const DefaultNavbar = ({
       setTimeout(() => {
         setLoading(false);
       }, 300);
+    }
+  };
+
+  // Forgot Password Form
+  const {
+    handleSubmit: forgotPassSubmit,
+    reset: forgotPassReset,
+    control: forgotPassControl,
+    formState: { errors: forgotPassErrors },
+  } = useForm({
+    // resolver: zodResolver(LoginByEmailSchema),
+    defaultValues: {
+      userEmail: "ram50@gmail.com",
+    },
+  });
+
+  const onForgotPassword = async (data: any) => {
+    console.log("Data: ", data);
+    setLoading(true);
+
+    try {
+      const deviceInfo = await GetDeviceInfo();
+      console.log("deviceInfo: ", deviceInfo);
+
+      const forgotPasswordResp = await forgotPasswordAPI({
+        userEmail: data.userEmail,
+        deviceIp: deviceInfo.device_ip,
+        deviceLat: deviceInfo.device_lat,
+        deviceLong: deviceInfo.device_long,
+      });
+
+      console.log("forgotPasswordResp: ", forgotPasswordResp);
+
+      if (forgotPasswordResp.status === 200) {
+        toast.success(forgotPasswordResp.message);
+      } else {
+        toast.error(forgotPasswordResp.message);
+      }
+    } catch (error: unknown) {
+      console.log("Error: ", error);
+      const err = error as { message: string };
+      toast.error(err.message);
     }
   };
 
@@ -1309,16 +1352,17 @@ const DefaultNavbar = ({
               )}
 
               <div className="w-full mt-5 flex justify-between items-center gap-2 text-sm">
-                <button
-                  type="button"
-                  className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
-                  onClick={() => {
-                    closeGsrctLoginDialog();
-                    openGsrctSignUpDialog();
-                  }}
-                >
-                  Forgot your password?
-                </button>
+                {loginWith === "email" && (
+                  <button
+                    type="button"
+                    className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                    onClick={() => {
+                      setLostPassword("forgot");
+                    }}
+                  >
+                    Forgot your password?
+                  </button>
+                )}
 
                 <div className="flex items-center gap-1 text-sm">
                   <p>Don't have account?</p>
@@ -1435,7 +1479,101 @@ const DefaultNavbar = ({
             </div>
           )}
 
-          {lostPassword === "forgot" && <div>{/* Forgot password */}</div>}
+          {lostPassword === "forgot" && (
+            <div className="px-4 flex-1">
+              <p className="text-3xl font-semibold mb-10">
+                Forgot your password?
+              </p>
+
+              <p className="text-sm mb-5">
+                To reset your password, please enter the email address of your
+                GSRTC account.
+              </p>
+
+              <form onSubmit={forgotPassSubmit(onForgotPassword)}>
+                {/* Email */}
+                <div>
+                  <Controller
+                    name="userEmail"
+                    control={forgotPassControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-lg">
+                        <TextField
+                          type="text"
+                          label="Email"
+                          placeholder="Enter email id."
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          error={false}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-input": {
+                              fontWeight: "500 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px !important",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {forgotPassErrors.userEmail
+                      ? forgotPassErrors.userEmail.message
+                      : ""}
+                  </p>
+                </div>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
+                  >
+                    {loading && (
+                      <CircularProgress
+                        size={25}
+                        sx={{
+                          "&.MuiCircularProgress-root": {
+                            color: "#6a7282",
+                          },
+                        }}
+                      />
+                    )}
+                    Reset my password
+                  </button>
+                </div>
+              </form>
+
+              <hr className="h-px mb-5 mt-10 border-none bg-slate-300" />
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  className="text-sm text-center underline underline-offset-1 cursor-pointer font-semibold text-blue-500 p-1.5 "
+                  onClick={() => {
+                    setLostPassword(null);
+                    setLoginWith("mobile");
+                    forgotPassReset();
+                  }}
+                >
+                  Go to login
+                </button>
+              </div>
+            </div>
+          )}
 
           {lostPassword === "reset" && <div>{/* Reset password */}</div>}
 

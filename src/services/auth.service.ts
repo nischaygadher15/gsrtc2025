@@ -1,6 +1,9 @@
 import API from "@/lib/axios";
 import { SignUpSchemaSchemaType } from "@/lib/schema/auth/auth.schema";
-import { EmailLoginPayloadType } from "../../types/auth/auth.type";
+import {
+  EmailLoginPayloadType,
+  ForgotPasswordPayload,
+} from "../../types/auth/auth.type";
 
 // <=================== Login ===================>
 
@@ -53,10 +56,23 @@ export const logoutAPI = () => {
   return API.get("/auth/logout");
 };
 
-// <=================== Login ===================>
+// <=================== Sign up ===================>
 
 export const signUpWithEmailAPI = (
   signUpData: SignUpSchemaSchemaType
 ): Promise<{ status: boolean; message: string }> => {
   return API.post("auth/signup/email", signUpData);
+};
+
+// <=================== Forgot/Reset Password ===================>
+
+export const forgotPasswordAPI = (
+  data: ForgotPasswordPayload
+): Promise<{ status: number; message: string }> => {
+  return API.post("/auth/forgot/password", {
+    userEmail: data.userEmail,
+    deviceIp: data.deviceIp,
+    deviceLat: data.deviceLat,
+    deviceLong: data.deviceLong,
+  });
 };
