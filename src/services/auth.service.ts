@@ -4,14 +4,20 @@ import {
   EmailSignupPayload,
   ForgotPasswordPayload,
   GoogleSignupPayload,
+  MobileLoginPayload,
   ResetPasswordPayload,
 } from "../../types/auth/auth.type";
 
 // <=================== Login ===================>
 
-export const loginWithMobileAPI = (userMobileNo: string) => {
+export const loginWithMobileAPI = (
+  mobileLoginPayload: MobileLoginPayload
+): Promise<{ status: number; message: string; access_token: string }> => {
   return API.post("/auth/login/mobile", {
-    userMobileNo,
+    userMobileNo: mobileLoginPayload.userMobileNo,
+    device_ip: mobileLoginPayload.device_ip,
+    device_lat: mobileLoginPayload.device_lat,
+    device_long: mobileLoginPayload.device_long,
   });
 };
 
@@ -33,7 +39,7 @@ export const otpVerificationAPI = (
 
 export const loginWithEmailAPI = (
   data: EmailLoginPayloadType
-): Promise<{ status: boolean; message: string; access_token: string }> => {
+): Promise<{ status: number; message: string; access_token: string }> => {
   return API.post("/auth/login/email", {
     userEmail: data.userEmail,
     userPass: data.userPass,
@@ -44,16 +50,26 @@ export const loginWithEmailAPI = (
 };
 
 export const loginWithGoogleAPI = (
-  code: string
-): Promise<{ status: boolean; message: string }> => {
-  return API.post("/auth/login/google", {
-    authCode: code,
-  });
+  googleSignupPayload: GoogleSignupPayload
+): Promise<{ status: number; message: string; access_token: string }> => {
+  return API.post(
+    "auth/login/google",
+    {
+      device_ip: googleSignupPayload.device_ip,
+      device_lat: googleSignupPayload.device_lat,
+      device_long: googleSignupPayload.device_long,
+    },
+    {
+      headers: {
+        Authorization: googleSignupPayload.code,
+      },
+    }
+  );
 };
 
 // <=================== Logout===================>
 
-export const logoutAPI = () => {
+export const logoutAPI = (): Promise<{ status: number; message: string }> => {
   return API.get("/auth/logout");
 };
 

@@ -6,6 +6,13 @@ export interface EmailLoginPayloadType {
   device_long: number | null;
 }
 
+export interface MobileLoginPayload {
+  userMobileNo: string;
+  device_ip: string | null;
+  device_lat: number | null;
+  device_long: number | null;
+}
+
 export interface EmailSignupPayload {
   firstName: string;
   lastName: string;

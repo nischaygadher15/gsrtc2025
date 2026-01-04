@@ -218,18 +218,31 @@ const DefaultNavbar = ({
   }, [loginWith]);
 
   const onMobileLogin = async (data: LoginByMobileSchemaType) => {
-    setLoading(true);
-    console.log("data: ", data);
     try {
-      const MobileLoginRes = await loginWithMobileAPI(data.userMobileNo);
+      setLoading(true);
 
-      console.log("MobileLoginRes: ", MobileLoginRes);
-      if (MobileLoginRes) {
+      // Create or Get device id
+      const deviceInfo = await GetDeviceInfo();
+
+      console.log("deviceInfo: ", deviceInfo);
+
+      const mobileLoginRes = await loginWithMobileAPI({
+        userMobileNo: data.userMobileNo,
+        device_ip: deviceInfo.device_ip,
+        device_lat: deviceInfo.device_lat,
+        device_long: deviceInfo.device_long,
+      });
+
+      console.log("mobileLoginRes: ", mobileLoginRes);
+
+      if (mobileLoginRes.status === 200) {
         setTimeout(() => {
           setOptSent(true);
         }, 300);
 
-        toast.success(`OTP sent successfully on ${data.userMobileNo}.`);
+        toast.success(mobileLoginRes.message);
+      } else {
+        toast.error(mobileLoginRes.message);
       }
     } catch (error) {
       console.log(error);
@@ -308,7 +321,7 @@ const DefaultNavbar = ({
 
       console.log("deviceInfo: ", deviceInfo);
 
-      const EmailLoginRes = await loginWithEmailAPI({
+      const emailLoginRes = await loginWithEmailAPI({
         userEmail: data.userEmail,
         userPass: data.userPass,
         device_ip: deviceInfo.device_ip,
@@ -316,18 +329,18 @@ const DefaultNavbar = ({
         device_long: deviceInfo.device_long,
       });
 
-      console.log("EmailLoginRes: ", EmailLoginRes);
+      console.log("emailLoginRes: ", emailLoginRes);
 
-      if (EmailLoginRes && EmailLoginRes.status) {
+      if (emailLoginRes.status === 200) {
         setTimeout(() => {
           setLoading(false);
-          toast.success(EmailLoginRes.message);
-          dispatch(setSession(EmailLoginRes.access_token));
+          toast.success(emailLoginRes.message);
+          dispatch(setSession(emailLoginRes.access_token));
           closeGsrctLoginDialog();
           closeUserDrawer();
         }, 300);
       } else {
-        toast.error(EmailLoginRes.message);
+        toast.error(emailLoginRes.message);
       }
     } catch (error: unknown) {
       let err = error as { message: string };
@@ -344,7 +357,57 @@ const DefaultNavbar = ({
     console.log("Current Session: ", sessionId);
   }, [sessionId]);
 
-  const handleSignInWithGoogle = useGoogleLogin({
+  // Login with google
+  const handleLoginWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+    ux_mode: "popup",
+    scope: "openid email profile",
+    onSuccess: async ({ code }) => {
+      console.log("Auth-code: ", code);
+
+      //Sign up payload
+      const deviceInfo = await GetDeviceInfo();
+
+      console.log("deviceInfo: ", deviceInfo);
+
+      try {
+        setLoadingGoogle(false);
+        const googleLoginRes = await loginWithGoogleAPI({
+          code,
+          device_ip: deviceInfo.device_ip,
+          device_lat: deviceInfo.device_lat,
+          device_long: deviceInfo.device_long,
+        });
+
+        console.log("googleLoginRes: ", googleLoginRes);
+
+        if (googleLoginRes.status === 200) {
+          setTimeout(() => {
+            toast.success(googleLoginRes.message);
+            dispatch(setSession(googleLoginRes.access_token));
+            closeGsrctLoginDialog();
+            closeUserDrawer();
+          }, 300);
+        } else {
+          toast.error(googleLoginRes.message);
+        }
+      } catch (error) {
+        console.log("error:", error);
+      } finally {
+        setTimeout(() => {
+          setLoadingGoogle(false);
+        }, 300);
+      }
+    },
+    onError: () => {
+      setLoadingGoogle(false);
+      console.log("Login with Google failed");
+      toast.error("Login with Google failed");
+    },
+  });
+
+  // Sign up with google
+  const handleSignupWithGoogle = useGoogleLogin({
     flow: "auth-code",
     ux_mode: "popup",
     scope: "openid email profile",
@@ -387,23 +450,22 @@ const DefaultNavbar = ({
     },
     onError: () => {
       setLoadingGoogle(false);
-      console.log("Login with Google failed");
-      toast.error("Login with Google failed");
+      toast.error("Sign up with Google failed");
     },
   });
 
   const handleSessionLogout = async () => {
     try {
-      if (!sessionId) {
-        toast.error("There is no active session.");
-      } else {
-        const logoutRes = await logoutAPI();
+      const logoutRes = await logoutAPI();
 
-        console.log("logoutRes: ", logoutRes);
+      console.log("logoutRes: ", logoutRes);
 
+      if (logoutRes.status === 200) {
         dispatch(sessionLogout());
         closeUserDrawer();
         toast.success("You have successfully logged out!");
+      } else {
+        toast.error(logoutRes.message);
       }
     } catch (error: unknown) {
       let err = error as { message: string };
@@ -1237,7 +1299,7 @@ const DefaultNavbar = ({
 
                     {/* Recaptcha */}
                     <div>
-                      <div
+                      {/* <div
                         className={`${
                           iAmNotRobot
                             ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
@@ -1250,11 +1312,12 @@ const DefaultNavbar = ({
                           onErrored={onCaptchaFailed}
                           onExpired={onCaptchaExpired}
                         />
-                      </div>
+                      </div> */}
 
                       <button
                         type="submit"
-                        disabled={loading || !captchaToken ? true : false}
+                        // disabled={loading || !captchaToken ? true : false}
+                        disabled={loading}
                         className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
                      disabled:bg-gray-200 disabled:text-gray-500`}
                       >
@@ -1482,7 +1545,7 @@ const DefaultNavbar = ({
                           ? "rounded-s-full rounded-e-full"
                           : "rounded-sm"
                       }`}
-                      onClick={handleSignInWithGoogle}
+                      onClick={handleLoginWithGoogle}
                     >
                       {loadingGoogle ? (
                         <>
@@ -2283,7 +2346,7 @@ const DefaultNavbar = ({
                       ? "rounded-s-full rounded-e-full"
                       : "rounded-sm"
                   }`}
-                  onClick={handleSignInWithGoogle}
+                  onClick={handleSignupWithGoogle}
                 >
                   <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
                     <Image
