@@ -95,6 +95,9 @@ const DefaultNavbar = ({
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
 
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
+  const [lostPassword, setLostPassword] = useState<"forgot" | "reset" | null>(
+    null
+  );
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
@@ -906,226 +909,77 @@ const DefaultNavbar = ({
           </div>
 
           {/* Forms */}
-          <div className="px-4 flex-1">
-            {loginWith === "mobile" ? (
-              <>
-                {/* OPT Verification form */}
-                <form
-                  className={`${
-                    optSent ? "" : "w-0 h-0 overflow-hidden -z-10 opacity-0"
-                  }`}
-                  onSubmit={otpSubmit(onOtpSubmit)}
-                >
-                  {/* onSubmit={otpSubmit(onOtpSubmit)} */}
-                  <p className="text-lg sm:text-[22px] font-bold">
-                    Enter the OTP we just sent you
-                  </p>
-
-                  <div className="flex justify-between items-center my-6">
-                    <p className="flex flex-col">
-                      <span className="text-sm">Mobile number</span>
-                      <span className="font-semibold">
-                        +91 {mobileGetValues("userMobileNo")}
-                      </span>
-                    </p>
-
-                    <button
-                      type="button"
-                      className="px-3 py-1.5 rounded-s-full rounded-e-full font-semibold text-sm underline underline-offset-1 hover:bg-slate-200"
-                      onClick={() => {
-                        setOptSent(false);
-                        otpReset();
-                        setOtpCounting(false);
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </div>
-
-                  <div className="mb-3">
-                    <Controller
-                      name="userLoginOTP"
-                      control={otpControl}
-                      render={({ field: { value, onChange } }) => (
-                        <div>
-                          <p className="text-sm mb-2">Enter OTP</p>
-                          <OtpInput
-                            value={value}
-                            onChange={onChange}
-                            numInputs={6}
-                            containerStyle="flex gap-2"
-                            inputStyle="min-w-8 sm:min-w-12 h-10 sm:h-14 rounded-sm sm:rounded-lg border focus:border-2 text-xl sm:text-2xl font-semibold focus:outline-4 outline-primary/20"
-                            renderInput={(props) => <input {...props} />}
-                          />
-
-                          <p className="mt-1 min-h-5 text-sm text-red-700">
-                            {otpErrors.userLoginOTP
-                              ? otpErrors.userLoginOTP.message
-                              : " "}
-                          </p>
-                        </div>
-                      )}
-                    />
-                  </div>
-
-                  {/* Submit */}
-                  <button
-                    type="submit"
-                    disabled={otpVerifying ? true : false}
-                    className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
-                     disabled:bg-gray-200 disabled:text-gray-500`}
+          {!lostPassword && (
+            <div className="px-4 flex-1">
+              {loginWith === "mobile" ? (
+                <>
+                  {/* OPT Verification form */}
+                  <form
+                    className={`${
+                      optSent ? "" : "w-0 h-0 overflow-hidden -z-10 opacity-0"
+                    }`}
+                    onSubmit={otpSubmit(onOtpSubmit)}
                   >
-                    {otpVerifying ? (
-                      <>
-                        <CircularProgress
-                          size={25}
-                          sx={{
-                            "&.MuiCircularProgress-root": {
-                              color: "#6a7282",
-                            },
-                          }}
-                        />
-                        <span>Verifying...</span>
-                      </>
-                    ) : (
-                      "Verify OTP"
-                    )}
-                  </button>
-
-                  <div className="py-5 flex items-center gap-2">
-                    <p className="text-sm font-medium">
-                      Didn't receive the OTP? Retry in
+                    {/* onSubmit={otpSubmit(onOtpSubmit)} */}
+                    <p className="text-lg sm:text-[22px] font-bold">
+                      Enter the OTP we just sent you
                     </p>
-                    <LocalTimer
-                      time={15}
-                      isCounting={otpCounting}
-                      setIsCounting={setOtpCounting}
-                      expiry={setOtpExpired}
-                    />
-                  </div>
 
-                  {/* Resend button */}
-                  {otpExpired && (
-                    <button
-                      type="button"
-                      disabled={otpResending ? true : false}
-                      className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
-                     disabled:bg-gray-200 disabled:text-gray-500`}
-                      onClick={handleResendOtp}
-                    >
-                      {otpResending ? (
-                        <>
-                          <CircularProgress
-                            size={25}
-                            sx={{
-                              "&.MuiCircularProgress-root": {
-                                color: "#6a7282",
-                              },
-                            }}
-                          />
-                          <span>Resending...</span>
-                        </>
-                      ) : (
-                        "Resend OTP"
-                      )}
-                    </button>
-                  )}
-                </form>
+                    <div className="flex justify-between items-center my-6">
+                      <p className="flex flex-col">
+                        <span className="text-sm">Mobile number</span>
+                        <span className="font-semibold">
+                          +91 {mobileGetValues("userMobileNo")}
+                        </span>
+                      </p>
 
-                {/* Mobile login form */}
-                <form
-                  onSubmit={mobileSubmit(onMobileLogin)}
-                  className={`${
-                    optSent ? "w-0 h-0 overflow-hidden -z-10 opacity-0" : ""
-                  }`}
-                >
-                  {/* Mobile no. */}
-                  <div>
-                    <p className="text-lg font-bold mb-1">
-                      What's your mobile number?
-                    </p>
-                    <div className="flex">
                       <button
                         type="button"
-                        disabled
-                        className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                        className="px-3 py-1.5 rounded-s-full rounded-e-full font-semibold text-sm underline underline-offset-1 hover:bg-slate-200"
+                        onClick={() => {
+                          setOptSent(false);
+                          otpReset();
+                          setOtpCounting(false);
+                        }}
                       >
-                        <p className="text-xs text-[#1d1d1da3]">Country Code</p>
-                        <p className="flex items-center gap-x-1 font-semibold">
-                          <span>+91 (IND)</span>
-                          <IoMdArrowDropdown className="text-xl" />
-                        </p>
+                        Edit
                       </button>
+                    </div>
 
+                    <div className="mb-3">
                       <Controller
-                        name="userMobileNo"
-                        control={mobileControl}
-                        render={({ field: { onChange, name, value } }) => (
-                          <div className="flex-1 border rounded-se-lg rounded-ee-lg">
-                            <TextField
-                              type="text"
-                              label="Mobile number"
-                              placeholder="Enter mobile no."
-                              variant="filled"
-                              name={name}
+                        name="userLoginOTP"
+                        control={otpControl}
+                        render={({ field: { value, onChange } }) => (
+                          <div>
+                            <p className="text-sm mb-2">Enter OTP</p>
+                            <OtpInput
                               value={value}
                               onChange={onChange}
-                              error={false}
-                              sx={{
-                                width: "100%",
-                                "& .MuiFilledInput-root": {
-                                  fontWeight: "700 !important",
-                                  backgroundColor: "white !important",
-                                  borderTopLeftRadius: "0px",
-                                  borderTopRightRadius: "8px",
-                                  borderBottomRightRadius: "8px",
-                                },
-                                "& .MuiInputLabel-root": {
-                                  color: "#1d1d1da3 !important",
-                                },
-                                "& ::before": {
-                                  display: "none",
-                                },
-                                "& ::after": {
-                                  display: "none",
-                                },
-                              }}
+                              numInputs={6}
+                              containerStyle="flex gap-2"
+                              inputStyle="min-w-8 sm:min-w-12 h-10 sm:h-14 rounded-sm sm:rounded-lg border focus:border-2 text-xl sm:text-2xl font-semibold focus:outline-4 outline-primary/20"
+                              renderInput={(props) => <input {...props} />}
                             />
+
+                            <p className="mt-1 min-h-5 text-sm text-red-700">
+                              {otpErrors.userLoginOTP
+                                ? otpErrors.userLoginOTP.message
+                                : " "}
+                            </p>
                           </div>
                         )}
                       />
                     </div>
-                    <p className="my-1 text-xs text-red-600 min-h-5">
-                      {mobileErrors.userMobileNo
-                        ? mobileErrors.userMobileNo.message
-                        : ""}
-                    </p>
-                  </div>
 
-                  {/* Recaptcha */}
-                  <div>
-                    <div
-                      className={`${
-                        iAmNotRobot
-                          ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
-                          : "pb-4 flex justify-center"
-                      }`}
-                    >
-                      <ReCAPTCHA
-                        sitekey={CaptchaClientKey}
-                        onChange={onCaptchSuccess}
-                        onErrored={onCaptchaFailed}
-                        onExpired={onCaptchaExpired}
-                      />
-                    </div>
-
+                    {/* Submit */}
                     <button
                       type="submit"
-                      disabled={loading || !captchaToken ? true : false}
+                      disabled={otpVerifying ? true : false}
                       className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
                      disabled:bg-gray-200 disabled:text-gray-500`}
                     >
-                      {loading ? (
+                      {otpVerifying ? (
                         <>
                           <CircularProgress
                             size={25}
@@ -1135,130 +989,286 @@ const DefaultNavbar = ({
                               },
                             }}
                           />
-                          <span>Generating...</span>
+                          <span>Verifying...</span>
                         </>
                       ) : (
-                        "Generate OTP"
+                        "Verify OTP"
                       )}
                     </button>
+
+                    <div className="py-5 flex items-center gap-2">
+                      <p className="text-sm font-medium">
+                        Didn't receive the OTP? Retry in
+                      </p>
+                      <LocalTimer
+                        time={15}
+                        isCounting={otpCounting}
+                        setIsCounting={setOtpCounting}
+                        expiry={setOtpExpired}
+                      />
+                    </div>
+
+                    {/* Resend button */}
+                    {otpExpired && (
+                      <button
+                        type="button"
+                        disabled={otpResending ? true : false}
+                        className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
+                     disabled:bg-gray-200 disabled:text-gray-500`}
+                        onClick={handleResendOtp}
+                      >
+                        {otpResending ? (
+                          <>
+                            <CircularProgress
+                              size={25}
+                              sx={{
+                                "&.MuiCircularProgress-root": {
+                                  color: "#6a7282",
+                                },
+                              }}
+                            />
+                            <span>Resending...</span>
+                          </>
+                        ) : (
+                          "Resend OTP"
+                        )}
+                      </button>
+                    )}
+                  </form>
+
+                  {/* Mobile login form */}
+                  <form
+                    onSubmit={mobileSubmit(onMobileLogin)}
+                    className={`${
+                      optSent ? "w-0 h-0 overflow-hidden -z-10 opacity-0" : ""
+                    }`}
+                  >
+                    {/* Mobile no. */}
+                    <div>
+                      <p className="text-lg font-bold mb-1">
+                        What's your mobile number?
+                      </p>
+                      <div className="flex">
+                        <button
+                          type="button"
+                          disabled
+                          className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                        >
+                          <p className="text-xs text-[#1d1d1da3]">
+                            Country Code
+                          </p>
+                          <p className="flex items-center gap-x-1 font-semibold">
+                            <span>+91 (IND)</span>
+                            <IoMdArrowDropdown className="text-xl" />
+                          </p>
+                        </button>
+
+                        <Controller
+                          name="userMobileNo"
+                          control={mobileControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <div className="flex-1 border rounded-se-lg rounded-ee-lg">
+                              <TextField
+                                type="text"
+                                label="Mobile number"
+                                placeholder="Enter mobile no."
+                                variant="filled"
+                                name={name}
+                                value={value}
+                                onChange={onChange}
+                                error={false}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderTopLeftRadius: "0px",
+                                    borderTopRightRadius: "8px",
+                                    borderBottomRightRadius: "8px",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+                          )}
+                        />
+                      </div>
+                      <p className="my-1 text-xs text-red-600 min-h-5">
+                        {mobileErrors.userMobileNo
+                          ? mobileErrors.userMobileNo.message
+                          : ""}
+                      </p>
+                    </div>
+
+                    {/* Recaptcha */}
+                    <div>
+                      <div
+                        className={`${
+                          iAmNotRobot
+                            ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
+                            : "pb-4 flex justify-center"
+                        }`}
+                      >
+                        <ReCAPTCHA
+                          sitekey={CaptchaClientKey}
+                          onChange={onCaptchSuccess}
+                          onErrored={onCaptchaFailed}
+                          onExpired={onCaptchaExpired}
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={loading || !captchaToken ? true : false}
+                        className={`w-full flex justify-center items-center gap-3 py-3 font-semibold bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default
+                     disabled:bg-gray-200 disabled:text-gray-500`}
+                      >
+                        {loading ? (
+                          <>
+                            <CircularProgress
+                              size={25}
+                              sx={{
+                                "&.MuiCircularProgress-root": {
+                                  color: "#6a7282",
+                                },
+                              }}
+                            />
+                            <span>Generating...</span>
+                          </>
+                        ) : (
+                          "Generate OTP"
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              ) : (
+                <form onSubmit={emailSubmit(onEmailLogin)}>
+                  {/* Email */}
+                  <div>
+                    {/* <p className="text-lg font-bold mb-1">Email</p> */}
+                    <Controller
+                      name="userEmail"
+                      control={emailControl}
+                      render={({ field: { onChange, name, value } }) => (
+                        <div className="flex-1 border rounded-lg">
+                          <TextField
+                            type="text"
+                            label="Email"
+                            placeholder="Enter email id."
+                            variant="filled"
+                            name={name}
+                            value={value}
+                            onChange={onChange}
+                            error={false}
+                            sx={{
+                              width: "100%",
+                              "& .MuiFilledInput-input": {
+                                fontWeight: "500 !important",
+                                backgroundColor: "white !important",
+                                borderRadius: "8px !important",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: "#1d1d1da3",
+                              },
+                              "& ::before": {
+                                display: "none",
+                              },
+                              "& ::after": {
+                                display: "none",
+                              },
+                            }}
+                          />
+                        </div>
+                      )}
+                    />
+
+                    <p className="my-1 text-xs text-red-600 min-h-5">
+                      {emailErrors.userEmail
+                        ? emailErrors.userEmail.message
+                        : ""}
+                    </p>
                   </div>
-                </form>
-              </>
-            ) : (
-              <form onSubmit={emailSubmit(onEmailLogin)}>
-                {/* Email */}
-                <div>
-                  {/* <p className="text-lg font-bold mb-1">Email</p> */}
-                  <Controller
-                    name="userEmail"
-                    control={emailControl}
-                    render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border rounded-lg">
-                        <TextField
-                          type="text"
-                          label="Email"
-                          placeholder="Enter email id."
-                          variant="filled"
-                          name={name}
-                          value={value}
-                          onChange={onChange}
-                          error={false}
-                          sx={{
-                            width: "100%",
-                            "& .MuiFilledInput-input": {
-                              fontWeight: "500 !important",
-                              backgroundColor: "white !important",
-                              borderRadius: "8px !important",
-                            },
-                            "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3",
-                            },
-                            "& ::before": {
-                              display: "none",
-                            },
-                            "& ::after": {
-                              display: "none",
-                            },
-                          }}
-                        />
-                      </div>
-                    )}
-                  />
 
-                  <p className="my-1 text-xs text-red-600 min-h-5">
-                    {emailErrors.userEmail ? emailErrors.userEmail.message : ""}
-                  </p>
-                </div>
+                  {/* Password */}
+                  <div>
+                    {/* <p className="text-lg font-bold mb-1">Password</p> */}
+                    <Controller
+                      name="userPass"
+                      control={emailControl}
+                      render={({ field: { onChange, name, value } }) => (
+                        <div className="flex-1 border rounded-lg">
+                          <TextField
+                            type={loginPassEye ? "text" : "password"}
+                            label="Password"
+                            placeholder="Enter password."
+                            variant="filled"
+                            name={name}
+                            value={value}
+                            onChange={onChange}
+                            error={false}
+                            autoComplete="new-password"
+                            slotProps={{
+                              input: {
+                                endAdornment: (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setLoginPassEye(!loginPassEye)
+                                    }
+                                    className="cursor-pointer"
+                                  >
+                                    {loginPassEye ? (
+                                      <VisibilityOff />
+                                    ) : (
+                                      <Visibility />
+                                    )}
+                                  </button>
+                                ),
+                              },
+                            }}
+                            sx={{
+                              width: "100%",
+                              "& .MuiFilledInput-root": {
+                                backgroundColor: "white !important",
+                                borderRadius: "8px !important",
+                              },
+                              "& .MuiFilledInput-input": {
+                                fontWeight: "500 !important",
+                                backgroundColor: "white !important",
+                                borderRadius: "8px !important",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: "#1d1d1da3",
+                              },
+                              "& ::before": {
+                                display: "none",
+                              },
+                              "& ::after": {
+                                display: "none",
+                              },
+                            }}
+                          />
+                        </div>
+                      )}
+                    />
 
-                {/* Password */}
-                <div>
-                  {/* <p className="text-lg font-bold mb-1">Password</p> */}
-                  <Controller
-                    name="userPass"
-                    control={emailControl}
-                    render={({ field: { onChange, name, value } }) => (
-                      <div className="flex-1 border rounded-lg">
-                        <TextField
-                          type={loginPassEye ? "text" : "password"}
-                          label="Password"
-                          placeholder="Enter password."
-                          variant="filled"
-                          name={name}
-                          value={value}
-                          onChange={onChange}
-                          error={false}
-                          autoComplete="new-password"
-                          slotProps={{
-                            input: {
-                              endAdornment: (
-                                <button
-                                  type="button"
-                                  onClick={() => setLoginPassEye(!loginPassEye)}
-                                  className="cursor-pointer"
-                                >
-                                  {loginPassEye ? (
-                                    <VisibilityOff />
-                                  ) : (
-                                    <Visibility />
-                                  )}
-                                </button>
-                              ),
-                            },
-                          }}
-                          sx={{
-                            width: "100%",
-                            "& .MuiFilledInput-root": {
-                              backgroundColor: "white !important",
-                              borderRadius: "8px !important",
-                            },
-                            "& .MuiFilledInput-input": {
-                              fontWeight: "500 !important",
-                              backgroundColor: "white !important",
-                              borderRadius: "8px !important",
-                            },
-                            "& .MuiInputLabel-root": {
-                              color: "#1d1d1da3",
-                            },
-                            "& ::before": {
-                              display: "none",
-                            },
-                            "& ::after": {
-                              display: "none",
-                            },
-                          }}
-                        />
-                      </div>
-                    )}
-                  />
+                    <p className="my-1 text-xs text-red-600 min-h-5">
+                      {emailErrors.userPass ? emailErrors.userPass.message : ""}
+                    </p>
+                  </div>
 
-                  <p className="my-1 text-xs text-red-600 min-h-5">
-                    {emailErrors.userPass ? emailErrors.userPass.message : ""}
-                  </p>
-                </div>
-
-                <div>
-                  {/* Recaptcha */}
-                  {/* <div
+                  <div>
+                    {/* Recaptcha */}
+                    {/* <div
                     className={`${
                       iAmNotRobot
                         ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
@@ -1273,143 +1283,161 @@ const DefaultNavbar = ({
                     />
                   </div> */}
 
-                  <button
-                    type="submit"
-                    // disabled={loading || !captchaToken ? true : false}
-                    className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
-                  >
-                    {loading ? (
-                      <>
-                        <CircularProgress
-                          size={25}
-                          sx={{
-                            "&.MuiCircularProgress-root": {
-                              color: "#6a7282",
-                            },
-                          }}
-                        />
-                        <span>Logging...</span>
-                      </>
-                    ) : (
-                      "Login"
-                    )}
-                  </button>
-                </div>
-              </form>
-            )}
+                    <button
+                      type="submit"
+                      // disabled={loading || !captchaToken ? true : false}
+                      className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
+                    >
+                      {loading ? (
+                        <>
+                          <CircularProgress
+                            size={25}
+                            sx={{
+                              "&.MuiCircularProgress-root": {
+                                color: "#6a7282",
+                              },
+                            }}
+                          />
+                          <span>Logging...</span>
+                        </>
+                      ) : (
+                        "Login"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
 
-            <div className="mt-5 flex items-center gap-2 text-sm">
-              <p>Don't have account?</p>
-              <button
-                type="button"
-                className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
-                onClick={() => {
-                  closeGsrctLoginDialog();
-                  openGsrctSignUpDialog();
-                }}
-              >
-                Sign up
-              </button>
-            </div>
+              <div className="w-full mt-5 flex justify-between items-center gap-2 text-sm">
+                <button
+                  type="button"
+                  className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                  onClick={() => {
+                    closeGsrctLoginDialog();
+                    openGsrctSignUpDialog();
+                  }}
+                >
+                  Forgot your password?
+                </button>
 
-            {!optSent && (
-              <>
-                <p className="flex justify-center items-center gap-2 py-5">
-                  <span className="w-10 h-px bg-slate-200"></span>
-                  <span className="text-slate-500 text-sm text-nowrap">
-                    Login/Signup With
-                  </span>
-                  <span className="w-10 h-px bg-slate-200"></span>
-                </p>
-
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  {/* Login with google */}
+                <div className="flex items-center gap-1 text-sm">
+                  <p>Don't have account?</p>
                   <button
                     type="button"
-                    className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
-                      winSize <= 640
-                        ? "rounded-s-full rounded-e-full"
-                        : "rounded-sm"
-                    }`}
-                    onClick={handleSignInWithGoogle}
+                    className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                    onClick={() => {
+                      closeGsrctLoginDialog();
+                      openGsrctSignUpDialog();
+                    }}
                   >
-                    {loadingGoogle ? (
+                    Sign up
+                  </button>
+                </div>
+              </div>
+
+              {!optSent && (
+                <>
+                  <p className="flex justify-center items-center gap-2 py-5">
+                    <span className="w-10 h-px bg-slate-200"></span>
+                    <span className="text-slate-500 text-sm text-nowrap">
+                      Login With
+                    </span>
+                    <span className="w-10 h-px bg-slate-200"></span>
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row justify-center gap-4">
+                    {/* Login with google */}
+                    <button
+                      type="button"
+                      className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
+                        winSize <= 640
+                          ? "rounded-s-full rounded-e-full"
+                          : "rounded-sm"
+                      }`}
+                      onClick={handleSignInWithGoogle}
+                    >
+                      {loadingGoogle ? (
+                        <>
+                          <CircularProgress
+                            size={25}
+                            sx={{
+                              "&.MuiCircularProgress-root": {
+                                color: "white",
+                              },
+                            }}
+                          />
+                          <span className="text-white font-semibold text-sm">
+                            Sign in with Google
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
+                            <Image
+                              src={googleIcon}
+                              width={24}
+                              height={24}
+                              alt="Google Sign In Icon"
+                            />
+                          </div>
+
+                          <p className="flex justify-center items-center font-semibold text-white text-sm">
+                            Sign in with Google
+                          </p>
+                        </>
+                      )}
+                    </button>
+
+                    {loginWith === "mobile" ? (
                       <>
-                        <CircularProgress
-                          size={25}
-                          sx={{
-                            "&.MuiCircularProgress-root": {
-                              color: "white",
-                            },
+                        {/* Login with Email */}
+                        <button
+                          type="button"
+                          className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 cursor-pointer ${
+                            winSize <= 640
+                              ? "rounded-s-full rounded-e-full"
+                              : "rounded-sm"
+                          }`}
+                          onClick={() => {
+                            setLoginWith("email");
                           }}
-                        />
-                        <span className="text-white font-semibold text-sm">
-                          Sign in with Google
-                        </span>
+                        >
+                          <MdOutlineEmail className="w-7 h-7 text-white" />
+                          <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
+                            Sign in with Email
+                          </p>
+                        </button>
                       </>
                     ) : (
                       <>
-                        <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
-                          <Image
-                            src={googleIcon}
-                            width={24}
-                            height={24}
-                            alt="Google Sign In Icon"
-                          />
-                        </div>
-
-                        <p className="flex justify-center items-center font-semibold text-white text-sm">
-                          Sign in with Google
-                        </p>
+                        {/* Login with Mobile No. */}
+                        <button
+                          type="button"
+                          className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 rounded-sm cursor-pointer ${
+                            winSize <= 640
+                              ? "rounded-s-full rounded-e-full"
+                              : "rounded-sm"
+                          }`}
+                          onClick={() => {
+                            setLoginWith("mobile");
+                          }}
+                        >
+                          <FaMobileAlt className="w-7 h-7 text-white" />
+                          <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
+                            Sign in with Mobile No.
+                          </p>
+                        </button>
                       </>
                     )}
-                  </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
-                  {loginWith === "mobile" ? (
-                    <>
-                      {/* Login with Email */}
-                      <button
-                        type="button"
-                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 cursor-pointer ${
-                          winSize <= 640
-                            ? "rounded-s-full rounded-e-full"
-                            : "rounded-sm"
-                        }`}
-                        onClick={() => {
-                          setLoginWith("email");
-                        }}
-                      >
-                        <MdOutlineEmail className="w-7 h-7 text-white" />
-                        <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
-                          Sign in with Email
-                        </p>
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      {/* Login with Mobile No. */}
-                      <button
-                        type="button"
-                        className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 rounded-sm cursor-pointer ${
-                          winSize <= 640
-                            ? "rounded-s-full rounded-e-full"
-                            : "rounded-sm"
-                        }`}
-                        onClick={() => {
-                          setLoginWith("mobile");
-                        }}
-                      >
-                        <FaMobileAlt className="w-7 h-7 text-white" />
-                        <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
-                          Sign in with Mobile No.
-                        </p>
-                      </button>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+          {lostPassword === "forgot" && <div>{/* Forgot password */}</div>}
+
+          {lostPassword === "reset" && <div>{/* Reset password */}</div>}
 
           {/* Footer */}
           <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
