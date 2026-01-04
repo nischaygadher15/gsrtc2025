@@ -582,7 +582,7 @@ const DefaultNavbar = ({
 
       console.log("forgotPasswordResp: ", forgotPasswordResp);
 
-      if (forgotPasswordResp.status === 200) {
+      if (forgotPasswordResp && forgotPasswordResp.status === 200) {
         toast.success(forgotPasswordResp.message);
         closeGsrctLoginDialog();
         closeUserDrawer();
