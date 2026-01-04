@@ -33,7 +33,7 @@ export type LoginByEmailSchemaType = z.infer<typeof LoginByEmailSchema>;
 const MAX_AGE_DATE = new Date();
 MAX_AGE_DATE.setFullYear(MAX_AGE_DATE.getFullYear() - 14);
 
-export const SignUpSchema = z.object({
+export const EmailSignUpSchema = z.object({
   firstName: z
     .string("First name is required.")
     .trim()
@@ -80,4 +80,4 @@ export const SignUpSchema = z.object({
     ),
 });
 
-export type SignUpSchemaSchemaType = z.infer<typeof SignUpSchema>;
+export type EmailSignUpSchemaType = z.infer<typeof EmailSignUpSchema>;

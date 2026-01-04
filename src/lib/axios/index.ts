@@ -25,9 +25,7 @@ API.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      console.error("Unauthorized request");
-    }
+    console.log("Axios Error: ", error);
 
     Promise.reject(error);
   }

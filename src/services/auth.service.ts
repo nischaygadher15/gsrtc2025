@@ -1,8 +1,10 @@
 import API from "@/lib/axios";
-import { SignUpSchemaSchemaType } from "@/lib/schema/auth/auth.schema";
 import {
   EmailLoginPayloadType,
+  EmailSignupPayload,
   ForgotPasswordPayload,
+  GoogleSignupPayload,
+  ResetPasswordPayload,
 } from "../../types/auth/auth.type";
 
 // <=================== Login ===================>
@@ -35,10 +37,9 @@ export const loginWithEmailAPI = (
   return API.post("/auth/login/email", {
     userEmail: data.userEmail,
     userPass: data.userPass,
-    deviceId: data.deviceId,
-    deviceIp: data.deviceIp,
-    deviceLat: data.deviceLat,
-    deviceLong: data.deviceLong,
+    device_ip: data.device_ip,
+    device_lat: data.device_lat,
+    device_long: data.device_long,
   });
 };
 
@@ -59,9 +60,27 @@ export const logoutAPI = () => {
 // <=================== Sign up ===================>
 
 export const signUpWithEmailAPI = (
-  signUpData: SignUpSchemaSchemaType
-): Promise<{ status: boolean; message: string }> => {
-  return API.post("auth/signup/email", signUpData);
+  emailSignupPayload: EmailSignupPayload
+): Promise<{ status: number; message: string }> => {
+  return API.post("auth/signup/email", emailSignupPayload);
+};
+
+export const signUpWithGoogleAPI = (
+  googleSignupPayload: GoogleSignupPayload
+): Promise<{ status: number; message: string }> => {
+  return API.post(
+    "auth/signup/google",
+    {
+      device_ip: googleSignupPayload.device_ip,
+      device_lat: googleSignupPayload.device_lat,
+      device_long: googleSignupPayload.device_long,
+    },
+    {
+      headers: {
+        Authorization: googleSignupPayload.code,
+      },
+    }
+  );
 };
 
 // <=================== Forgot/Reset Password ===================>
@@ -71,8 +90,20 @@ export const forgotPasswordAPI = (
 ): Promise<{ status: number; message: string }> => {
   return API.post("/auth/forgot/password", {
     userEmail: data.userEmail,
-    deviceIp: data.deviceIp,
-    deviceLat: data.deviceLat,
-    deviceLong: data.deviceLong,
+    device_ip: data.device_ip,
+    device_lat: data.device_lat,
+    device_long: data.device_long,
+  });
+};
+
+export const resetPasswordAPI = (
+  data: ResetPasswordPayload
+): Promise<{ status: number; message: string }> => {
+  return API.post("/auth/reset/password", {
+    userPass: data.userPass,
+    userConfirmPass: data.userConfirmPass,
+    device_ip: data.device_ip,
+    device_lat: data.device_lat,
+    device_long: data.device_long,
   });
 };

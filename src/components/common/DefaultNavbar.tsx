@@ -36,14 +36,14 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { BiHelpCircle, BiLogOut } from "react-icons/bi";
 import { Controller, useForm } from "react-hook-form";
 import {
+  EmailSignUpSchema,
+  EmailSignUpSchemaType,
   LoginByEmailSchema,
   LoginByEmailSchemaType,
   LoginByMobileSchema,
   LoginByMobileSchemaType,
   OtpVerificationSchema,
   OtpVerificationSchemaType,
-  SignUpSchema,
-  SignUpSchemaSchemaType,
 } from "@/lib/schema/auth/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -58,8 +58,10 @@ import {
   loginWithMobileAPI,
   logoutAPI,
   otpVerificationAPI,
+  resetPasswordAPI,
   sendOtpAPI,
   signUpWithEmailAPI,
+  signUpWithGoogleAPI,
 } from "@/services/auth.service";
 import OtpInput from "react-otp-input";
 import LocalTimer from "./LocalTimer";
@@ -97,7 +99,7 @@ const DefaultNavbar = ({
 
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
   const [lostPassword, setLostPassword] = useState<"forgot" | "reset" | null>(
-    "forgot"
+    null
   );
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -309,10 +311,9 @@ const DefaultNavbar = ({
       const EmailLoginRes = await loginWithEmailAPI({
         userEmail: data.userEmail,
         userPass: data.userPass,
-        deviceId: deviceInfo.device_id,
-        deviceIp: deviceInfo.device_ip,
-        deviceLat: deviceInfo.device_lat,
-        deviceLong: deviceInfo.device_long,
+        device_ip: deviceInfo.device_ip,
+        device_lat: deviceInfo.device_lat,
+        device_long: deviceInfo.device_long,
       });
 
       console.log("EmailLoginRes: ", EmailLoginRes);
@@ -349,21 +350,39 @@ const DefaultNavbar = ({
     scope: "openid email profile",
     onSuccess: async ({ code }) => {
       console.log("Auth-code: ", code);
+
+      //Sign up payload
+      const deviceInfo = await GetDeviceInfo();
+
+      console.log("deviceInfo: ", deviceInfo);
+
       try {
-        setLoadingGoogle(true);
-        const GoogleSignInRes = await loginWithGoogleAPI(code);
-        console.log("GoogleSignInRes: ", GoogleSignInRes);
-        if (GoogleSignInRes.status) {
-          toast.success(GoogleSignInRes.message);
-          dispatch(setSession(code));
-          closeGsrctLoginDialog();
-          closeUserDrawer();
+        setLoadingGoogle(false);
+        const googleSignupRes = await signUpWithGoogleAPI({
+          code,
+          device_ip: deviceInfo.device_ip,
+          device_lat: deviceInfo.device_lat,
+          device_long: deviceInfo.device_long,
+        });
+
+        console.log("googleSignupRes: ", googleSignupRes);
+
+        if (googleSignupRes.status === 201) {
+          setTimeout(() => {
+            toast.success(googleSignupRes.message);
+            dispatch(setSession(code));
+            closeGsrctLoginDialog();
+            closeUserDrawer();
+          }, 300);
+        } else {
+          toast.error(googleSignupRes.message);
         }
       } catch (error) {
-        console.log("error: ", error);
-        toast.error("Something went wrong!!");
+        console.log("error:", error);
       } finally {
-        setLoadingGoogle(false);
+        setTimeout(() => {
+          setLoadingGoogle(false);
+        }, 300);
       }
     },
     onError: () => {
@@ -401,11 +420,12 @@ const DefaultNavbar = ({
     reset: signUpReset,
     control: signUpControl,
     formState: { errors: signUpErrors },
-  } = useForm<SignUpSchemaSchemaType>({
-    resolver: zodResolver(SignUpSchema),
+  } = useForm<EmailSignUpSchemaType>({
+    resolver: zodResolver(EmailSignUpSchema),
     defaultValues: {
       firstName: "sita",
       lastName: "ram",
+      userDob: new Date("2000-01-01"),
       userMobileNo: "8141409448",
       userEmail: `ram${randomUser}@gmail.com`,
       userPass: `Ram@@${randomUser}`,
@@ -423,12 +443,28 @@ const DefaultNavbar = ({
     dispatch(setSignUpDialog(false));
   };
 
-  const onSignUp = async (data: SignUpSchemaSchemaType) => {
-    // console.log("data: ", data);
+  const onEmailSignUp = async (data: EmailSignUpSchemaType) => {
+    console.log("data: ", data);
+    setLoading(true);
+
+    //Sign up payload
+    const deviceInfo = await GetDeviceInfo();
+
+    console.log("deviceInfo: ", deviceInfo);
 
     try {
       setLoading(true);
-      const signUpRes = await signUpWithEmailAPI(data);
+      const signUpRes = await signUpWithEmailAPI({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        userDob: data.userDob,
+        userMobileNo: data.userMobileNo,
+        userEmail: data.userEmail,
+        userPass: data.userPass,
+        device_ip: deviceInfo.device_ip,
+        device_lat: deviceInfo.device_lat,
+        device_long: deviceInfo.device_long,
+      });
 
       console.log("signUpRes: ", signUpRes);
 
@@ -460,7 +496,7 @@ const DefaultNavbar = ({
   } = useForm({
     // resolver: zodResolver(LoginByEmailSchema),
     defaultValues: {
-      userEmail: "ram50@gmail.com",
+      userEmail: "nischaygadher15@gmail.com",
     },
   });
 
@@ -474,9 +510,9 @@ const DefaultNavbar = ({
 
       const forgotPasswordResp = await forgotPasswordAPI({
         userEmail: data.userEmail,
-        deviceIp: deviceInfo.device_ip,
-        deviceLat: deviceInfo.device_lat,
-        deviceLong: deviceInfo.device_long,
+        device_ip: deviceInfo.device_ip,
+        device_lat: deviceInfo.device_lat,
+        device_long: deviceInfo.device_long,
       });
 
       console.log("forgotPasswordResp: ", forgotPasswordResp);
@@ -490,6 +526,54 @@ const DefaultNavbar = ({
       console.log("Error: ", error);
       const err = error as { message: string };
       toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset Password Form
+  const {
+    handleSubmit: resetPassSubmit,
+    reset: resetPassReset,
+    control: resetPassControl,
+    formState: { errors: resetPassErrors },
+  } = useForm({
+    // resolver: zodResolver(LoginByEmailSchema),
+    defaultValues: {
+      userPass: "",
+      userConfirmPass: "",
+    },
+  });
+
+  const onResetPassword = async (data: any) => {
+    console.log("Data: ", data);
+    setLoading(true);
+
+    try {
+      const deviceInfo = await GetDeviceInfo();
+      console.log("deviceInfo: ", deviceInfo);
+
+      const resetPasswordResp = await resetPasswordAPI({
+        userPass: data.userPass,
+        userConfirmPass: data.userConfirmPass,
+        device_ip: deviceInfo.device_ip,
+        device_lat: deviceInfo.device_lat,
+        device_long: deviceInfo.device_long,
+      });
+
+      console.log("resetPasswordResp: ", resetPasswordResp);
+
+      if (resetPasswordResp.status === 200) {
+        toast.success(resetPasswordResp.message);
+      } else {
+        toast.error(resetPasswordResp.message);
+      }
+    } catch (error: unknown) {
+      console.log("Error: ", error);
+      const err = error as { message: string };
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1481,7 +1565,7 @@ const DefaultNavbar = ({
 
           {lostPassword === "forgot" && (
             <div className="px-4 flex-1">
-              <p className="text-3xl font-semibold mb-10">
+              <p className="text-2xl font-semibold mb-10">
                 Forgot your password?
               </p>
 
@@ -1501,6 +1585,7 @@ const DefaultNavbar = ({
                         <TextField
                           type="text"
                           label="Email"
+                          disabled={loading}
                           placeholder="Enter email id."
                           variant="filled"
                           name={name}
@@ -1575,7 +1660,188 @@ const DefaultNavbar = ({
             </div>
           )}
 
-          {lostPassword === "reset" && <div>{/* Reset password */}</div>}
+          {lostPassword === "reset" && (
+            <div className="px-4 flex-1">
+              <p className="text-2xl font-semibold mb-7">Password reset</p>
+
+              <p className="text-sm mb-4">
+                Please enter a new password for your Todoist account.
+              </p>
+              <p className="text-sm mb-5">
+                This will end all active sessions for your account from all
+                devices.
+              </p>
+
+              <form onSubmit={resetPassSubmit(onResetPassword)}>
+                {/* Password */}
+                <div>
+                  <Controller
+                    name="userPass"
+                    control={resetPassControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-lg">
+                        <TextField
+                          type={loginPassEye ? "text" : "password"}
+                          label="Password"
+                          placeholder="Enter password."
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          error={false}
+                          autoComplete="new-password"
+                          slotProps={{
+                            input: {
+                              endAdornment: (
+                                <button
+                                  type="button"
+                                  onClick={() => setLoginPassEye(!loginPassEye)}
+                                  className="cursor-pointer"
+                                >
+                                  {loginPassEye ? (
+                                    <VisibilityOff />
+                                  ) : (
+                                    <Visibility />
+                                  )}
+                                </button>
+                              ),
+                            },
+                          }}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              backgroundColor: "white !important",
+                              borderRadius: "8px !important",
+                            },
+                            "& .MuiFilledInput-input": {
+                              fontWeight: "500 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px !important",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {resetPassErrors.userPass
+                      ? resetPassErrors.userPass.message
+                      : ""}
+                  </p>
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <Controller
+                    name="userConfirmPass"
+                    control={resetPassControl}
+                    render={({ field: { onChange, name, value } }) => (
+                      <div className="flex-1 border rounded-lg">
+                        <TextField
+                          type={loginPassEye ? "text" : "password"}
+                          label="Confirm Password"
+                          placeholder="Enter confirm password"
+                          variant="filled"
+                          name={name}
+                          value={value}
+                          onChange={onChange}
+                          error={false}
+                          autoComplete="new-password"
+                          slotProps={{
+                            input: {
+                              endAdornment: (
+                                <button
+                                  type="button"
+                                  onClick={() => setLoginPassEye(!loginPassEye)}
+                                  className="cursor-pointer"
+                                >
+                                  {loginPassEye ? (
+                                    <VisibilityOff />
+                                  ) : (
+                                    <Visibility />
+                                  )}
+                                </button>
+                              ),
+                            },
+                          }}
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              backgroundColor: "white !important",
+                              borderRadius: "8px !important",
+                            },
+                            "& .MuiFilledInput-input": {
+                              fontWeight: "500 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px !important",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <p className="my-1 text-xs text-red-600 min-h-5">
+                    {resetPassErrors.userPass
+                      ? resetPassErrors.userPass.message
+                      : ""}
+                  </p>
+                </div>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
+                  >
+                    {loading && (
+                      <CircularProgress
+                        size={25}
+                        sx={{
+                          "&.MuiCircularProgress-root": {
+                            color: "#6a7282",
+                          },
+                        }}
+                      />
+                    )}
+                    Reset my password
+                  </button>
+                </div>
+              </form>
+
+              <hr className="h-px mt-7 mb-5 border-none bg-slate-300" />
+
+              <div className="flex justify-center items-center gap-1">
+                <p className="text-sm">Need additional help?</p>
+                <button
+                  type="button"
+                  className="text-sm text-center underline underline-offset-1 cursor-pointer font-semibold text-blue-500"
+                  // onClick={() => {}}
+                >
+                  Contact us
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
@@ -1628,7 +1894,7 @@ const DefaultNavbar = ({
 
           {/* Forms */}
           <div className="px-4 flex-1">
-            <form onSubmit={signUpSubmit(onSignUp)}>
+            <form onSubmit={signUpSubmit(onEmailSignUp)}>
               {/* Full name */}
               <div className="flex gap-4">
                 {/* First Name */}
@@ -1942,7 +2208,7 @@ const DefaultNavbar = ({
               </div>
 
               {/* Recaptcha */}
-              <div
+              {/* <div
                 className={`${
                   iAmNotRobot
                     ? "w-0! max-h-0 relative overflow-hidden -z-10 opacity-0 p-0"
@@ -1955,13 +2221,14 @@ const DefaultNavbar = ({
                   onErrored={onCaptchaFailed}
                   onExpired={onCaptchaExpired}
                 />
-              </div>
+              </div> */}
 
               {/* Sign Up button */}
               <div className="flex justify-center mb-5">
                 <button
                   type="submit"
-                  disabled={loading || !captchaToken ? true : false}
+                  // disabled={loading || !captchaToken ? true : false}
+                  disabled={loading}
                   className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
                 >
                   {loading ? (
