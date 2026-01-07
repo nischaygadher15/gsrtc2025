@@ -134,7 +134,7 @@ const BusListPage = () => {
     null
   );
   const [dateDialog, setDateDialog] = useState<boolean>(false);
-  const [jorneyDateBtn, setJourneyDateBtn] = useState<Date>(
+  const [journeyDateBtn, setJourneyDateBtn] = useState<Date>(
     new Date(Date.now())
   );
 
@@ -200,9 +200,9 @@ const BusListPage = () => {
   const dPoint = watch("destinationPoint");
 
   useEffect(() => {
-    // console.log("jDate: ", jorneyDateBtn);
-    if (jorneyDateBtn) setValue("journeyDate", jorneyDateBtn);
-  }, [jorneyDateBtn]);
+    // console.log("jDate: ", journeyDateBtn);
+    if (journeyDateBtn) setValue("journeyDate", journeyDateBtn);
+  }, [journeyDateBtn]);
 
   //Offer carousel
   const [offersCarouselRef, offersCarouselAPI] = useEmblaCarousel({
@@ -609,10 +609,10 @@ const BusListPage = () => {
             onClick={handleDateDialog}
           >
             <span className="bg-[#fed9d5] hover:bg-[#f8d3cf] font-bold p-2 rounded-s-full  text-xs md:text-sm rounded-e-full cursor-pointer">
-              {jorneyDateBtn && DateFormater(jorneyDateBtn).split(",")[0]}
+              {journeyDateBtn && DateFormater(journeyDateBtn).split(",")[0]}
             </span>
             <span className=" text-xs md:text-sm text-center text-[#1d1d1da3]">
-              {jorneyDateBtn && getDayOfWeek(jorneyDateBtn)}
+              {journeyDateBtn && getDayOfWeek(journeyDateBtn)}
             </span>
           </button>
 

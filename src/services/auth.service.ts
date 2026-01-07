@@ -6,7 +6,7 @@ import {
   GoogleSignupPayload,
   MobileLoginPayload,
   ResetPasswordPayload,
-} from "../../types/auth/auth.type";
+} from "../types/auth/auth.type";
 
 // <=================== Login ===================>
 

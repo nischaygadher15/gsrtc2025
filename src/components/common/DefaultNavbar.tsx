@@ -647,7 +647,7 @@ const DefaultNavbar = ({
   return (
     <nav
       className={`myContainer ${
-        currentLocation !== "/search"
+        currentLocation !== "/search-bus"
           ? "sticky top-0 left-0 right-0 z-40 flex shadow-md"
           : "relative border-b border-b-slate-200 z-40 hidden lg:flex"
       }  min-w-full bg-white justify-between py-3`}

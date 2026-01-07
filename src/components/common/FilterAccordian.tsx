@@ -6,7 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Checkbox from "@mui/material/Checkbox";
 import { FilterContentType } from "./SearchPageData";
-import { FilterStateObjectType } from "@/app/search/BustListPage";
+import { FilterStateObjectType } from "@/app/search-bus/BustListPage";
 
 interface FilterAccordianType {
   isSearchable: boolean;

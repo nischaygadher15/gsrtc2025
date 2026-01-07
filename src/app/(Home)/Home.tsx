@@ -480,7 +480,7 @@ export default function Home() {
   const onSearchBuses = async (data: SearchBusDataType) => {
     setLoading(true);
     console.log("Form data: ", data);
-    router.push("/search");
+    router.push("/search-bus");
   };
 
   // watching all search buses inputs
@@ -766,7 +766,7 @@ export default function Home() {
                     <div>
                       <p className="text-left text-xs text-gray-500">From</p>
                       <p className="min-h-6 text-left font-bold">
-                        {bPoint ?? <span className="">Boarding point</span>}
+                        {bPoint ?? <span className="">Source</span>}
                       </p>
                     </div>
                   </button>
@@ -977,7 +977,7 @@ export default function Home() {
                     <div>
                       <p className="text-left text-xs text-gray-500">To</p>
                       <p className="min-h-6 text-left font-bold">
-                        {dPoint ?? <span className="">Destination point</span>}
+                        {dPoint ?? <span className="">Destination</span>}
                       </p>
                     </div>
                   </button>

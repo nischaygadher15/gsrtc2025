@@ -23,7 +23,7 @@ const FooterNavbar = ({
   return (
     <div
       className={`border-t border-t-gray-300 ${
-        currentLocation !== "/search" ? "lg:hidden" : "hidden"
+        currentLocation !== "/search-bus" ? "lg:hidden" : "hidden"
       } h-[74px] fixed bottom-0 left-0 right-0 z-40 min-w-full bg-white`}
     >
       {/* Navbar links */}
