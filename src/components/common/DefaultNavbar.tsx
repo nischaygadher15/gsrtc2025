@@ -194,24 +194,26 @@ const DefaultNavbar = ({
   };
 
   const closeGsrctLoginDialog = () => {
-    setGsrctLoginDialog(false);
-    setCaptchaToken("");
-    setIAmNotRobot(false);
-    setLoginWith("mobile");
-    mobileReset();
-    emailReset();
+    if (!loading || !loadingGoogle) {
+      setGsrctLoginDialog(false);
+      setCaptchaToken("");
+      setIAmNotRobot(false);
+      setLoginWith("mobile");
+      mobileReset();
+      emailReset();
 
-    // OPT Form
-    otpReset();
-    setLoading(false);
-    setOtpVerifying(false);
-    setOtpResending(false);
-    setOptSent(false);
-    setOtpExpired(false);
-    setOtpCounting(false);
+      // OPT Form
+      otpReset();
+      setLoading(false);
+      setOtpVerifying(false);
+      setOtpResending(false);
+      setOptSent(false);
+      setOtpExpired(false);
+      setOtpCounting(false);
 
-    //Redux
-    dispatch(setLoginDialog(false));
+      //Redux
+      dispatch(setLoginDialog(false));
+    }
   };
 
   useEffect(() => {
@@ -335,13 +337,11 @@ const DefaultNavbar = ({
       console.log("emailLoginRes: ", emailLoginRes);
 
       if (emailLoginRes.status === 200) {
-        setTimeout(() => {
-          setLoading(false);
-          toast.success(emailLoginRes.message);
-          dispatch(setSession(emailLoginRes.access_token));
-          closeGsrctLoginDialog();
-          closeUserDrawer();
-        }, 300);
+        setLoading(false);
+        toast.success(emailLoginRes.message);
+        dispatch(setSession(emailLoginRes.access_token));
+        closeGsrctLoginDialog();
+        closeUserDrawer();
       } else {
         toast.error(emailLoginRes.message);
       }
@@ -350,9 +350,7 @@ const DefaultNavbar = ({
       console.log("error: ", error);
       toast.error(err.message);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
+      setLoading(false);
     }
   };
 
@@ -366,15 +364,15 @@ const DefaultNavbar = ({
     ux_mode: "popup",
     scope: "openid email profile",
     onSuccess: async ({ code }) => {
-      console.log("Auth-code: ", code);
-
-      //Sign up payload
-      const deviceInfo = await GetDeviceInfo();
-
-      console.log("deviceInfo: ", deviceInfo);
-
       try {
-        setLoadingGoogle(false);
+        setLoadingGoogle(true);
+        console.log("Auth-code: ", code);
+
+        //Sign up payload
+        const deviceInfo = await GetDeviceInfo();
+
+        console.log("deviceInfo: ", deviceInfo);
+
         const googleLoginRes = await loginWithGoogleAPI({
           code,
           device_ip: deviceInfo.device_ip,
@@ -397,9 +395,7 @@ const DefaultNavbar = ({
       } catch (error) {
         console.log("error:", error);
       } finally {
-        setTimeout(() => {
-          setLoadingGoogle(false);
-        }, 300);
+        setLoadingGoogle(false);
       }
     },
     onError: () => {
@@ -459,6 +455,7 @@ const DefaultNavbar = ({
 
   const handleSessionLogout = async () => {
     try {
+      setLoading(true);
       const logoutRes = await logoutAPI();
 
       console.log("logoutRes: ", logoutRes);
@@ -474,10 +471,12 @@ const DefaultNavbar = ({
       let err = error as { message: string };
       console.log("error: ", error);
       toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const randomUser = Math.ceil(Math.random() * 1000);
+  const randomUser = Math.ceil(Math.random() * 10000);
 
   // GSRTC Sign up form
   const {
@@ -501,11 +500,13 @@ const DefaultNavbar = ({
     setGsrtcSignUpDialog(true);
   };
   const closeGsrctSignUpDialog = () => {
-    setGsrtcSignUpDialog(false);
-    signUpReset();
+    if (!loading || !loadingGoogle) {
+      setGsrtcSignUpDialog(false);
+      signUpReset();
 
-    //Redux
-    dispatch(setSignUpDialog(false));
+      //Redux
+      dispatch(setSignUpDialog(false));
+    }
   };
 
   const onEmailSignUp = async (data: EmailSignUpSchemaType) => {
@@ -539,6 +540,7 @@ const DefaultNavbar = ({
           dispatch(setSession("1234567890"));
           closeGsrctSignUpDialog();
           closeUserDrawer();
+          closeGsrctSignUpDialog();
         }, 300);
       } else {
         toast.error(signUpRes.message);
@@ -714,7 +716,7 @@ const DefaultNavbar = ({
             <span>Help</span>
           </Link>
         </li>
-        <li className="">
+        {/* <li className="">
           <a
             href="https://yatradham.gujarat.gov.in/Booking"
             className="p-3 text-black rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
@@ -722,8 +724,8 @@ const DefaultNavbar = ({
             <span>Sharvan Tirth</span>
             <span>Darshan</span>
           </a>
-        </li>
-        <li>
+        </li> */}
+        {/* <li>
           <a
             href="https://www.soutickets.in/#/gsrtc-booking"
             className="p-3 text-black rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
@@ -731,7 +733,7 @@ const DefaultNavbar = ({
             <span>Unity</span>
             <span>Booking</span>
           </a>
-        </li>
+        </li> */}
         <li className="">
           <button
             type="button"
@@ -1062,7 +1064,20 @@ const DefaultNavbar = ({
                   <span>Logout</span>
                 </div>
 
-                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+                <div className="flex items-center gap-3">
+                  {loading && (
+                    <CircularProgress
+                      size={25}
+                      sx={{
+                        "&.MuiCircularProgress-root": {
+                          color: "black",
+                        },
+                      }}
+                    />
+                  )}
+
+                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+                </div>
               </button>
             )}
           </div>
@@ -1251,7 +1266,11 @@ const DefaultNavbar = ({
                           <p className="text-xs text-[#1d1d1da3]">
                             Country Code
                           </p>
-                          <p className="flex items-center gap-x-1 font-semibold">
+                          <p
+                            className={`flex items-center gap-x-1 font-semibold ${
+                              loading ? "text-[#1d1d1da3]" : ""
+                            }`}
+                          >
                             <span>+91 (IND)</span>
                             <IoMdArrowDropdown className="text-xl" />
                           </p>
@@ -1265,6 +1284,7 @@ const DefaultNavbar = ({
                               <TextField
                                 type="text"
                                 label="Mobile number"
+                                disabled={loading}
                                 placeholder="Enter mobile no."
                                 variant="filled"
                                 name={name}
@@ -1358,6 +1378,7 @@ const DefaultNavbar = ({
                           <TextField
                             type="text"
                             label="Email"
+                            disabled={loading}
                             placeholder="Enter email id."
                             variant="filled"
                             name={name}
@@ -1404,6 +1425,7 @@ const DefaultNavbar = ({
                           <TextField
                             type={loginPassEye ? "text" : "password"}
                             label="Password"
+                            disabled={loading}
                             placeholder="Enter password."
                             variant="filled"
                             name={name}
@@ -1416,10 +1438,11 @@ const DefaultNavbar = ({
                                 endAdornment: (
                                   <button
                                     type="button"
+                                    disabled={loading}
                                     onClick={() =>
                                       setLoginPassEye(!loginPassEye)
                                     }
-                                    className="cursor-pointer"
+                                    className="cursor-pointer disabled:cursor-default"
                                   >
                                     {loginPassEye ? (
                                       <VisibilityOff />
@@ -1481,6 +1504,7 @@ const DefaultNavbar = ({
                     <button
                       type="submit"
                       // disabled={loading || !captchaToken ? true : false}
+                      disabled={loading}
                       className="w-full py-3 font-semibold flex justify-center items-center gap-2 bg-primary/90 hover:bg-primary text-white rounded-s-full rounded-e-full cursor-pointer disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500"
                     >
                       {loading ? (
@@ -1507,7 +1531,8 @@ const DefaultNavbar = ({
                 {loginWith === "email" && (
                   <button
                     type="button"
-                    className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                    disabled={loading}
+                    className="font-semibold text-blue-500 disabled:text-gray-500 underline underline-offset-1 cursor-pointer disabled:cursor-default"
                     onClick={() => {
                       setLostPassword("forgot");
                     }}
@@ -1520,7 +1545,8 @@ const DefaultNavbar = ({
                   <p>Don't have account?</p>
                   <button
                     type="button"
-                    className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                    disabled={loading}
+                    className="font-semibold text-blue-500 disabled:text-gray-500 underline underline-offset-1 cursor-pointer disabled:cursor-default"
                     onClick={() => {
                       closeGsrctLoginDialog();
                       openGsrctSignUpDialog();
@@ -1545,42 +1571,36 @@ const DefaultNavbar = ({
                     {/* Login with google */}
                     <button
                       type="button"
-                      className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
+                      disabled={loadingGoogle}
+                      className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] text-white p-1.5 pe-3 rounded-sm cursor-pointer ${
                         winSize <= 640
                           ? "rounded-s-full rounded-e-full"
                           : "rounded-sm"
-                      }`}
+                      } disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500`}
                       onClick={handleLoginWithGoogle}
                     >
-                      {loadingGoogle ? (
-                        <>
-                          <CircularProgress
-                            size={25}
-                            sx={{
-                              "&.MuiCircularProgress-root": {
-                                color: "white",
-                              },
-                            }}
-                          />
-                          <span className="text-white font-semibold text-sm">
-                            Sign in with Google
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
-                            <Image
-                              src={googleIcon}
-                              width={24}
-                              height={24}
-                              alt="Google Sign In Icon"
-                            />
-                          </div>
+                      <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
+                        <Image
+                          src={googleIcon}
+                          width={24}
+                          height={24}
+                          alt="Google Sign In Icon"
+                        />
+                      </div>
 
-                          <p className="flex justify-center items-center font-semibold text-white text-sm">
-                            Sign in with Google
-                          </p>
-                        </>
+                      <p className="flex justify-center items-center font-semibold text-sm">
+                        Sign in with Google
+                      </p>
+
+                      {loadingGoogle && (
+                        <CircularProgress
+                          size={25}
+                          sx={{
+                            "&.MuiCircularProgress-root": {
+                              color: "#6a7282",
+                            },
+                          }}
+                        />
                       )}
                     </button>
 
@@ -1589,17 +1609,18 @@ const DefaultNavbar = ({
                         {/* Login with Email */}
                         <button
                           type="button"
+                          disabled={loading}
                           className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 cursor-pointer ${
                             winSize <= 640
                               ? "rounded-s-full rounded-e-full"
                               : "rounded-sm"
-                          }`}
+                          } disabled:cursor-default disabled:bg-gray-200 text-white disabled:text-gray-500`}
                           onClick={() => {
                             setLoginWith("email");
                           }}
                         >
-                          <MdOutlineEmail className="w-7 h-7 text-white" />
-                          <p className="flex justify-center items-center font-semibold text-white text-sm px-2">
+                          <MdOutlineEmail className="w-7 h-7 " />
+                          <p className="flex justify-center items-center font-semibold  text-sm px-2">
                             Sign in with Email
                           </p>
                         </button>
@@ -1609,11 +1630,12 @@ const DefaultNavbar = ({
                         {/* Login with Mobile No. */}
                         <button
                           type="button"
+                          disabled={loading}
                           className={`min-h-12 flex justify-center items-center bg-primary/90 hover:bg-primary p-1.5 rounded-sm cursor-pointer ${
                             winSize <= 640
                               ? "rounded-s-full rounded-e-full"
                               : "rounded-sm"
-                          }`}
+                          } disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500`}
                           onClick={() => {
                             setLoginWith("mobile");
                           }}
@@ -1920,11 +1942,17 @@ const DefaultNavbar = ({
           <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
             <p className="text-xs text-center">By logging in, I agree</p>
             <p className="text-xs flex justify-center items-center gap-2">
-              <a href="#" className="text-blue-500 hover:underline">
+              <a
+                href={`${loading ? "/#" : "/#"}`}
+                className="text-blue-500 hover:underline"
+              >
                 Terms & Conditions
               </a>
               <span>&</span>
-              <a href="#" className="text-blue-500 hover:underline">
+              <a
+                href={`${loading ? "/#" : "/#"}`}
+                className="text-blue-500 hover:underline"
+              >
                 Privacy Policy
               </a>
             </p>
@@ -1984,6 +2012,7 @@ const DefaultNavbar = ({
                         <TextField
                           type="text"
                           label="First name"
+                          disabled={loading}
                           placeholder="Enter first name"
                           variant="filled"
                           error={signUpErrors.firstName ? true : false}
@@ -2033,6 +2062,7 @@ const DefaultNavbar = ({
                         <TextField
                           type="text"
                           label="Last name"
+                          disabled={loading}
                           placeholder="Enter last name"
                           variant="filled"
                           name={name}
@@ -2076,6 +2106,7 @@ const DefaultNavbar = ({
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         label="Date of birth"
+                        disabled={loading}
                         format="DD/MM/YYYY"
                         name={name}
                         value={value ? dayjs(value) : null}
@@ -2119,7 +2150,11 @@ const DefaultNavbar = ({
                     className="px-3 flex flex-col justify-center"
                   >
                     <p className="text-xs text-[#1d1d1da3]">Country Code</p>
-                    <p className="flex items-center gap-x-1 font-semibold">
+                    <p
+                      className={`flex items-center gap-x-1 font-semibold ${
+                        loading ? "text-[#1d1d1da3]" : ""
+                      }`}
+                    >
                       <span>+91 (IND)</span>
                       <IoMdArrowDropdown className="text-xl" />
                     </p>
@@ -2137,6 +2172,7 @@ const DefaultNavbar = ({
                         <TextField
                           type="text"
                           label="Mobile number"
+                          disabled={loading}
                           placeholder="Enter mobile no."
                           variant="filled"
                           name={name}
@@ -2184,6 +2220,7 @@ const DefaultNavbar = ({
                       <TextField
                         type="text"
                         label="Email"
+                        disabled={loading}
                         placeholder="Enter email id."
                         variant="filled"
                         name={name}
@@ -2229,6 +2266,7 @@ const DefaultNavbar = ({
                       <TextField
                         type={loginPassEye ? "text" : "password"}
                         label="Password"
+                        disabled={loading}
                         placeholder="Enter password."
                         variant="filled"
                         name={name}
@@ -2326,7 +2364,8 @@ const DefaultNavbar = ({
                 <p>Already have account?</p>
                 <button
                   type="button"
-                  className="font-semibold text-blue-500 underline underline-offset-1 cursor-pointer"
+                  disabled={loading}
+                  className="font-semibold text-blue-500 disabled:text-slate-500 underline underline-offset-1 cursor-pointer disabled:cursor-default"
                   onClick={() => {
                     closeGsrctSignUpDialog();
                     openGsrctLoginDialog();
@@ -2351,11 +2390,12 @@ const DefaultNavbar = ({
                 {/* Login with google */}
                 <button
                   type="button"
-                  className={`w-full sm:w-auto  min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] p-1.5 pe-3 rounded-sm cursor-pointer ${
+                  disabled={loading}
+                  className={`w-full sm:w-auto  min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] text-white p-1.5 pe-3 rounded-sm cursor-pointer ${
                     winSize <= 640
                       ? "rounded-s-full rounded-e-full"
                       : "rounded-sm"
-                  }`}
+                  }  disabled:cursor-default disabled:bg-gray-200 disabled:text-gray-500`}
                   onClick={handleSignupWithGoogle}
                 >
                   <div className="bg-white p-1 rounded-ss-sm rounded-es-sm">
@@ -2367,9 +2407,20 @@ const DefaultNavbar = ({
                     />
                   </div>
 
-                  <p className="flex justify-center items-center font-semibold text-white text-sm">
+                  <p className="flex justify-center items-center font-semibold  text-sm">
                     Sign up with Google
                   </p>
+
+                  {loadingGoogle && (
+                    <CircularProgress
+                      size={25}
+                      sx={{
+                        "&.MuiCircularProgress-root": {
+                          color: "#6a7282",
+                        },
+                      }}
+                    />
+                  )}
                 </button>
               </div>
             </div>
@@ -2379,11 +2430,17 @@ const DefaultNavbar = ({
           <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
             <p className="text-xs text-center">By Singing Up, I agree</p>
             <p className="text-xs flex justify-center items-center gap-2">
-              <a href="#" className="text-blue-500 hover:underline">
+              <a
+                href={loading ? "/#" : "/#"}
+                className="text-blue-500 hover:underline"
+              >
                 Terms & Conditions
               </a>
               <span>&</span>
-              <a href="#" className="text-blue-500 hover:underline">
+              <a
+                href={loading ? "/#" : "/#"}
+                className="text-blue-500 hover:underline"
+              >
                 Privacy Policy
               </a>
             </p>
