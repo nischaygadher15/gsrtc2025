@@ -1551,7 +1551,7 @@ const DefaultNavbar = ({
                     {/* Login with google */}
                     <button
                       type="button"
-                      disabled={loadingGoogle}
+                      disabled={loadingGoogle || loading}
                       className={`min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] text-white p-1.5 pe-3 rounded-sm cursor-pointer ${
                         winSize <= 640
                           ? "rounded-s-full rounded-e-full"
@@ -2369,7 +2369,7 @@ const DefaultNavbar = ({
               <div className="flex justify-center mb-5">
                 <button
                   type="button"
-                  disabled={loading}
+                  disabled={loadingGoogle || loading}
                   className={`w-full sm:w-auto  min-h-12 flex justify-center items-center gap-2 bg-[#1a73e8]/90 hover:bg-[#1a73e8] text-white p-1.5 pe-3 rounded-sm cursor-pointer ${
                     winSize <= 640
                       ? "rounded-s-full rounded-e-full"
