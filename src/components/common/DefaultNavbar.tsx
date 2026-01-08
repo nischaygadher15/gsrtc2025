@@ -112,7 +112,7 @@ const DefaultNavbar = ({
   const [optSent, setOptSent] = useState<boolean>(false);
   const [otpCounting, setOtpCounting] = useState<boolean>(false);
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
-  const [gsrtcLoginDialog, setGsrctLoginDialog] = useState<boolean>(false);
+  const [gsrtcLoginDialog, setGsrtcLoginDialog] = useState<boolean>(false);
   const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState<boolean>(false);
   const sessionId = useSelector(
     (state: RootState) => state.session?.access_token
@@ -190,12 +190,12 @@ const DefaultNavbar = ({
   });
 
   const openGsrctLoginDialog = () => {
-    setGsrctLoginDialog(true);
+    setGsrtcLoginDialog(true);
   };
 
   const closeGsrctLoginDialog = () => {
-    if (!loading || !loadingGoogle) {
-      setGsrctLoginDialog(false);
+    if (!loading && !loadingGoogle) {
+      setGsrtcLoginDialog(false);
       setCaptchaToken("");
       setIAmNotRobot(false);
       setLoginWith("mobile");
@@ -241,9 +241,7 @@ const DefaultNavbar = ({
       console.log("mobileLoginRes: ", mobileLoginRes);
 
       if (mobileLoginRes.status === 200) {
-        setTimeout(() => {
-          setOptSent(true);
-        }, 300);
+        setOptSent(true);
 
         toast.success(mobileLoginRes.message);
       } else {
@@ -252,9 +250,7 @@ const DefaultNavbar = ({
     } catch (error) {
       console.log(error);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
+      setLoading(false);
     }
   };
 
@@ -265,19 +261,16 @@ const DefaultNavbar = ({
       const otpVerifyRes = await otpVerificationAPI(data.userLoginOTP);
 
       if (otpVerifyRes.message === "success") {
-        setTimeout(() => {
-          dispatch(setSession("1234567890"));
-          closeGsrctLoginDialog();
-          closeUserDrawer();
-          toast.success("OTP verified successfully.");
-          setOtpVerifying(false);
-        }, 300);
+        dispatch(setSession("1234567890"));
+        closeGsrctLoginDialog();
+        closeUserDrawer();
+        toast.success("OTP verified successfully.");
+        setOtpVerifying(false);
       }
     } catch (error) {
       console.log("error", error);
-      setTimeout(() => {
-        setOtpVerifying(false);
-      }, 300);
+
+      setOtpVerifying(false);
     }
   };
 
@@ -301,9 +294,7 @@ const DefaultNavbar = ({
     } catch (error) {
       console.log("error:", error);
     } finally {
-      setTimeout(() => {
-        setOtpResending(false);
-      }, 300);
+      setOtpResending(false);
     }
   };
 
@@ -358,6 +349,102 @@ const DefaultNavbar = ({
     console.log("Current Session: ", sessionId);
   }, [sessionId]);
 
+  const handleSessionLogout = async () => {
+    try {
+      setLoading(true);
+      const logoutRes = await logoutAPI();
+
+      console.log("logoutRes: ", logoutRes);
+
+      if (logoutRes.status === 200) {
+        dispatch(sessionLogout());
+        closeUserDrawer();
+        toast.success("You have successfully logged out!");
+      } else {
+        toast.error(logoutRes.message);
+      }
+    } catch (error: unknown) {
+      let err = error as { message: string };
+      console.log("error: ", error);
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const randomUser = Math.ceil(Math.random() * 10000);
+
+  // Email Sign up form
+  const {
+    handleSubmit: signUpSubmit,
+    reset: signUpReset,
+    control: signUpControl,
+    formState: { errors: signUpErrors },
+  } = useForm<EmailSignUpSchemaType>({
+    resolver: zodResolver(EmailSignUpSchema),
+    defaultValues: {
+      firstName: "sita",
+      lastName: "ram",
+      userDob: new Date("2000-01-01"),
+      userMobileNo: "8141409448",
+      userEmail: `ram${randomUser}@gmail.com`,
+      userPass: `Ram@@${randomUser}`,
+    },
+  });
+
+  const openGsrctSignUpDialog = () => {
+    setGsrtcSignUpDialog(true);
+  };
+
+  const closeGsrtcSignUpDialog = () => {
+    if (!loading && !loadingGoogle) {
+      setGsrtcSignUpDialog(false);
+      signUpReset();
+
+      //Redux
+      dispatch(setSignUpDialog(false));
+    }
+  };
+
+  const onEmailSignUp = async (data: EmailSignUpSchemaType) => {
+    console.log("data: ", data);
+    setLoading(true);
+
+    try {
+      //Sign up payload
+      const deviceInfo = await GetDeviceInfo();
+
+      console.log("deviceInfo: ", deviceInfo);
+
+      const signUpRes = await signUpWithEmailAPI({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        userDob: data.userDob,
+        userMobileNo: data.userMobileNo,
+        userEmail: data.userEmail,
+        userPass: data.userPass,
+        device_ip: deviceInfo.device_ip,
+        device_lat: deviceInfo.device_lat,
+        device_long: deviceInfo.device_long,
+      });
+
+      console.log("signUpRes: ", signUpRes);
+
+      if (signUpRes.status) {
+        toast.success(signUpRes.message);
+        dispatch(setSession("1234567890"));
+        closeGsrtcSignUpDialog();
+        closeUserDrawer();
+      } else {
+        toast.error(signUpRes.message);
+      }
+    } catch (error) {
+      console.log("error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Login with google
   const handleLoginWithGoogle = useGoogleLogin({
     flow: "auth-code",
@@ -383,12 +470,10 @@ const DefaultNavbar = ({
         console.log("googleLoginRes: ", googleLoginRes);
 
         if (googleLoginRes.status === 200) {
-          setTimeout(() => {
-            toast.success(googleLoginRes.message);
-            dispatch(setSession(googleLoginRes.access_token));
-            closeGsrctLoginDialog();
-            closeUserDrawer();
-          }, 300);
+          toast.success(googleLoginRes.message);
+          dispatch(setSession(googleLoginRes.access_token));
+          closeGsrctLoginDialog();
+          closeUserDrawer();
         } else {
           toast.error(googleLoginRes.message);
         }
@@ -419,7 +504,7 @@ const DefaultNavbar = ({
       console.log("deviceInfo: ", deviceInfo);
 
       try {
-        setLoadingGoogle(false);
+        setLoadingGoogle(true);
         const googleSignupRes = await signUpWithGoogleAPI({
           code,
           device_ip: deviceInfo.device_ip,
@@ -430,21 +515,17 @@ const DefaultNavbar = ({
         console.log("googleSignupRes: ", googleSignupRes);
 
         if (googleSignupRes.status === 201) {
-          setTimeout(() => {
-            toast.success(googleSignupRes.message);
-            dispatch(setSession(code));
-            closeGsrctLoginDialog();
-            closeUserDrawer();
-          }, 300);
+          toast.success(googleSignupRes.message);
+          dispatch(setSession(code));
+          closeGsrtcSignUpDialog();
+          closeUserDrawer();
         } else {
           toast.error(googleSignupRes.message);
         }
       } catch (error) {
         console.log("error:", error);
       } finally {
-        setTimeout(() => {
-          setLoadingGoogle(false);
-        }, 300);
+        setLoadingGoogle(false);
       }
     },
     onError: () => {
@@ -452,107 +533,6 @@ const DefaultNavbar = ({
       toast.error("Sign up with Google failed");
     },
   });
-
-  const handleSessionLogout = async () => {
-    try {
-      setLoading(true);
-      const logoutRes = await logoutAPI();
-
-      console.log("logoutRes: ", logoutRes);
-
-      if (logoutRes.status === 200) {
-        dispatch(sessionLogout());
-        closeUserDrawer();
-        toast.success("You have successfully logged out!");
-      } else {
-        toast.error(logoutRes.message);
-      }
-    } catch (error: unknown) {
-      let err = error as { message: string };
-      console.log("error: ", error);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const randomUser = Math.ceil(Math.random() * 10000);
-
-  // GSRTC Sign up form
-  const {
-    handleSubmit: signUpSubmit,
-    reset: signUpReset,
-    control: signUpControl,
-    formState: { errors: signUpErrors },
-  } = useForm<EmailSignUpSchemaType>({
-    resolver: zodResolver(EmailSignUpSchema),
-    defaultValues: {
-      firstName: "sita",
-      lastName: "ram",
-      userDob: new Date("2000-01-01"),
-      userMobileNo: "8141409448",
-      userEmail: `ram${randomUser}@gmail.com`,
-      userPass: `Ram@@${randomUser}`,
-    },
-  });
-
-  const openGsrctSignUpDialog = () => {
-    setGsrtcSignUpDialog(true);
-  };
-  const closeGsrctSignUpDialog = () => {
-    if (!loading || !loadingGoogle) {
-      setGsrtcSignUpDialog(false);
-      signUpReset();
-
-      //Redux
-      dispatch(setSignUpDialog(false));
-    }
-  };
-
-  const onEmailSignUp = async (data: EmailSignUpSchemaType) => {
-    console.log("data: ", data);
-    setLoading(true);
-
-    //Sign up payload
-    const deviceInfo = await GetDeviceInfo();
-
-    console.log("deviceInfo: ", deviceInfo);
-
-    try {
-      setLoading(true);
-      const signUpRes = await signUpWithEmailAPI({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        userDob: data.userDob,
-        userMobileNo: data.userMobileNo,
-        userEmail: data.userEmail,
-        userPass: data.userPass,
-        device_ip: deviceInfo.device_ip,
-        device_lat: deviceInfo.device_lat,
-        device_long: deviceInfo.device_long,
-      });
-
-      console.log("signUpRes: ", signUpRes);
-
-      if (signUpRes.status) {
-        setTimeout(() => {
-          toast.success(signUpRes.message);
-          dispatch(setSession("1234567890"));
-          closeGsrctSignUpDialog();
-          closeUserDrawer();
-          closeGsrctSignUpDialog();
-        }, 300);
-      } else {
-        toast.error(signUpRes.message);
-      }
-    } catch (error) {
-      console.log("error:", error);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    }
-  };
 
   // Forgot Password Form
   const {
@@ -1963,7 +1943,7 @@ const DefaultNavbar = ({
       {/* GSRTC Sign up Dialog */}
       <Dialog
         fullScreen={winSize <= 640 ? true : false}
-        onClose={closeGsrctSignUpDialog}
+        onClose={closeGsrtcSignUpDialog}
         open={gsrtcSignUpDialog || signUpDialog}
         sx={{
           "& .MuiDialog-paper": {
@@ -1987,7 +1967,7 @@ const DefaultNavbar = ({
             <button
               type="button"
               className="rounded-s-full rounded-e-full p-2 hover:bg-slate-200 cursor-pointer"
-              onClick={closeGsrctSignUpDialog}
+              onClick={closeGsrtcSignUpDialog}
             >
               <IoMdClose className="text-2xl" />
             </button>
@@ -2367,7 +2347,7 @@ const DefaultNavbar = ({
                   disabled={loading}
                   className="font-semibold text-blue-500 disabled:text-slate-500 underline underline-offset-1 cursor-pointer disabled:cursor-default"
                   onClick={() => {
-                    closeGsrctSignUpDialog();
+                    closeGsrtcSignUpDialog();
                     openGsrctLoginDialog();
                   }}
                 >
@@ -2387,7 +2367,6 @@ const DefaultNavbar = ({
               </p>
 
               <div className="flex justify-center mb-5">
-                {/* Login with google */}
                 <button
                   type="button"
                   disabled={loading}
