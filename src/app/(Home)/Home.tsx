@@ -429,6 +429,9 @@ export default function Home() {
   };
 
   //React-hook-from with Zod validation
+  const TODAY = new Date();
+  TODAY.setHours(0, 0, 0, 0);
+  console.log("TODAY: ", TODAY);
 
   // SearchBuses Form Schema
   const SearchBusSchema = z.object({
@@ -438,9 +441,9 @@ export default function Home() {
     destinationPoint: z
       .string({ error: "Destination point is required!" })
       .min(1, { message: "Destination point is required!" }),
-    journeyDate: z
-      .date({ error: "Journey Date is required!" })
-      .min(new Date(), { message: "Journey Date can't be from past!" }),
+    journeyDate: z.date({ error: "Journey Date is required!" }).min(TODAY, {
+      message: "Journey Date can't be from past!",
+    }),
     isWomen: z.boolean().optional(),
   });
 
@@ -462,20 +465,6 @@ export default function Home() {
     resolver: zodResolver(SearchBusSchema),
   });
 
-  useEffect(() => {
-    if (errors["boardingPoint"] || errors["destinationPoint"]) {
-      toast.error("Destination and Source is required !!", {
-        position: "bottom-center",
-      });
-    } else {
-      if (errors["journeyDate"]) {
-        toast.error(errors["journeyDate"].message as string, {
-          position: "bottom-center",
-        });
-      }
-    }
-  }, [errors]);
-
   //Handle submit on SearchBuses
   const onSearchBuses = async (data: SearchBusDataType) => {
     setLoading(true);
@@ -488,6 +477,22 @@ export default function Home() {
   const bPoint = watch("boardingPoint");
   const dPoint = watch("destinationPoint");
   const [journeyDate, setJourneyDate] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log("jDate: ", jDate);
+
+    if (errors["boardingPoint"] || errors["destinationPoint"]) {
+      toast.error("Destination and Source is required !!", {
+        position: "bottom-center",
+      });
+    } else {
+      if (errors["journeyDate"]) {
+        toast.error(errors["journeyDate"].message as string, {
+          position: "bottom-center",
+        });
+      }
+    }
+  }, [errors]);
 
   // FAQs tabs
   const [faqActiveTab, setFAQActiveTab] = useState<number>(0);
@@ -1204,7 +1209,7 @@ export default function Home() {
                       className="bg-[#fed9d5] hover:bg-[#f8d3cf] font-bold px-3 py-2 rounded-s-full text-sm rounded-e-full cursor-pointer"
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.stopPropagation();
-                        setValue("journeyDate", new Date(Date.now()));
+                        setValue("journeyDate", new Date());
                       }}
                     >
                       Today
