@@ -1,0 +1,14 @@
+GSRTC Front-end:
+
+Redux:
+ - redux state expansion
+
+User UI (Logged in):
+ - profile page - update
+ - delete profile
+ - profile photo upload
+
+
+
+
+
