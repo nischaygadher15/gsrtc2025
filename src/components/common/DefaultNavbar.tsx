@@ -746,26 +746,31 @@ const DefaultNavbar = ({
             <>
               {/* My Details */}
               <div className="">
-                <p className="p-4 text-[22px] font-bold leading-tight py-7">
+                <p className="p-4 text-[22px] font-bold leading-tight pt-7 pb-2">
                   My Details
                 </p>
 
-                <Link href="/bookings" onClick={closeUserDrawer}>
+                <Link href="/profile" onClick={closeUserDrawer}>
                   <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                     <div className="flex items-center gap-x-3">
-                      <IoListOutline className="w-6 h-6" />
-                      <span>My Bookings</span>
+                      <FaUser className="w-6 h-6" />
+                      <div className="flex flex-col">
+                        <span>Username</span>
+                        <span className="text-xs font-normal text-blue-600">
+                          View your profile
+                        </span>
+                      </div>
                     </div>
 
                     <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
                   </div>
                 </Link>
 
-                <Link href="#" onClick={closeUserDrawer}>
+                <Link href="/bookings" onClick={closeUserDrawer}>
                   <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                     <div className="flex items-center gap-x-3">
-                      <FaUser className="w-6 h-6" />
-                      <span>Personal Information</span>
+                      <IoListOutline className="w-6 h-6" />
+                      <span>My Bookings</span>
                     </div>
 
                     <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
