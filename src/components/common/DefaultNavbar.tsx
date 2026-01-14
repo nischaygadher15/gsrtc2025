@@ -2340,7 +2340,7 @@ const DefaultNavbar = ({
                       <span>Signing up...</span>
                     </>
                   ) : (
-                    "Sing up"
+                    "Sign up"
                   )}
                 </button>
               </div>
