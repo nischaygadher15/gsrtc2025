@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import {
+  FaArrowLeft,
   FaRegEnvelope,
   FaRegUserCircle,
   FaUserCog,
@@ -40,6 +41,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import useWindowSize from "@/Hooks/useWindowSize";
 import defaultUser from "@/assets/images/default-user.svg";
+import { FaArrowLeftLong, FaRegTrashCan } from "react-icons/fa6";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -54,8 +56,11 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const Profile = () => {
-  const [profileTab, setProfileTab] = useState<number>(0);
+  const [profileTab, setProfileTab] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
+  const [travellerForm, setTravellerForm] = useState<"add" | "edit" | null>(
+    "add"
+  );
   const windowSize = useWindowSize();
 
   const handleProfileTabChange = (
@@ -158,15 +163,15 @@ const Profile = () => {
   return (
     <div>
       {/* header */}
-      <div className="w-full flex items-end py-5 h-50 bg-primary/90 myContainer">
+      <div className="relative w-full flex items-end py-5 min-h-50 bg-primary/90 myContainer">
         {/* bg */}
         <Image
           alt="Header bg"
           src={headerBg}
-          className="absolute inset-0 -z-10 w-full max-h-full object-cover"
+          className="absolute inset-0 -z-10 w-full h-full object-cover"
         />
 
-        <div className="flex items-center gap-7">
+        <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-7">
           {/* User photo */}
           <label className="cursor-pointer ">
             <div className="w-[110px] h-[110px] flex justify-center items-center rounded-full bg-white/70 outline-2 outline-primary/90 -outline-offset-[6px]">
@@ -201,7 +206,7 @@ const Profile = () => {
       <div className="bg-[#f2f2f8] myContainer py-7">
         <div className="bg-white rounded-xl flex">
           {/* Sidebar */}
-          <div className="w-1/4 border-r border-slate-300 overflow-auto hideScrollBar">
+          <div className="hidden lg:block lg:w-1/4 border-r border-slate-300 overflow-auto hideScrollBar">
             <p className="text-xs p-5">MY ACCOUNT</p>
 
             <div className="flex flex-col">
@@ -236,7 +241,7 @@ const Profile = () => {
                   label={
                     <p className="w-full p-3 flex items-center gap-2">
                       <FaRegUserCircle className="text-[27px]" />
-                      <span>My Profile</span>
+                      <span className="text-base capitalize">My Profile</span>
                     </p>
                   }
                 />
@@ -244,7 +249,9 @@ const Profile = () => {
                   label={
                     <p className="w-full p-3 flex items-center gap-2">
                       <FaUserFriends className="text-2xl" />
-                      <span>Co-travellers</span>
+                      <span className="text-base capitalize">
+                        Co-travellers
+                      </span>
                     </p>
                   }
                 />
@@ -252,7 +259,9 @@ const Profile = () => {
                   label={
                     <p className="w-full p-3 flex items-center gap-2">
                       <FaUserCog className="text-2xl" />
-                      <span>Logged in Devices</span>
+                      <span className="text-base capitalize">
+                        Logged in Devices
+                      </span>
                     </p>
                   }
                 />
@@ -260,16 +269,16 @@ const Profile = () => {
 
               <button
                 type="button"
-                className="h-13 mx-4 mt-1 mb-5 p-3 text-gray-600 flex items-center gap-2 cursor-pointer hover:bg-[#e2e8f0] rounded-lg"
+                className="h-13 mx-4 mt-1 mb-5 p-3 text-gray-600 flex items-center gap-3 cursor-pointer hover:bg-[#e2e8f0] rounded-lg"
               >
                 <HiOutlineLogout className="text-2xl" />
-                Logout
+                <span className="text-base capitalize">Logout</span>
               </button>
             </div>
           </div>
 
           {/* profile page */}
-          <div className="w-3/4 overflow-auto hideScrollBar">
+          <div className="w-full lg:w-3/4 overflow-auto hideScrollBar">
             {/* My Profile */}
             {profileTab === 0 && (
               <div className="">
@@ -535,107 +544,6 @@ const Profile = () => {
                       </div>
                       <IoMdArrowDropdown className="text-lg" />
                     </button>
-
-                    {/* State Dialog */}
-                    <Dialog
-                      fullScreen={windowSize > 640 ? false : true}
-                      onClose={closeStateDialog}
-                      open={contactInfoState}
-                      sx={{
-                        "& .MuiDialog-paper": {
-                          overflow: "hidden",
-                          borderRadius: windowSize > 640 ? "16px" : "0px",
-                        },
-                      }}
-                    >
-                      <div className="relative w-full sm:w-lg overflow-y-auto hideScrollBar">
-                        <div className="sticky top-0 left-0 right-0 bg-white z-[1000] shadow-sm p-4">
-                          <div className="flex justify-between items-center mb-7">
-                            <p className="font-bold">
-                              Select state of residence
-                            </p>
-                            <button
-                              type="button"
-                              className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
-                              onClick={closeStateDialog}
-                            >
-                              <IoMdClose className="text-2xl" />
-                            </button>
-                          </div>
-                          <input
-                            type="text"
-                            className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
-                            placeholder="Search for state"
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) =>
-                              SearchStatesList(
-                                e.currentTarget.value,
-                                indiaStatesAndUTs
-                              )
-                            }
-                          />
-                        </div>
-                        <RadioGroup
-                          name="radio-buttons-state"
-                          value={
-                            indiaStatesAndUTs.find(
-                              (st) => st.state == stateName
-                            )?.code
-                          }
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            let index = indiaStatesAndUTs.findIndex(
-                              (state) => state.code == event.target.value
-                            );
-
-                            profileSetVal(
-                              "userState",
-                              indiaStatesAndUTs[index].state
-                            );
-                          }}
-                        >
-                          <ul className="">
-                            {filteredStatesList &&
-                              filteredStatesList.map((st, inx, stArr) => (
-                                <li key={`state-code-${st.id}`}>
-                                  <label
-                                    htmlFor={`state-options-${st.id}`}
-                                    className={`flex justify-between items-center font-medium cursor-pointer px-4 py-2.5 ${
-                                      inx !== stArr.length - 1
-                                        ? "border-b border-b-slate-200"
-                                        : ""
-                                    }`}
-                                  >
-                                    <span>{st.state}</span>
-                                    <Radio
-                                      id={`state-options-${st.id}`}
-                                      onClick={closeStateDialog}
-                                      value={st.code}
-                                      sx={{
-                                        color: "#173c62",
-                                        "&.Mui-checked": {
-                                          color: "#173c62",
-                                        },
-                                      }}
-                                    />
-                                  </label>
-                                </li>
-                              ))}
-
-                            {filteredStatesList &&
-                              filteredStatesList.length <= 0 && (
-                                <li>
-                                  <p className="px-4 py-5 text-center font-semibold">
-                                    No state found
-                                  </p>
-                                </li>
-                              )}
-                          </ul>
-                        </RadioGroup>
-                      </div>
-                    </Dialog>
                   </div>
 
                   <hr className="h-px mx-5 bg-slate-300 border-none" />
@@ -807,55 +715,602 @@ const Profile = () => {
               </div>
             )}
 
+            {/* State Dialog */}
+            <Dialog
+              fullScreen={windowSize > 640 ? false : true}
+              onClose={closeStateDialog}
+              open={contactInfoState}
+              sx={{
+                "& .MuiDialog-paper": {
+                  overflow: "hidden",
+                  borderRadius: windowSize > 640 ? "16px" : "0px",
+                },
+              }}
+            >
+              <div className="relative w-full sm:w-lg overflow-y-auto hideScrollBar">
+                <div className="sticky top-0 left-0 right-0 bg-white z-[1000] shadow-sm p-4">
+                  <div className="flex justify-between items-center mb-7">
+                    <p className="font-bold">Select state of residence</p>
+                    <button
+                      type="button"
+                      className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
+                      onClick={closeStateDialog}
+                    >
+                      <IoMdClose className="text-2xl" />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
+                    placeholder="Search for state"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      SearchStatesList(e.currentTarget.value, indiaStatesAndUTs)
+                    }
+                  />
+                </div>
+                <RadioGroup
+                  name="radio-buttons-state"
+                  value={
+                    indiaStatesAndUTs.find((st) => st.state == stateName)?.code
+                  }
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    let index = indiaStatesAndUTs.findIndex(
+                      (state) => state.code == event.target.value
+                    );
+
+                    profileSetVal("userState", indiaStatesAndUTs[index].state);
+                  }}
+                >
+                  <ul className="">
+                    {filteredStatesList &&
+                      filteredStatesList.map((st, inx, stArr) => (
+                        <li key={`state-code-${st.id}`}>
+                          <label
+                            htmlFor={`state-options-${st.id}`}
+                            className={`flex justify-between items-center font-medium cursor-pointer px-4 py-2.5 ${
+                              inx !== stArr.length - 1
+                                ? "border-b border-b-slate-200"
+                                : ""
+                            }`}
+                          >
+                            <span>{st.state}</span>
+                            <Radio
+                              id={`state-options-${st.id}`}
+                              onClick={closeStateDialog}
+                              value={st.code}
+                              sx={{
+                                color: "#173c62",
+                                "&.Mui-checked": {
+                                  color: "#173c62",
+                                },
+                              }}
+                            />
+                          </label>
+                        </li>
+                      ))}
+
+                    {filteredStatesList && filteredStatesList.length <= 0 && (
+                      <li>
+                        <p className="px-4 py-5 text-center font-semibold">
+                          No state found
+                        </p>
+                      </li>
+                    )}
+                  </ul>
+                </RadioGroup>
+              </div>
+            </Dialog>
+
             {/* Co-Traveller */}
             {profileTab === 1 && (
               <div>
                 {/* Header */}
                 <div className="w-full min-h-20 flex justify-between items-center p-5 border-b border-b-slate-300">
-                  <p className="text-xl font-semibold">Co-Travellers</p>
-                  <button
-                    type="button"
-                    disabled={loading}
-                    className="text-sm font-semibold bg-primary/90 hover:bg-primary px-6 py-2.5 rounded-sm text-white cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
-                  >
-                    + Add New Co-Traveller
-                  </button>
+                  <p className="text-xl font-semibold flex items-center gap-2">
+                    {travellerForm !== null && (
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="p-1 ps-0 cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        onClick={() => {
+                          setTravellerForm(null);
+                        }}
+                      >
+                        <FaArrowLeftLong className="text-2xl text-primary" />
+                      </button>
+                    )}
+                    {travellerForm === null && "Co-Travellers"}
+                    {travellerForm === "add" && "Add Co-Travellers"}
+                    {travellerForm === "edit" && "Edit Co-Travellers"}
+                  </p>
+
+                  {travellerForm === null && (
+                    <button
+                      type="button"
+                      disabled={loading}
+                      className="text-sm font-semibold bg-primary/90 hover:bg-primary px-4 py-2.5 rounded-sm text-white cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                      onClick={() => {
+                        setTravellerForm("add");
+                      }}
+                    >
+                      {windowSize <= 640 ? "+Add" : "+Add New Co-Traveller"}
+                    </button>
+                  )}
+
+                  {travellerForm !== null && windowSize > 640 && (
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="px-6 py-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        // onClick={() => {
+                        //   setTravellerForm(null);
+                        // }}
+                      >
+                        <FaRegTrashCan />
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border border-primary disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        onClick={() => {
+                          setTravellerForm(null);
+                        }}
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="text-sm font-semibold bg-primary/90 hover:bg-primary w-20 py-2.5 rounded-sm text-white cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        // onClick={() => {
+                        //   setTravellerForm("add");
+                        // }}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Travellers List */}
-                <ul className="p-5 flex flex-col gap-y-3">
-                  {[1, 2, 3].map((tvlr) => (
-                    <li key={`traveller-${tvlr}`}>
-                      <div className="flex justify-between items-center p-3 border border-slate-300 rounded-lg hover:bg-slate-200">
-                        <div className="flex items-center gap-3">
-                          <Image
-                            alt="Traveller photo"
-                            src={defaultUser}
-                            className="w-9 h-9 rounded-full"
-                          />
-                          <div>
-                            <p className="font-semibold">Nischay Gadher</p>
-                            <p className="text-sm text-gray-600">
-                              Male, 26y,1 Jan 2000
-                            </p>
+                {travellerForm === null && (
+                  <ul className="p-5 flex flex-col gap-y-3">
+                    {[1, 2, 3].map((tvlr) => (
+                      <li key={`traveller-${tvlr}`}>
+                        <div className="flex justify-between items-center p-3 border border-slate-300 rounded-lg hover:bg-slate-200">
+                          <div className="flex items-center gap-3">
+                            <Image
+                              alt="Traveller photo"
+                              src={defaultUser}
+                              className="w-9 h-9 rounded-full"
+                            />
+                            <div>
+                              <p className="font-semibold">Nischay Gadher</p>
+                              <p className="text-sm text-gray-600">
+                                Male, 26y,1 Jan 2000
+                              </p>
+                            </div>
                           </div>
+                          <button
+                            type="button"
+                            className="min-w-20 p-2 flex items-center gap-1 cursor-pointer"
+                            onClick={() => {
+                              setTravellerForm("edit");
+                            }}
+                          >
+                            <MdEdit className="text-xl text-blue-600" />
+                            <p className="font-semibold max-h-5">Edit</p>
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          className="min-w-20 p-2 flex items-center gap-1 cursor-pointer"
-                        >
-                          <MdEdit className="text-xl text-blue-600" />
-                          <p className="font-semibold max-h-5">Edit</p>
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
                 {/* Add Travellers Form */}
-                <div>
-                  
-                </div>
+                {travellerForm !== null && (
+                  <form onSubmit={profileSubmit(onProfileSave)} className="">
+                    {/* General Information */}
+                    <div className="p-5">
+                      <p className="text-lg font-bold mb-4">
+                        General Information
+                      </p>
+                      {/* Full name */}
+                      <div className="flex flex-col sm:flex-row gap-x-4">
+                        {/* First Name */}
+                        <div className="w-full sm:w-1/2">
+                          <Controller
+                            name="firstName"
+                            control={profileControl}
+                            render={({ field: { onChange, name, value } }) => (
+                              <div
+                                className={`flex-1 border rounded-lg ${
+                                  profileErrors.firstName
+                                    ? "border-red-600"
+                                    : ""
+                                }`}
+                              >
+                                <TextField
+                                  type="text"
+                                  label="First name"
+                                  disabled={loading}
+                                  placeholder="Enter first name"
+                                  variant="filled"
+                                  error={profileErrors.firstName ? true : false}
+                                  name={name}
+                                  value={value}
+                                  onChange={onChange}
+                                  sx={{
+                                    width: "100%",
+                                    "& .MuiFilledInput-input": {
+                                      fontWeight: "700 !important",
+                                      backgroundColor: "white !important",
+                                      borderRadius: "8px !important",
+                                      textTransform: "capitalize",
+                                    },
+                                    "& .MuiInputLabel-root": {
+                                      color: "#1d1d1da3",
+                                    },
+                                    "& ::before": {
+                                      display: "none",
+                                    },
+                                    "& ::after": {
+                                      display: "none",
+                                    },
+                                  }}
+                                />
+                              </div>
+                            )}
+                          />
+
+                          <p className="my-1 text-xs text-red-600 min-h-5">
+                            {profileErrors.firstName
+                              ? profileErrors.firstName.message
+                              : ""}
+                          </p>
+                        </div>
+
+                        {/* Last Name */}
+                        <div className="w-full sm:w-1/2">
+                          <Controller
+                            name="lastName"
+                            control={profileControl}
+                            render={({ field: { onChange, name, value } }) => (
+                              <div
+                                className={`flex-1 border rounded-lg ${
+                                  profileErrors.firstName
+                                    ? "border-red-600"
+                                    : ""
+                                }`}
+                              >
+                                <TextField
+                                  type="text"
+                                  label="Last name"
+                                  disabled={loading}
+                                  placeholder="Enter last name"
+                                  variant="filled"
+                                  name={name}
+                                  value={value}
+                                  onChange={onChange}
+                                  error={profileErrors.lastName ? true : false}
+                                  sx={{
+                                    width: "100%",
+                                    "& .MuiFilledInput-input": {
+                                      fontWeight: "700 !important",
+                                      backgroundColor: "white !important",
+                                      borderRadius: "8px !important",
+                                      textTransform: "capitalize",
+                                    },
+                                    "& .MuiInputLabel-root": {
+                                      color: "#1d1d1da3",
+                                    },
+                                    "& ::before": {
+                                      display: "none",
+                                    },
+                                    "& ::after": {
+                                      display: "none",
+                                    },
+                                  }}
+                                />
+                              </div>
+                            )}
+                          />
+
+                          <p className="my-1 text-xs text-red-600 min-h-5">
+                            {profileErrors.lastName
+                              ? profileErrors.lastName.message
+                              : ""}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-x-4">
+                        {/* Date of birth */}
+                        <div className="w-full sm:w-1/2">
+                          <Controller
+                            name="userDob"
+                            control={profileControl}
+                            render={({ field: { onChange, name, value } }) => (
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                  label="Date of birth"
+                                  disabled={loading}
+                                  format="DD/MM/YYYY"
+                                  name={name}
+                                  value={value ? dayjs(value) : null}
+                                  onChange={(value) => {
+                                    if (value) {
+                                      onChange(value.toDate());
+                                    }
+                                  }}
+                                  sx={{
+                                    "&.MuiPickersTextField-root": {
+                                      width: "100%",
+                                    },
+                                    "& .MuiPickersOutlinedInput-notchedOutline":
+                                      {
+                                        borderColor: profileErrors.userDob
+                                          ? "#e7000b !important"
+                                          : "black !important",
+                                        borderWidth: "1px !important",
+                                        borderRadius: "8px",
+                                        fontWeight: "700 !important",
+                                      },
+                                    "& .MuiPickersSectionList-root": {
+                                      fontWeight: "700",
+                                    },
+                                  }}
+                                />
+                              </LocalizationProvider>
+                            )}
+                          />
+
+                          <p className="my-1 text-xs text-red-600 min-h-5">
+                            {profileErrors.userDob
+                              ? profileErrors.userDob.message
+                              : ""}
+                          </p>
+                        </div>
+
+                        {/* Gender */}
+                        <div className="w-full sm:w-1/2">
+                          <Controller
+                            name="userGender"
+                            control={profileControl}
+                            render={({ field: { onChange, name, value } }) => (
+                              <FormControl
+                                sx={{
+                                  width: "100%",
+                                }}
+                              >
+                                <InputLabel id="user_gender">Gender</InputLabel>
+                                <Select
+                                  name={name}
+                                  labelId="user_gender"
+                                  value={value}
+                                  label="Gender"
+                                  onChange={onChange}
+                                  sx={{
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                      border: "1px solid black !important",
+                                      borderRadius: "8px",
+                                    },
+                                    "& .MuiOutlinedInput-input": {
+                                      fontWeight: "700",
+                                    },
+                                  }}
+                                >
+                                  <MenuItem value="">
+                                    <em>None</em>
+                                  </MenuItem>
+                                  <MenuItem value={"female"}>Female</MenuItem>
+                                  <MenuItem value={"male"}>Man</MenuItem>
+                                  <MenuItem value={"other"}>Other</MenuItem>
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+
+                          <p className="my-1 text-xs text-red-600 min-h-5">
+                            {profileErrors.userDob
+                              ? profileErrors.userDob.message
+                              : ""}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* State */}
+                      <button
+                        type="button"
+                        className="w-full flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5"
+                        onClick={() => {
+                          setContactInfoState(true);
+                        }}
+                      >
+                        <div className="w-full z-0">
+                          <p className="text-sm text-left text-[#1d1d1da3]">
+                            State of Residence*
+                          </p>
+
+                          <Controller
+                            name="userState"
+                            disabled={true}
+                            control={profileControl}
+                            render={({ field: { onChange, name, value } }) => (
+                              <input
+                                name={name}
+                                disabled={true}
+                                value={value}
+                                onChange={onChange}
+                                className="relative -z-10 w-full text-left font-bold cursor-pointer capitalize"
+                              />
+                            )}
+                          />
+                        </div>
+                        <IoMdArrowDropdown className="text-lg" />
+                      </button>
+                    </div>
+
+                    <hr className="h-px mx-5 bg-slate-300 border-none" />
+
+                    {/* Contact information */}
+                    <div className="p-5">
+                      <div className="mb-3">
+                        <p className="text-xl font-bold">Contact details</p>
+                      </div>
+
+                      {/* Phone no. */}
+                      <div>
+                        <div className="flex">
+                          <button
+                            type="button"
+                            className="px-3 flex flex-col justify-center border-t border-b border-s rounded-ss-lg rounded-es-lg"
+                          >
+                            <p className="text-xs text-[#1d1d1da3]">
+                              Country Code
+                            </p>
+                            <p className="flex items-center gap-x-1 font-semibold">
+                              <span>+91 (IND)</span>
+                              <IoMdArrowDropdown className="text-xl" />
+                            </p>
+                          </button>
+
+                          <div className="flex-1 border rounded-se-lg rounded-ee-lg">
+                            <Controller
+                              name="userMobileNo"
+                              control={profileControl}
+                              render={({
+                                field: { onChange, name, value },
+                              }) => (
+                                <TextField
+                                  type="text"
+                                  name={name}
+                                  label="Phone"
+                                  value={value}
+                                  placeholder="Enter phone no."
+                                  variant="filled"
+                                  onChange={onChange}
+                                  error={true}
+                                  sx={{
+                                    width: "100%",
+                                    "& .MuiFilledInput-root": {
+                                      fontWeight: "700 !important",
+                                      backgroundColor: "white !important",
+                                      borderTopLeftRadius: "0px",
+                                      borderTopRightRadius: "8px",
+                                      borderBottomRightRadius: "8px",
+                                    },
+                                    "& .MuiInputLabel-root": {
+                                      color: "#1d1d1da3 !important",
+                                    },
+                                    "& ::before": {
+                                      display: "none",
+                                    },
+                                    "& ::after": {
+                                      display: "none",
+                                    },
+                                  }}
+                                />
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {profileErrors.userPass
+                            ? profileErrors.userPass.message
+                            : ""}
+                        </p>
+                      </div>
+
+                      {/* Email */}
+                      <div>
+                        <div className="border rounded-lg">
+                          <Controller
+                            name="userEmail"
+                            control={profileControl}
+                            render={({ field: { onChange, name, value } }) => (
+                              <TextField
+                                type="text"
+                                name={name}
+                                label="Email ID"
+                                variant="filled"
+                                placeholder="Enter email id"
+                                value={value}
+                                onChange={onChange}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "700 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3 !important",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                        </div>
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {profileErrors.userPass
+                            ? profileErrors.userPass.message
+                            : ""}
+                        </p>
+                      </div>
+                    </div>
+
+                    {travellerForm !== null && windowSize <= 640 && (
+                      <div className="pb-5 flex justify-center gap-4">
+                        <button
+                          type="button"
+                          disabled={loading}
+                          className="p-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          // onClick={() => {
+                          //   setTravellerForm(null);
+                          // }}
+                        >
+                          <FaRegTrashCan />
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={loading}
+                          className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border border-primary disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          onClick={() => {
+                            window.scrollTo({
+                              top: 0,
+                              behavior: "smooth",
+                            });
+                            setTravellerForm(null);
+                          }}
+                        >
+                          Cancel
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={loading}
+                          className="text-sm font-semibold bg-primary/90 hover:bg-primary w-20 py-2.5 rounded-sm text-white cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          // onClick={() => {
+                          //   setTravellerForm("add");
+                          // }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    )}
+                  </form>
+                )}
               </div>
             )}
 
