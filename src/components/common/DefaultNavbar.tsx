@@ -117,6 +117,7 @@ const DefaultNavbar = ({
   const sessionId = useSelector(
     (state: RootState) => state.session?.access_token
   );
+  let fpAgent: any;
 
   // User Account Dropdown
   const handleUserDrawer = () => {

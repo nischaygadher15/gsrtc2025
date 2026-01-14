@@ -1,4 +1,5 @@
 import axios from "axios";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 export const GetDeviceInfo = async (): Promise<{
   device_id: string;
@@ -13,9 +14,12 @@ export const GetDeviceInfo = async (): Promise<{
     device_long: number | null = null;
 
   if (!device_id) {
-    const new_device_id = crypto.randomUUID();
-    localStorage.setItem("gsrtc_device_id", new_device_id);
-    device_id = new_device_id;
+    // const new_device_id = crypto.randomUUID();
+    const fpAgent = FingerprintJS.load();
+    const fp = await fpAgent;
+    const newDeviceId = await fp.get();
+    localStorage.setItem("gsrtc_device_id", newDeviceId.visitorId);
+    device_id = newDeviceId.visitorId;
   }
 
   // console.log("device_id: ", device_id);

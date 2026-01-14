@@ -25,15 +25,25 @@ import {
   FaUserCog,
   FaUserFriends,
 } from "react-icons/fa";
-import { MdAddAPhoto, MdEdit, MdOutlinePhone } from "react-icons/md";
+import {
+  MdAddAPhoto,
+  MdEdit,
+  MdOutlinePhone,
+  MdOutlineRotateLeft,
+  MdOutlineRotateRight,
+} from "react-icons/md";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { BiUserCircle } from "react-icons/bi";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { TbLogout, TbUserCog } from "react-icons/tb";
 import { PiUserCircleLight } from "react-icons/pi";
 import { HiOutlineLogout } from "react-icons/hi";
 import { Controller, useForm } from "react-hook-form";
-import { IoMdArrowDropdown, IoMdClose } from "react-icons/io";
+import {
+  IoIosCloseCircleOutline,
+  IoMdArrowDropdown,
+  IoMdClose,
+} from "react-icons/io";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -42,6 +52,9 @@ import dayjs from "dayjs";
 import useWindowSize from "@/Hooks/useWindowSize";
 import defaultUser from "@/assets/images/default-user.svg";
 import { FaArrowLeftLong, FaRegTrashCan } from "react-icons/fa6";
+import Cropper from "react-easy-crop";
+import { FiZoomIn, FiZoomOut } from "react-icons/fi";
+import getCroppedImage from "@/utils/common/getCroppedImage";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -59,49 +72,9 @@ const Profile = () => {
   const [profileTab, setProfileTab] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [travellerForm, setTravellerForm] = useState<"add" | "edit" | null>(
-    "add"
+    null
   );
   const windowSize = useWindowSize();
-
-  const handleProfileTabChange = (
-    event: React.SyntheticEvent,
-    newValue: number
-  ) => {
-    setProfileTab(newValue);
-  };
-
-  // User information form
-  const {
-    handleSubmit: profileSubmit,
-    setValue: profileSetVal,
-    reset: profileReset,
-    control: profileControl,
-    formState: { errors: profileErrors },
-  } = useForm({
-    // resolver: zodResolver(),
-    defaultValues: {
-      firstName: "sita",
-      lastName: "ram",
-      userDob: new Date("2000-01-01"),
-      userMobileNo: "8141409448",
-      userEmail: `abc@gmail.com`,
-      userPass: ``,
-      userGender: "female",
-      userState: "gujarat",
-    },
-  });
-
-  const onProfileSave = (data: any) => {
-    console.log("Data: ", data);
-  };
-
-  //Contact Info: State
-  interface StateInfoType {
-    id: number;
-    state: string;
-    code: string;
-  }
-
   const indiaStatesAndUTs: StateInfoType[] = [
     { id: 0, state: "Andhra Pradesh", code: "AP" },
     { id: 1, state: "Arunachal Pradesh", code: "AR" },
@@ -145,6 +118,63 @@ const Profile = () => {
   const [stateName, setStateName] = useState<string>("Select state");
   const [filteredStatesList, setFilteredStatesList] =
     useState<StateInfoType[]>(indiaStatesAndUTs);
+  const [userPhotoUrl, setUserPhotoUrl] = useState<string | undefined>(
+    undefined
+  );
+  const [userPhotoCrop, setUserPhotoCrop] = useState({ x: 0, y: 0 });
+  const [userPhotoZoom, setUserPhotoZoom] = useState(1);
+  const [userPhotoRotate, setUserPhotoRotate] = useState<number>(0);
+  const [photoDialog, setPhotoDialog] = useState<boolean>(false);
+  const [photoDimension, setPhotoDimension] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }>({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+
+  const handleProfileTabChange = (
+    event: React.SyntheticEvent,
+    newValue: number
+  ) => {
+    setProfileTab(newValue);
+  };
+
+  // User information form
+  const {
+    handleSubmit: profileSubmit,
+    setValue: profileSetVal,
+    reset: profileReset,
+    control: profileControl,
+    formState: { errors: profileErrors },
+  } = useForm({
+    // resolver: zodResolver(),
+    defaultValues: {
+      firstName: "sita",
+      lastName: "ram",
+      userDob: new Date("2000-01-01"),
+      userMobileNo: "8141409448",
+      userEmail: `abc@gmail.com`,
+      userPass: ``,
+      userGender: "female",
+      userState: "gujarat",
+    },
+  });
+
+  const onProfileSave = (data: any) => {
+    console.log("Data: ", data);
+  };
+
+  //Contact Info: State
+  interface StateInfoType {
+    id: number;
+    state: string;
+    code: string;
+  }
 
   const closeStateDialog = () => {
     setContactInfoState(false);
@@ -160,6 +190,106 @@ const Profile = () => {
     setFilteredStatesList(filtered);
   };
 
+  const {
+    control: userPhotoControl,
+    setValue: userPhotoVal,
+    reset: userPhotoReset,
+    handleSubmit: userPhotoSubmit,
+  } = useForm({
+    defaultValues: {
+      userPhoto: "",
+    },
+  });
+
+  const userPhotoUpdate = (file: File | null) => {
+    console.log("FIle: ", file);
+  };
+
+  const onCropComplete = async (croppedArea: any, croppedAreaPixels: any) => {
+    setPhotoDimension({ ...croppedAreaPixels });
+  };
+
+  const closePhotoDialog = () => {
+    setPhotoDialog(false);
+  };
+
+  const handlePhotoRotation = (action: string) => {
+    switch (action) {
+      case "+": {
+        setUserPhotoRotate((prev) => {
+          if (prev == 360) {
+            return 0;
+          } else {
+            return prev + 90;
+          }
+        });
+        break;
+      }
+      case "-": {
+        setUserPhotoRotate((prev) => {
+          if (prev == -360) {
+            return 0;
+          } else {
+            return prev - 90;
+          }
+        });
+        break;
+      }
+    }
+  };
+
+  const handlePhotoZoom = (action: string) => {
+    switch (action) {
+      case "+": {
+        setUserPhotoZoom((prev) => {
+          return prev + 0.5;
+        });
+        break;
+      }
+      case "-": {
+        setUserPhotoZoom((prev) => {
+          if (prev == 1) {
+            return 1;
+          } else {
+            return prev - 0.5;
+          }
+        });
+        break;
+      }
+    }
+  };
+
+  const handlePhotoReset = () => {
+    setUserPhotoCrop({ x: 0, y: 0 });
+    setUserPhotoRotate(0);
+    setUserPhotoZoom(1);
+  };
+
+  const onPhotoSave = async () => {
+    if (userPhotoUrl) {
+      const croppedImage = await getCroppedImage(
+        userPhotoUrl,
+        photoDimension,
+        userPhotoRotate
+      );
+
+      const croppedFile = new File([croppedImage as Blob], "cropped.jpg", {
+        type: "image/jpeg",
+      });
+
+      console.log("croppedFile: ", croppedFile);
+
+      const url = URL.createObjectURL(croppedFile);
+
+      closePhotoDialog();
+
+      setUserPhotoUrl(url);
+
+      // Reset everything
+      handlePhotoReset();
+      userPhotoReset();
+    }
+  };
   return (
     <div>
       {/* header */}
@@ -173,16 +303,161 @@ const Profile = () => {
 
         <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-7">
           {/* User photo */}
-          <label className="cursor-pointer ">
-            <div className="w-[110px] h-[110px] flex justify-center items-center rounded-full bg-white/70 outline-2 outline-primary/90 -outline-offset-[6px]">
-              <MdAddAPhoto className="text-3xl" />
-            </div>
-            {/* <Image alt="User photo" src={} className="" /> */}
-            <VisuallyHiddenInput
-              type="file"
-              onChange={(event) => console.log(event.target.files)}
-              multiple
+          <label className="cursor-pointer">
+            <Controller
+              name="userPhoto"
+              control={userPhotoControl}
+              render={({ field: { onChange, name, value } }) => (
+                <>
+                  <div className="w-[110px] h-[110px] flex justify-center items-center rounded-full bg-white/70 outline-2 outline-primary/90 -outline-offset-[6px]">
+                    {userPhotoUrl ? (
+                      <Image
+                        src={userPhotoUrl}
+                        alt="User photo"
+                        width={110}
+                        height={110}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <MdAddAPhoto className="text-3xl" />
+                    )}
+                  </div>
+
+                  <VisuallyHiddenInput
+                    type="file"
+                    name={name}
+                    value={(value as any)?.name || ""}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      if (event.target.files) {
+                        userPhotoUpdate(event.target.files[0]);
+                        const url = URL.createObjectURL(event.target.files[0]);
+                        setUserPhotoUrl(url);
+                        setPhotoDialog(true);
+                        onChange(url);
+                      } else {
+                        userPhotoUpdate(null);
+                      }
+                    }}
+                  />
+                </>
+              )}
             />
+
+            <Dialog
+              open={photoDialog}
+              onClose={closePhotoDialog}
+              sx={{
+                "& .MuiDialog-paper": {
+                  borderRadius: "16px",
+                },
+              }}
+            >
+              <div className="relative min-w-lg h-auto bg-white">
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 z-1500 w-7 h-7 bg-white py-1 rounded-sm cursor-pointer flex items-center justify-center"
+                  onClick={closePhotoDialog}
+                >
+                  <IoMdClose className="text-2xl" />
+                </button>
+
+                <div className="relative w-full h-[300px]">
+                  <Cropper
+                    image={userPhotoUrl}
+                    crop={userPhotoCrop}
+                    zoom={userPhotoZoom}
+                    rotation={userPhotoRotate}
+                    cropSize={{ width: 200, height: 200 }}
+                    cropShape="round"
+                    // aspect={4 / 3}
+                    classes={{
+                      containerClassName: "w-full max-h-[300px]",
+                    }}
+                    onCropChange={setUserPhotoCrop}
+                    onCropComplete={onCropComplete}
+                    onZoomChange={setUserPhotoZoom}
+                  />
+                </div>
+
+                <p className="bg-primary text-white py-5 text-sm text-center">
+                  Adjust image within circle, make it look fabulous and save it!
+                </p>
+
+                {/* Photo Action */}
+                <div className="p-5 flex justify-center gap-2">
+                  {/* Rotate */}
+                  <div className="bg-slate-100 flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="px-2 py-1 rounded-md cursor-pointer"
+                      onClick={() => handlePhotoRotation("+")}
+                    >
+                      <MdOutlineRotateRight className="text-2xl" />
+                    </button>
+                    <p>|</p>
+                    <button
+                      type="button"
+                      className="px-2 py-1 rounded-md cursor-pointer"
+                      onClick={() => handlePhotoRotation("-")}
+                    >
+                      <MdOutlineRotateLeft className="text-2xl" />
+                    </button>
+                  </div>
+
+                  {/* Zoom */}
+                  <div className="flex items-center gap-2 bg-slate-100">
+                    <button
+                      type="button"
+                      disabled={userPhotoZoom == 1}
+                      className="px-2 py-1 rounded-md cursor-pointer disabled:text-gray-500 disabled:cursor-not-allowed"
+                      onClick={() => handlePhotoZoom("-")}
+                    >
+                      <FiZoomOut className="text-2xl" />
+                    </button>
+                    <p>|</p>
+                    <button
+                      type="button"
+                      className="px-2 py-1 rounded-md cursor-pointer"
+                      onClick={() => handlePhotoZoom("+")}
+                    >
+                      <FiZoomIn className="text-2xl" />
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={loading}
+                    className="text-sm min-w-20 font-semibold border border-primary p-2 rounded-sm cursor-pointer"
+                    onClick={handlePhotoReset}
+                  >
+                    Reset
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={loading}
+                    className="text-sm min-w-20 font-semibold bg-primary/90 hover:bg-primary p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                    onClick={onPhotoSave}
+                  >
+                    {loading ? (
+                      <>
+                        <CircularProgress
+                          size={20}
+                          sx={{
+                            "&.MuiCircularProgress-root": {
+                              color: "#6a7282",
+                            },
+                          }}
+                        />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      "Save"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </Dialog>
           </label>
 
           {/* User name */}
@@ -238,6 +513,7 @@ const Profile = () => {
                 }}
               >
                 <Tab
+                  disabled={loading}
                   label={
                     <p className="w-full p-3 flex items-center gap-2">
                       <FaRegUserCircle className="text-[27px]" />
@@ -246,6 +522,7 @@ const Profile = () => {
                   }
                 />
                 <Tab
+                  disabled={loading}
                   label={
                     <p className="w-full p-3 flex items-center gap-2">
                       <FaUserFriends className="text-2xl" />
@@ -256,6 +533,7 @@ const Profile = () => {
                   }
                 />
                 <Tab
+                  disabled={loading}
                   label={
                     <p className="w-full p-3 flex items-center gap-2">
                       <FaUserCog className="text-2xl" />
@@ -265,15 +543,17 @@ const Profile = () => {
                     </p>
                   }
                 />
-              </Tabs>
 
-              <button
-                type="button"
-                className="h-13 mx-4 mt-1 mb-5 p-3 text-gray-600 flex items-center gap-3 cursor-pointer hover:bg-[#e2e8f0] rounded-lg"
-              >
-                <HiOutlineLogout className="text-2xl" />
-                <span className="text-base capitalize">Logout</span>
-              </button>
+                <Tab
+                  disabled={loading}
+                  label={
+                    <p className="w-full p-3 flex items-center gap-2">
+                      <HiOutlineLogout className="text-2xl" />
+                      <span className="text-base capitalize">Logout</span>
+                    </p>
+                  }
+                />
+              </Tabs>
             </div>
           </div>
 
@@ -288,12 +568,12 @@ const Profile = () => {
                   <button
                     type="button"
                     disabled={loading}
-                    className="text-sm font-semibold bg-primary/90 hover:bg-primary px-6 py-2.5 rounded-sm text-white cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                    className="text-sm min-w-20 font-semibold bg-primary/90 hover:bg-primary p-2.5 rounded-sm text-white cursor-pointer flex items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>
                         <CircularProgress
-                          size={25}
+                          size={20}
                           sx={{
                             "&.MuiCircularProgress-root": {
                               color: "#6a7282",
@@ -477,6 +757,7 @@ const Profile = () => {
                               sx={{
                                 width: "100%",
                               }}
+                              disabled={loading}
                             >
                               <InputLabel id="user_gender">Gender</InputLabel>
                               <Select
@@ -517,7 +798,8 @@ const Profile = () => {
                     {/* State */}
                     <button
                       type="button"
-                      className="w-full flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5"
+                      disabled={loading}
+                      className="w-full flex border border-black rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5 disabled:text-gray-500 disabled:cursor-default"
                       onClick={() => {
                         setContactInfoState(true);
                       }}
@@ -578,12 +860,12 @@ const Profile = () => {
                               <TextField
                                 type="text"
                                 name={name}
+                                disabled={loading}
                                 label="Phone"
                                 value={value}
                                 placeholder="Enter phone no."
                                 variant="filled"
                                 onChange={onChange}
-                                error={true}
                                 sx={{
                                   width: "100%",
                                   "& .MuiFilledInput-root": {
@@ -592,9 +874,6 @@ const Profile = () => {
                                     borderTopLeftRadius: "0px",
                                     borderTopRightRadius: "8px",
                                     borderBottomRightRadius: "8px",
-                                  },
-                                  "& .MuiInputLabel-root": {
-                                    color: "#1d1d1da3 !important",
                                   },
                                   "& ::before": {
                                     display: "none",
@@ -625,6 +904,7 @@ const Profile = () => {
                             <TextField
                               type="text"
                               name={name}
+                              disabled={loading}
                               label="Email ID"
                               variant="filled"
                               placeholder="Enter email id"
@@ -636,9 +916,6 @@ const Profile = () => {
                                   fontWeight: "700 !important",
                                   backgroundColor: "white !important",
                                   borderRadius: "8px !important",
-                                },
-                                "& .MuiInputLabel-root": {
-                                  color: "#1d1d1da3 !important",
                                 },
                                 "& ::before": {
                                   display: "none",
@@ -842,7 +1119,7 @@ const Profile = () => {
                       <button
                         type="button"
                         disabled={loading}
-                        className="px-6 py-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        className="p-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:cursor-not-allowed"
                         // onClick={() => {
                         //   setTravellerForm(null);
                         // }}
@@ -853,7 +1130,7 @@ const Profile = () => {
                       <button
                         type="button"
                         disabled={loading}
-                        className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border border-primary disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border border-primary disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                         onClick={() => {
                           setTravellerForm(null);
                         }}
@@ -864,12 +1141,26 @@ const Profile = () => {
                       <button
                         type="button"
                         disabled={loading}
-                        className="text-sm font-semibold bg-primary/90 hover:bg-primary w-20 py-2.5 rounded-sm text-white cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                         // onClick={() => {
                         //   setTravellerForm("add");
                         // }}
                       >
-                        Save
+                        {loading ? (
+                          <>
+                            <CircularProgress
+                              size={20}
+                              sx={{
+                                "&.MuiCircularProgress-root": {
+                                  color: "#6a7282",
+                                },
+                              }}
+                            />
+                            <span>Saving...</span>
+                          </>
+                        ) : (
+                          "Save"
+                        )}
                       </button>
                     </div>
                   )}
@@ -1085,6 +1376,7 @@ const Profile = () => {
                                 sx={{
                                   width: "100%",
                                 }}
+                                disabled={loading}
                               >
                                 <InputLabel id="user_gender">Gender</InputLabel>
                                 <Select
@@ -1125,7 +1417,8 @@ const Profile = () => {
                       {/* State */}
                       <button
                         type="button"
-                        className="w-full flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5"
+                        disabled={loading}
+                        className="w-full flex border rounded-lg justify-between items-center px-3 py-2 cursor-pointer disabled:cursor-default mb-5"
                         onClick={() => {
                           setContactInfoState(true);
                         }}
@@ -1145,7 +1438,7 @@ const Profile = () => {
                                 disabled={true}
                                 value={value}
                                 onChange={onChange}
-                                className="relative -z-10 w-full text-left font-bold cursor-pointer capitalize"
+                                className="relative -z-10 w-full text-left font-bold cursor-pointer capitalize disabled:text-gray-500"
                               />
                             )}
                           />
@@ -1188,6 +1481,7 @@ const Profile = () => {
                                 <TextField
                                   type="text"
                                   name={name}
+                                  disabled={loading}
                                   label="Phone"
                                   value={value}
                                   placeholder="Enter phone no."
@@ -1235,6 +1529,7 @@ const Profile = () => {
                               <TextField
                                 type="text"
                                 name={name}
+                                disabled={loading}
                                 label="Email ID"
                                 variant="filled"
                                 placeholder="Enter email id"

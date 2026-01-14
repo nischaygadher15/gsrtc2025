@@ -431,7 +431,6 @@ export default function Home() {
   //React-hook-from with Zod validation
   const TODAY = new Date();
   TODAY.setHours(0, 0, 0, 0);
-  console.log("TODAY: ", TODAY);
 
   // SearchBuses Form Schema
   const SearchBusSchema = z.object({
