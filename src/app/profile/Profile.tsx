@@ -362,7 +362,7 @@ const Profile = () => {
                   <IoMdClose className="text-2xl" />
                 </button>
 
-                <div className="relative w-full h-[calc(100vh-160px)] sm:h-[300px]">
+                <div className="relative w-full h-[calc(100dvh-160px)] sm:h-[300px]">
                   <Cropper
                     image={userPhotoUrl}
                     crop={userPhotoCrop}
