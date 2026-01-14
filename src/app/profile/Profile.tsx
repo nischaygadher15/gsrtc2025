@@ -345,14 +345,15 @@ const Profile = () => {
 
             <Dialog
               open={photoDialog}
+              fullScreen={windowSize <= 640}
               onClose={closePhotoDialog}
               sx={{
                 "& .MuiDialog-paper": {
-                  borderRadius: "16px",
+                  borderRadius: windowSize >= 640 ? "16px" : "",
                 },
               }}
             >
-              <div className="relative min-w-lg h-auto bg-white">
+              <div className="relative overflow-x-hidden sm:min-w-lg h-auto bg-white">
                 <button
                   type="button"
                   className="absolute top-2 right-2 z-1500 w-7 h-7 bg-white py-1 rounded-sm cursor-pointer flex items-center justify-center"
@@ -361,7 +362,7 @@ const Profile = () => {
                   <IoMdClose className="text-2xl" />
                 </button>
 
-                <div className="relative w-full h-[300px]">
+                <div className="relative w-full h-[calc(100vh-160px)] sm:h-[300px]">
                   <Cropper
                     image={userPhotoUrl}
                     crop={userPhotoCrop}
@@ -371,7 +372,7 @@ const Profile = () => {
                     cropShape="round"
                     // aspect={4 / 3}
                     classes={{
-                      containerClassName: "w-full max-h-[300px]",
+                      containerClassName: "w-full sm:max-h-[300px]",
                     }}
                     onCropChange={setUserPhotoCrop}
                     onCropComplete={onCropComplete}
@@ -379,12 +380,12 @@ const Profile = () => {
                   />
                 </div>
 
-                <p className="bg-primary text-white py-5 text-sm text-center">
+                <p className="bg-primary text-white p-5 text-sm text-center">
                   Adjust image within circle, make it look fabulous and save it!
                 </p>
 
                 {/* Photo Action */}
-                <div className="p-5 flex justify-center gap-2">
+                <div className="p-5 flex flex-wrap justify-center gap-2">
                   {/* Rotate */}
                   <div className="bg-slate-100 flex items-center gap-2">
                     <button
@@ -424,14 +425,16 @@ const Profile = () => {
                     </button>
                   </div>
 
-                  <button
-                    type="button"
-                    disabled={loading}
-                    className="text-sm min-w-20 font-semibold border border-primary p-2 rounded-sm cursor-pointer"
-                    onClick={handlePhotoReset}
-                  >
-                    Reset
-                  </button>
+                  {windowSize >= 640 && (
+                    <button
+                      type="button"
+                      disabled={loading}
+                      className="text-sm min-w-20 font-semibold border border-primary p-2 rounded-sm cursor-pointer"
+                      onClick={handlePhotoReset}
+                    >
+                      Reset
+                    </button>
+                  )}
 
                   <button
                     type="button"
