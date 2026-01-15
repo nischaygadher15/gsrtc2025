@@ -48,6 +48,7 @@ import {
   FormControl,
   FormControlLabel,
   InputLabel,
+  Menu,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -56,6 +57,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import useWindowSize from "@/Hooks/useWindowSize";
 import { FiEdit } from "react-icons/fi";
 import toast from "react-hot-toast";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const BookTicketDrawer = ({
   data,
@@ -143,6 +145,16 @@ const BookTicketDrawer = ({
       rightPart: ["Iskon Cross Road", "Iskon Cross Road"],
     },
   ];
+  const [travellerAction, setTravellerAction] = useState<null | HTMLElement>(
+    null
+  );
+
+  const handleTravellerAction = (event: React.MouseEvent<HTMLElement>) => {
+    setTravellerAction(event.currentTarget);
+  };
+  const closeTravellerAction = () => {
+    setTravellerAction(null);
+  };
 
   interface PassengerInfo {
     name: string;
@@ -859,16 +871,23 @@ const BookTicketDrawer = ({
                               inx == 0 ? "border-t" : ""
                             }`}
                           >
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3 sm:gap-4">
                               <Checkbox
                                 id={`passengerId-${inx}`}
                                 onChange={() =>
                                   handleSelectTraveller(`traveller-${inx}`)
                                 }
+                                sx={{
+                                  "&.MuiCheckbox-root": {
+                                    padding: "0px",
+                                  },
+                                }}
                               />
-                              <FaCircleUser className="text-4xl" />
+                              <FaCircleUser className="text-3xl sm:text-4xl" />
                               <div>
-                                <p className="font-bold">Passenger {inx + 1}</p>
+                                <p className="font-bold text-sm sm:text-base">
+                                  Passenger {inx + 1}
+                                </p>
                                 <p className="text-sm text-[#1d1d1da3]">
                                   Male, 26y
                                 </p>
@@ -878,7 +897,7 @@ const BookTicketDrawer = ({
                             <div className="flex items-center gap-3">
                               <select
                                 name=""
-                                className="min-w-20 border rounded-sm p-2"
+                                className="sm:min-w-20 border rounded-sm p-2 text-sm sm:text-base font-bold"
                                 onChange={(event) =>
                                   handleSeatChange(
                                     `traveller-${inx}`,
@@ -892,22 +911,51 @@ const BookTicketDrawer = ({
                                 <option value="3">3</option>
                               </select>
 
-                              <div className="flex gap-1.5">
+                              <div>
                                 <button
-                                  type="button"
-                                  className="p-2 text-primary/90 hover:text-primary underline underline-offset-2 
-                                  cursor-pointer"
-                                  onClick={openTravellerDialog}
+                                  aria-controls={
+                                    Boolean(travellerAction)
+                                      ? "demo-positioned-menu"
+                                      : undefined
+                                  }
+                                  aria-haspopup="true"
+                                  aria-expanded={
+                                    Boolean(travellerAction)
+                                      ? "true"
+                                      : undefined
+                                  }
+                                  onClick={handleTravellerAction}
+                                  className="cursor-pointer"
                                 >
-                                  <FiEdit className="text-xl" />
+                                  <MoreVertIcon />
                                 </button>
 
-                                <button
-                                  type="button"
-                                  className="p-2 text-primary hover:text-red-600 underline underline-offset-2 cursor-pointer"
+                                <Menu
+                                  aria-labelledby="demo-positioned-button"
+                                  anchorEl={travellerAction}
+                                  open={Boolean(travellerAction)}
+                                  onClose={closeTravellerAction}
+                                  anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "left",
+                                  }}
+                                  transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "left",
+                                  }}
                                 >
-                                  <FaRegTrashCan className="text-xl" />
-                                </button>
+                                  <MenuItem
+                                    onClick={() => {
+                                      openTravellerDialog();
+                                      closeTravellerAction();
+                                    }}
+                                  >
+                                    Edit
+                                  </MenuItem>
+                                  <MenuItem onClick={closeTravellerAction}>
+                                    Delete
+                                  </MenuItem>
+                                </Menu>
                               </div>
                             </div>
                           </label>
