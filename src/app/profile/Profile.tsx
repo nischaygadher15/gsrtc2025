@@ -3,10 +3,12 @@
 import headerBg from "@/assets/images/headerBG2.png";
 import {
   Avatar,
+  Checkbox,
   CircularProgress,
   Dialog,
   Drawer,
   FormControl,
+  FormControlLabel,
   FormHelperText,
   InputLabel,
   MenuItem,
@@ -29,10 +31,13 @@ import {
 } from "react-icons/fa";
 import {
   MdAddAPhoto,
+  MdClose,
   MdEdit,
+  MdKeyboardArrowRight,
   MdOutlinePhone,
   MdOutlineRotateLeft,
   MdOutlineRotateRight,
+  MdVisibilityOff,
 } from "react-icons/md";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { BiUserCircle } from "react-icons/bi";
@@ -60,6 +65,8 @@ import getCroppedImage from "@/utils/common/getCroppedImage";
 import { HiMiniComputerDesktop } from "react-icons/hi2";
 import { useRouter } from "next/navigation";
 import { GiHamburgerMenu } from "react-icons/gi";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -77,6 +84,9 @@ const Profile = () => {
   const router = useRouter();
   const [profileTab, setProfileTab] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [currPasswordEye, setCurrPasswordEye] = useState<boolean>(false);
+  const [newPasswordEye, setNewPasswordEye] = useState<boolean>(false);
+  const [cnfNewPasswordEye, setCnfNewPasswordEye] = useState<boolean>(false);
   const [travellerForm, setTravellerForm] = useState<"add" | "edit" | null>(
     null
   );
@@ -131,6 +141,7 @@ const Profile = () => {
   const [userPhotoZoom, setUserPhotoZoom] = useState(1);
   const [userPhotoRotate, setUserPhotoRotate] = useState<number>(0);
   const [photoDialog, setPhotoDialog] = useState<boolean>(false);
+  const [passwordDialog, setPasswordDialog] = useState<boolean>(false);
   const [photoDimension, setPhotoDimension] = useState<{
     x: number;
     y: number;
@@ -311,6 +322,37 @@ const Profile = () => {
       userPhotoReset();
     }
   };
+
+  // Password change
+  const openPasswordDialog = () => {
+    setPasswordDialog(true);
+  };
+
+  const closePasswordDialog = () => {
+    setPasswordDialog(false);
+  };
+
+  // User information form
+  const {
+    handleSubmit: passwordSubmit,
+    setValue: passwordSetVal,
+    reset: passwordReset,
+    control: passwordControl,
+    formState: { errors: passwordErrors },
+  } = useForm({
+    // resolver: zodResolver(),
+    defaultValues: {
+      current_password: "",
+      new_password: "",
+      new_cnf_password: "",
+      logout_consent: false,
+    },
+  });
+
+  const onPasswordChange = (data: any) => {
+    console.log("Data: ", data);
+  };
+
   return (
     <div>
       {/* header */}
@@ -605,27 +647,44 @@ const Profile = () => {
                     </button>
                     <p className="text-xl font-bold">My Profile</p>
                   </div>
-                  <button
-                    type="button"
-                    disabled={loading}
-                    className="text-sm min-w-20 font-semibold bg-primary/90 hover:bg-primary p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <>
-                        <CircularProgress
-                          size={20}
-                          sx={{
-                            "&.MuiCircularProgress-root": {
-                              color: "#6a7282",
-                            },
-                          }}
-                        />
-                        <span>Saving...</span>
-                      </>
-                    ) : (
-                      "Save"
-                    )}
-                  </button>
+
+                  <div className="hidden sm:flex justify-center gap-5">
+                    <button
+                      type="button"
+                      disabled={loading}
+                      className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                      onClick={() => {
+                        setTravellerForm(null);
+                      }}
+                    >
+                      Delete
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={loading}
+                      className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                      // onClick={() => {
+                      //   setTravellerForm("add");
+                      // }}
+                    >
+                      {loading ? (
+                        <>
+                          <CircularProgress
+                            size={20}
+                            sx={{
+                              "&.MuiCircularProgress-root": {
+                                color: "#6a7282",
+                              },
+                            }}
+                          />
+                          <span>Saving...</span>
+                        </>
+                      ) : (
+                        "Save"
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {/* User information form */}
@@ -636,9 +695,9 @@ const Profile = () => {
                       General Information
                     </p>
                     {/* Full name */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-x-4">
                       {/* First Name */}
-                      <div className="w-1/2">
+                      <div className="w-full sm:w-1/2">
                         <Controller
                           name="firstName"
                           control={profileControl}
@@ -689,7 +748,7 @@ const Profile = () => {
                       </div>
 
                       {/* Last Name */}
-                      <div className="w-1/2">
+                      <div className="w-full sm:w-1/2">
                         <Controller
                           name="lastName"
                           control={profileControl}
@@ -740,9 +799,9 @@ const Profile = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-x-4">
                       {/* Date of birth */}
-                      <div className="w-1/2">
+                      <div className="w-full sm:w-1/2">
                         <Controller
                           name="userDob"
                           control={profileControl}
@@ -788,7 +847,7 @@ const Profile = () => {
                       </div>
 
                       {/* Gender */}
-                      <div className="w-1/2">
+                      <div className="w-full sm:w-1/2">
                         <Controller
                           name="userGender"
                           control={profileControl}
@@ -839,7 +898,7 @@ const Profile = () => {
                     <button
                       type="button"
                       disabled={loading}
-                      className="w-full flex border border-black rounded-lg justify-between items-center px-3 py-2 cursor-pointer mb-5 disabled:text-gray-500 disabled:cursor-default"
+                      className="w-full flex border border-black rounded-lg justify-between items-center px-3 py-2 cursor-pointer  disabled:text-gray-500 disabled:cursor-default"
                       onClick={() => {
                         setContactInfoState(true);
                       }}
@@ -976,59 +1035,381 @@ const Profile = () => {
                     </div>
 
                     {/* Password */}
-                    <div>
-                      <Controller
-                        name="userPass"
-                        control={profileControl}
-                        render={({ field: { onChange, name, value } }) => (
-                          <div
-                            className={`flex-1 border rounded-lg ${
-                              profileErrors.userPass
-                                ? "border-red-600"
-                                : "black"
-                            }`}
-                          >
-                            <TextField
-                              type={"password"}
-                              label="Password"
-                              disabled={true}
-                              placeholder="Enter password."
-                              variant="filled"
-                              name={name}
-                              value={"*********"}
-                              onChange={onChange}
-                              autoComplete="new-password"
+                    <button
+                      type="button"
+                      className="w-full h-14 border rounded-md mb-7 flex items-center justify-between px-3 cursor-pointer hover:bg-slate-200"
+                      onClick={openPasswordDialog}
+                    >
+                      <p className="leading-none font-semibold">Password</p>
+                      <MdKeyboardArrowRight className="text-2xl" />
+                    </button>
+
+                    {/* Action buttons */}
+                    <div className="flex sm:hidden justify-center gap-5">
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        onClick={() => {
+                          setTravellerForm(null);
+                        }}
+                      >
+                        Delete
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        // onClick={() => {
+                        //   setTravellerForm("add");
+                        // }}
+                      >
+                        {loading ? (
+                          <>
+                            <CircularProgress
+                              size={20}
                               sx={{
-                                width: "100%",
-                                "& .MuiFilledInput-root": {
-                                  backgroundColor: "white !important",
-                                  borderRadius: "8px !important",
-                                },
-                                "& .MuiFilledInput-input": {
-                                  fontWeight: "500 !important",
-                                  backgroundColor: "white !important",
-                                  borderRadius: "8px !important",
-                                },
-                                "& ::before": {
-                                  display: "none",
-                                },
-                                "& ::after": {
-                                  display: "none",
+                                "&.MuiCircularProgress-root": {
+                                  color: "#6a7282",
                                 },
                               }}
                             />
-                          </div>
+                            <span>Saving...</span>
+                          </>
+                        ) : (
+                          "Save"
                         )}
-                      />
-
-                      <p className="my-1 text-xs text-red-600 min-h-5">
-                        {profileErrors.userPass
-                          ? profileErrors.userPass.message
-                          : ""}
-                      </p>
+                      </button>
                     </div>
                   </div>
                 </form>
+
+                {/* Password change dialog */}
+                <Dialog
+                  fullScreen={windowSize > 640 ? false : true}
+                  open={passwordDialog}
+                  onClose={closePasswordDialog}
+                  sx={{
+                    "& .MuiDialog-paper": {
+                      overflow: "hidden",
+                      borderRadius: windowSize > 640 ? "16px" : "0px",
+                    },
+                  }}
+                >
+                  <form
+                    className="relative sm:w-lg sm:max-h-[calc(100dvh-32px)] overflow-auto bg-white hideScrollBar"
+                    onSubmit={passwordSubmit(onPasswordChange)}
+                  >
+                    <div className="sticky top-0 bg-white z-10 flex justify-between items-center p-4">
+                      <p className="font-bold text-lg">Password</p>
+                      <button
+                        type="button"
+                        className="rounded-s-full rounded-e-full p-1.5 bg-slate-200 hover:bg-slate-300 cursor-pointer"
+                        onClick={closePasswordDialog}
+                      >
+                        <IoMdClose className="text-2xl" />
+                      </button>
+                    </div>
+
+                    <div className="p-4">
+                      {/*Current Password */}
+                      <div>
+                        <Controller
+                          name="current_password"
+                          control={passwordControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <div className="flex-1 border rounded-lg">
+                              <TextField
+                                type={currPasswordEye ? "text" : "password"}
+                                label="Current Password"
+                                disabled={loading}
+                                placeholder="Enter current password."
+                                variant="filled"
+                                name={name}
+                                value={value}
+                                onChange={onChange}
+                                error={false}
+                                autoComplete="new-password"
+                                slotProps={{
+                                  input: {
+                                    endAdornment: (
+                                      <button
+                                        type="button"
+                                        disabled={loading}
+                                        onClick={() =>
+                                          setCurrPasswordEye(!currPasswordEye)
+                                        }
+                                        className="cursor-pointer disabled:cursor-default"
+                                      >
+                                        {currPasswordEye ? (
+                                          <VisibilityOff />
+                                        ) : (
+                                          <Visibility />
+                                        )}
+                                      </button>
+                                    ),
+                                  },
+                                }}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiFilledInput-input": {
+                                    fontWeight: "500 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {passwordErrors.current_password
+                            ? passwordErrors.current_password.message
+                            : ""}
+                        </p>
+                      </div>
+
+                      {/* New Password */}
+                      <div>
+                        <Controller
+                          name="new_password"
+                          control={passwordControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <div className="flex-1 border rounded-lg">
+                              <TextField
+                                type={newPasswordEye ? "text" : "password"}
+                                label="New password"
+                                disabled={loading}
+                                placeholder="Enter new password."
+                                variant="filled"
+                                name={name}
+                                value={value}
+                                onChange={onChange}
+                                error={false}
+                                autoComplete="new-password"
+                                slotProps={{
+                                  input: {
+                                    endAdornment: (
+                                      <button
+                                        type="button"
+                                        disabled={loading}
+                                        onClick={() =>
+                                          setNewPasswordEye(!newPasswordEye)
+                                        }
+                                        className="cursor-pointer disabled:cursor-default"
+                                      >
+                                        {newPasswordEye ? (
+                                          <VisibilityOff />
+                                        ) : (
+                                          <Visibility />
+                                        )}
+                                      </button>
+                                    ),
+                                  },
+                                }}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiFilledInput-input": {
+                                    fontWeight: "500 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {passwordErrors.new_password
+                            ? passwordErrors.new_password.message
+                            : ""}
+                        </p>
+                      </div>
+
+                      {/* Confirm Password */}
+                      <div>
+                        <Controller
+                          name="new_cnf_password"
+                          control={passwordControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <div className="flex-1 border rounded-lg">
+                              <TextField
+                                type={cnfNewPasswordEye ? "text" : "password"}
+                                label="Confirm Password"
+                                disabled={loading}
+                                placeholder="Enter confirm password."
+                                variant="filled"
+                                name={name}
+                                value={value}
+                                onChange={onChange}
+                                error={false}
+                                autoComplete="new-password"
+                                slotProps={{
+                                  input: {
+                                    endAdornment: (
+                                      <button
+                                        type="button"
+                                        disabled={loading}
+                                        onClick={() =>
+                                          setCnfNewPasswordEye(
+                                            !cnfNewPasswordEye
+                                          )
+                                        }
+                                        className="cursor-pointer disabled:cursor-default"
+                                      >
+                                        {cnfNewPasswordEye ? (
+                                          <VisibilityOff />
+                                        ) : (
+                                          <Visibility />
+                                        )}
+                                      </button>
+                                    ),
+                                  },
+                                }}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiFilledInput-input": {
+                                    fontWeight: "500 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {passwordErrors.new_cnf_password
+                            ? passwordErrors.new_cnf_password.message
+                            : ""}
+                        </p>
+                      </div>
+
+                      <hr className="border-none h-px bg-gray-400 mt-2 mb-5" />
+
+                      <div>
+                        <p className="text-sm mb-3">Log me out everywhere</p>
+
+                        <Controller
+                          name="logout_consent"
+                          control={passwordControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  name={name}
+                                  checked={value}
+                                  onChange={onChange}
+                                  sx={{
+                                    "&.MuiCheckbox-root": {
+                                      padding: "0px",
+                                    },
+                                  }}
+                                />
+                              }
+                              label="Changing your password logs you out of all browsers on your device(s). Checking this box also logs you out of all apps you have authorized."
+                              sx={{
+                                "& .MuiFormControlLabel-label": {
+                                  fontSize: "14px",
+                                },
+                                "&.MuiFormControlLabel-root": {
+                                  alignItems: "start",
+                                  margin: "0px",
+                                  gap: "8px",
+                                },
+                              }}
+                            />
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {passwordErrors.new_password
+                            ? passwordErrors.new_password.message
+                            : ""}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="sticky bottom-0 flex justify-center gap-5 py-4 bg-white">
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        onClick={closePasswordDialog}
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        // onClick={() => {
+                        //   setTravellerForm("add");
+                        // }}
+                      >
+                        {loading ? (
+                          <>
+                            <CircularProgress
+                              size={20}
+                              sx={{
+                                "&.MuiCircularProgress-root": {
+                                  color: "#6a7282",
+                                },
+                              }}
+                            />
+                            <span>Saving...</span>
+                          </>
+                        ) : (
+                          "Save"
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </Dialog>
               </div>
             )}
 
@@ -1037,8 +1418,8 @@ const Profile = () => {
               <div>
                 {/* Header */}
                 <div className="w-full min-h-20 flex justify-between items-center p-5 border-b border-b-slate-300">
-                  <div className="flex items-center gap-2">
-                    {windowSize <= 640 && (
+                  <div className="w-full text-xl font-semibold flex items-center gap-2">
+                    {windowSize <= 640 && travellerForm === null && (
                       <button
                         type="button"
                         className="p-1 cursor-pointer"
@@ -1048,19 +1429,20 @@ const Profile = () => {
                       </button>
                     )}
 
-                    <p className="text-xl font-semibold flex items-center gap-2">
-                      {travellerForm !== null && windowSize > 640 && (
-                        <button
-                          type="button"
-                          disabled={loading}
-                          className=" p-1 ps-0 cursor-pointer text-primary disabled:text-gray-500 disabled:cursor-not-allowed"
-                          onClick={() => {
-                            setTravellerForm(null);
-                          }}
-                        >
-                          <FaArrowLeftLong className="text-2xl " />
-                        </button>
-                      )}
+                    {travellerForm !== null && (
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className=" p-1 ps-0 cursor-pointer text-primary disabled:text-gray-500 disabled:cursor-not-allowed"
+                        onClick={() => {
+                          setTravellerForm(null);
+                        }}
+                      >
+                        <FaArrowLeftLong className="text-2xl " />
+                      </button>
+                    )}
+
+                    <p>
                       {travellerForm === null && "Co-Travellers"}
                       {travellerForm === "add" && "Add Co-Travellers"}
                       {travellerForm === "edit" && "Edit Co-Travellers"}
@@ -1107,7 +1489,7 @@ const Profile = () => {
                       <button
                         type="button"
                         disabled={loading}
-                        className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                         // onClick={() => {
                         //   setTravellerForm("add");
                         // }}
@@ -1535,37 +1917,22 @@ const Profile = () => {
                     </div>
 
                     {travellerForm !== null && windowSize <= 640 && (
-                      <div className="pb-5 flex justify-center gap-4">
+                      <div className="pb-5 flex justify-center gap-5">
                         <button
                           type="button"
                           disabled={loading}
-                          className="p-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:cursor-not-allowed"
-                          // onClick={() => {
-                          //   setTravellerForm(null);
-                          // }}
-                        >
-                          <FaRegTrashCan />
-                        </button>
-
-                        <button
-                          type="button"
-                          disabled={loading}
-                          className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border disabled:border-none border-primary  disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                           onClick={() => {
-                            window.scrollTo({
-                              top: 0,
-                              behavior: "smooth",
-                            });
                             setTravellerForm(null);
                           }}
                         >
-                          Cancel
+                          Delete
                         </button>
 
                         <button
                           type="button"
                           disabled={loading}
-                          className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                           // onClick={() => {
                           //   setTravellerForm("add");
                           // }}
@@ -1618,7 +1985,7 @@ const Profile = () => {
                 <ul className="p-4 flex flex-col gap-y-3">
                   <li>
                     <div className="flex gap-3">
-                      <HiMiniComputerDesktop className="text-5xl text-primary" />
+                      <HiMiniComputerDesktop className="text-[40px] sm:text-5xl text-primary" />
                       <div className="flex-1 pb-3 border-b border-b-slate-300">
                         <p className="sm:text-lg font-bold">
                           Chrome (Current device)
@@ -1633,7 +2000,7 @@ const Profile = () => {
                   </li>
                   <li>
                     <div className="flex gap-3">
-                      <FaMobileAlt className="text-5xl text-primary" />
+                      <FaMobileAlt className="text-[40px] sm:text-5xl text-primary" />
                       <div className="flex-1 flex items-center justify-between gap-3 border-b border-b-slate-300">
                         <div className="flex-1 pb-3">
                           <p className="sm:text-lg font-bold">Chrome</p>
