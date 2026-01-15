@@ -848,12 +848,7 @@ const BookTicketDrawer = ({
                       type="button"
                       className="w-full sm:min-w-[340px] py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
               bg-primary outline-none flex justify-center items-center gap-2 mb-4"
-                      onClick={() => {
-                        setActiveTab((prev) => {
-                          if (prev < 2) return prev + 1;
-                          else return prev;
-                        });
-                      }}
+                      onClick={openTravellerDialog}
                     >
                       <HiUserAdd className="text-xl" />
                       <span>Add new passenger</span>

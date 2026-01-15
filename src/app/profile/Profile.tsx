@@ -5,6 +5,7 @@ import {
   Avatar,
   CircularProgress,
   Dialog,
+  Drawer,
   FormControl,
   FormHelperText,
   InputLabel,
@@ -20,6 +21,7 @@ import {
 import Image from "next/image";
 import {
   FaArrowLeft,
+  FaMobileAlt,
   FaRegEnvelope,
   FaRegUserCircle,
   FaUserCog,
@@ -55,6 +57,9 @@ import { FaArrowLeftLong, FaRegTrashCan } from "react-icons/fa6";
 import Cropper from "react-easy-crop";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 import getCroppedImage from "@/utils/common/getCroppedImage";
+import { HiMiniComputerDesktop } from "react-icons/hi2";
+import { useRouter } from "next/navigation";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -69,7 +74,8 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const Profile = () => {
-  const [profileTab, setProfileTab] = useState<number>(1);
+  const router = useRouter();
+  const [profileTab, setProfileTab] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [travellerForm, setTravellerForm] = useState<"add" | "edit" | null>(
     null
@@ -136,12 +142,27 @@ const Profile = () => {
     width: 0,
     height: 0,
   });
+  const [mobTravellerDrawer, setMobTravellerDrawer] = useState<boolean>(false);
 
   const handleProfileTabChange = (
     event: React.SyntheticEvent,
     newValue: number
   ) => {
+    if (mobTravellerDrawer) {
+      closeMobTravellerDrawer();
+    }
+
+    setTravellerForm(null);
+
     setProfileTab(newValue);
+  };
+
+  const openMobTravellerDrawer = () => {
+    setMobTravellerDrawer(true);
+  };
+
+  const closeMobTravellerDrawer = () => {
+    setMobTravellerDrawer(false);
   };
 
   // User information form
@@ -484,7 +505,7 @@ const Profile = () => {
 
       {/* Main content */}
       <div className="bg-[#f2f2f8] myContainer py-7">
-        <div className="bg-white rounded-xl flex">
+        <div className="bg-white rounded-xl flex min-h-screen">
           {/* Sidebar */}
           <div className="hidden lg:block lg:w-1/4 border-r border-slate-300 overflow-auto hideScrollBar">
             <p className="text-xs p-5">MY ACCOUNT</p>
@@ -526,6 +547,7 @@ const Profile = () => {
                     </p>
                   }
                 />
+
                 <Tab
                   disabled={loading}
                   label={
@@ -537,6 +559,7 @@ const Profile = () => {
                     </p>
                   }
                 />
+
                 <Tab
                   disabled={loading}
                   label={
@@ -557,6 +580,9 @@ const Profile = () => {
                       <span className="text-base capitalize">Logout</span>
                     </p>
                   }
+                  onClick={() => {
+                    router.replace("/");
+                  }}
                 />
               </Tabs>
             </div>
@@ -569,11 +595,20 @@ const Profile = () => {
               <div className="">
                 {/* Header */}
                 <div className="w-full min-h-20 flex justify-between items-center p-5 border-b border-b-slate-300">
-                  <p className="text-xl font-bold">My Profile</p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="p-1 cursor-pointer"
+                      onClick={openMobTravellerDrawer}
+                    >
+                      <GiHamburgerMenu className="text-2xl" />
+                    </button>
+                    <p className="text-xl font-bold">My Profile</p>
+                  </div>
                   <button
                     type="button"
                     disabled={loading}
-                    className="text-sm min-w-20 font-semibold bg-primary/90 hover:bg-primary p-2.5 rounded-sm text-white cursor-pointer flex items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                    className="text-sm min-w-20 font-semibold bg-primary/90 hover:bg-primary p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <>
@@ -997,114 +1032,40 @@ const Profile = () => {
               </div>
             )}
 
-            {/* State Dialog */}
-            <Dialog
-              fullScreen={windowSize > 640 ? false : true}
-              onClose={closeStateDialog}
-              open={contactInfoState}
-              sx={{
-                "& .MuiDialog-paper": {
-                  overflow: "hidden",
-                  borderRadius: windowSize > 640 ? "16px" : "0px",
-                },
-              }}
-            >
-              <div className="relative w-full sm:w-lg overflow-y-auto hideScrollBar">
-                <div className="sticky top-0 left-0 right-0 bg-white z-[1000] shadow-sm p-4">
-                  <div className="flex justify-between items-center mb-7">
-                    <p className="font-bold">Select state of residence</p>
-                    <button
-                      type="button"
-                      className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
-                      onClick={closeStateDialog}
-                    >
-                      <IoMdClose className="text-2xl" />
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
-                    placeholder="Search for state"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      SearchStatesList(e.currentTarget.value, indiaStatesAndUTs)
-                    }
-                  />
-                </div>
-                <RadioGroup
-                  name="radio-buttons-state"
-                  value={
-                    indiaStatesAndUTs.find((st) => st.state == stateName)?.code
-                  }
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    let index = indiaStatesAndUTs.findIndex(
-                      (state) => state.code == event.target.value
-                    );
-
-                    profileSetVal("userState", indiaStatesAndUTs[index].state);
-                  }}
-                >
-                  <ul className="">
-                    {filteredStatesList &&
-                      filteredStatesList.map((st, inx, stArr) => (
-                        <li key={`state-code-${st.id}`}>
-                          <label
-                            htmlFor={`state-options-${st.id}`}
-                            className={`flex justify-between items-center font-medium cursor-pointer px-4 py-2.5 ${
-                              inx !== stArr.length - 1
-                                ? "border-b border-b-slate-200"
-                                : ""
-                            }`}
-                          >
-                            <span>{st.state}</span>
-                            <Radio
-                              id={`state-options-${st.id}`}
-                              onClick={closeStateDialog}
-                              value={st.code}
-                              sx={{
-                                color: "#173c62",
-                                "&.Mui-checked": {
-                                  color: "#173c62",
-                                },
-                              }}
-                            />
-                          </label>
-                        </li>
-                      ))}
-
-                    {filteredStatesList && filteredStatesList.length <= 0 && (
-                      <li>
-                        <p className="px-4 py-5 text-center font-semibold">
-                          No state found
-                        </p>
-                      </li>
-                    )}
-                  </ul>
-                </RadioGroup>
-              </div>
-            </Dialog>
-
             {/* Co-Traveller */}
             {profileTab === 1 && (
               <div>
                 {/* Header */}
                 <div className="w-full min-h-20 flex justify-between items-center p-5 border-b border-b-slate-300">
-                  <p className="text-xl font-semibold flex items-center gap-2">
-                    {travellerForm !== null && (
+                  <div className="flex items-center gap-2">
+                    {windowSize <= 640 && (
                       <button
                         type="button"
-                        disabled={loading}
-                        className="p-1 ps-0 cursor-pointer text-primary disabled:text-gray-500 disabled:cursor-not-allowed"
-                        onClick={() => {
-                          setTravellerForm(null);
-                        }}
+                        className="p-1 cursor-pointer"
+                        onClick={openMobTravellerDrawer}
                       >
-                        <FaArrowLeftLong className="text-2xl " />
+                        <GiHamburgerMenu className="text-2xl" />
                       </button>
                     )}
-                    {travellerForm === null && "Co-Travellers"}
-                    {travellerForm === "add" && "Add Co-Travellers"}
-                    {travellerForm === "edit" && "Edit Co-Travellers"}
-                  </p>
+
+                    <p className="text-xl font-semibold flex items-center gap-2">
+                      {travellerForm !== null && windowSize > 640 && (
+                        <button
+                          type="button"
+                          disabled={loading}
+                          className=" p-1 ps-0 cursor-pointer text-primary disabled:text-gray-500 disabled:cursor-not-allowed"
+                          onClick={() => {
+                            setTravellerForm(null);
+                          }}
+                        >
+                          <FaArrowLeftLong className="text-2xl " />
+                        </button>
+                      )}
+                      {travellerForm === null && "Co-Travellers"}
+                      {travellerForm === "add" && "Add Co-Travellers"}
+                      {travellerForm === "edit" && "Edit Co-Travellers"}
+                    </p>
+                  </div>
 
                   {travellerForm === null && (
                     <button
@@ -1194,6 +1155,10 @@ const Profile = () => {
                             type="button"
                             className="sm:min-w-20 p-2 flex items-center gap-1 cursor-pointer"
                             onClick={() => {
+                              window.scrollTo({
+                                top: windowSize > 640 ? 200 : 274,
+                                behavior: "smooth",
+                              });
                               setTravellerForm("edit");
                             }}
                           >
@@ -1633,11 +1598,246 @@ const Profile = () => {
               <div>
                 {/* Header */}
                 <div className="w-full min-h-20 flex justify-between items-center p-5 border-b border-b-slate-300">
-                  <p className="text-xl font-semibold">Logged in Devices</p>
+                  <div className="flex items-center gap-2">
+                    {windowSize <= 640 && (
+                      <button
+                        type="button"
+                        className="p-1 cursor-pointer"
+                        onClick={openMobTravellerDrawer}
+                      >
+                        <GiHamburgerMenu className="text-2xl" />
+                      </button>
+                    )}
+
+                    <p className="text-xl font-semibold flex items-center gap-2">
+                      Logged in Devices
+                    </p>
+                  </div>
                 </div>
+
+                <ul className="p-4 flex flex-col gap-y-3">
+                  <li>
+                    <div className="flex gap-3">
+                      <HiMiniComputerDesktop className="text-5xl text-primary" />
+                      <div className="flex-1 pb-3 border-b border-b-slate-300">
+                        <p className="sm:text-lg font-bold">
+                          Chrome (Current device)
+                        </p>
+                        <p className="text-sm">Desktop Web</p>
+                        <p className="text-sm">AHMEDABAD, IN</p>
+                        <p className="text-sm text-[#1d1d1da3]">
+                          Logged in since 9:31 pm, 13th Jan '26
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex gap-3">
+                      <FaMobileAlt className="text-5xl text-primary" />
+                      <div className="flex-1 flex items-center justify-between gap-3 border-b border-b-slate-300">
+                        <div className="flex-1 pb-3">
+                          <p className="sm:text-lg font-bold">Chrome</p>
+                          <p className="text-sm">Desktop Web</p>
+                          <p className="text-sm">AHMEDABAD, IN</p>
+                          <p className="text-sm text-[#1d1d1da3]">
+                            Logged in since 9:31 pm, 13th Jan '26
+                          </p>
+                        </div>
+
+                        <div className="sm:mx-5">
+                          <button
+                            type="button"
+                            disabled={loading}
+                            className="text-sm font-semibold sm:min-w-20 p-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border border-primary disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                            // onClick={() => {
+                            //   setTravellerForm(null);
+                            // }}
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
               </div>
             )}
-            {profileTab === 3 && <></>}
+
+            {/* State Dialog */}
+            <Dialog
+              fullScreen={windowSize > 640 ? false : true}
+              onClose={closeStateDialog}
+              open={contactInfoState}
+              sx={{
+                "& .MuiDialog-paper": {
+                  overflow: "hidden",
+                  borderRadius: windowSize > 640 ? "16px" : "0px",
+                },
+              }}
+            >
+              <div className="relative w-full sm:w-lg overflow-y-auto hideScrollBar">
+                <div className="sticky top-0 left-0 right-0 bg-white z-[1000] shadow-sm p-4">
+                  <div className="flex justify-between items-center mb-7">
+                    <p className="font-bold">Select state of residence</p>
+                    <button
+                      type="button"
+                      className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
+                      onClick={closeStateDialog}
+                    >
+                      <IoMdClose className="text-2xl" />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
+                    placeholder="Search for state"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      SearchStatesList(e.currentTarget.value, indiaStatesAndUTs)
+                    }
+                  />
+                </div>
+                <RadioGroup
+                  name="radio-buttons-state"
+                  value={
+                    indiaStatesAndUTs.find((st) => st.state == stateName)?.code
+                  }
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    let index = indiaStatesAndUTs.findIndex(
+                      (state) => state.code == event.target.value
+                    );
+
+                    profileSetVal("userState", indiaStatesAndUTs[index].state);
+                  }}
+                >
+                  <ul className="">
+                    {filteredStatesList &&
+                      filteredStatesList.map((st, inx, stArr) => (
+                        <li key={`state-code-${st.id}`}>
+                          <label
+                            htmlFor={`state-options-${st.id}`}
+                            className={`flex justify-between items-center font-medium cursor-pointer px-4 py-2.5 ${
+                              inx !== stArr.length - 1
+                                ? "border-b border-b-slate-200"
+                                : ""
+                            }`}
+                          >
+                            <span>{st.state}</span>
+                            <Radio
+                              id={`state-options-${st.id}`}
+                              onClick={closeStateDialog}
+                              value={st.code}
+                              sx={{
+                                color: "#173c62",
+                                "&.Mui-checked": {
+                                  color: "#173c62",
+                                },
+                              }}
+                            />
+                          </label>
+                        </li>
+                      ))}
+
+                    {filteredStatesList && filteredStatesList.length <= 0 && (
+                      <li>
+                        <p className="px-4 py-5 text-center font-semibold">
+                          No state found
+                        </p>
+                      </li>
+                    )}
+                  </ul>
+                </RadioGroup>
+              </div>
+            </Dialog>
+
+            {/* Mobile Drawer */}
+            <Drawer
+              anchor={"left"}
+              open={mobTravellerDrawer}
+              onClose={closeMobTravellerDrawer}
+            >
+              <div className="">
+                <p className="text-xs p-5">MY ACCOUNT</p>
+
+                <div className="flex flex-col">
+                  <Tabs
+                    orientation="vertical"
+                    variant="scrollable"
+                    value={profileTab}
+                    onChange={handleProfileTabChange}
+                    sx={{
+                      borderRight: 1,
+                      borderColor: "divider",
+                      "& .MuiTab-root": {
+                        margin: "4px 16px",
+                        padding: "0px 4px",
+                        minHeight: "52px",
+                        borderRadius: "6px",
+                      },
+                      "&.MuiTabs-root": {
+                        border: "none",
+                      },
+                      "& .MuiTabs-indicator": { display: "none" },
+                      "& .Mui-selected": {
+                        backgroundColor: "#173c6240 !important",
+                        color: "#000000 !important",
+                      },
+                      "& .MuiTab-root:hover": {
+                        backgroundColor: "#e2e8f0",
+                      },
+                    }}
+                  >
+                    <Tab
+                      disabled={loading}
+                      label={
+                        <p className="w-full p-3 flex items-center gap-2">
+                          <FaRegUserCircle className="text-[27px]" />
+                          <span className="text-base capitalize">
+                            My Profile
+                          </span>
+                        </p>
+                      }
+                    />
+
+                    <Tab
+                      disabled={loading}
+                      label={
+                        <p className="w-full p-3 flex items-center gap-2">
+                          <FaUserFriends className="text-2xl" />
+                          <span className="text-base capitalize">
+                            Co-travellers
+                          </span>
+                        </p>
+                      }
+                    />
+
+                    <Tab
+                      disabled={loading}
+                      label={
+                        <p className="w-full p-3 flex items-center gap-2">
+                          <FaUserCog className="text-2xl" />
+                          <span className="text-base capitalize">
+                            Logged in Devices
+                          </span>
+                        </p>
+                      }
+                    />
+
+                    <Tab
+                      disabled={loading}
+                      label={
+                        <p className="w-full p-3 flex items-center gap-2">
+                          <HiOutlineLogout className="text-2xl" />
+                          <span className="text-base capitalize">Logout</span>
+                        </p>
+                      }
+                      onClick={() => {
+                        router.replace("/");
+                      }}
+                    />
+                  </Tabs>
+                </div>
+              </div>
+            </Drawer>
           </div>
         </div>
       </div>
