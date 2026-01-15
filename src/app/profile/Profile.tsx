@@ -142,6 +142,7 @@ const Profile = () => {
   const [userPhotoRotate, setUserPhotoRotate] = useState<number>(0);
   const [photoDialog, setPhotoDialog] = useState<boolean>(false);
   const [passwordDialog, setPasswordDialog] = useState<boolean>(false);
+  const [delAccDialog, setDelAccDialog] = useState<boolean>(false);
   const [photoDimension, setPhotoDimension] = useState<{
     x: number;
     y: number;
@@ -350,6 +351,35 @@ const Profile = () => {
   });
 
   const onPasswordChange = (data: any) => {
+    console.log("Data: ", data);
+  };
+
+  // Delete acconut
+  const openDeleteAccDialog = () => {
+    setDelAccDialog(true);
+  };
+
+  const closeDeleteAccDialog = () => {
+    setDelAccDialog(false);
+  };
+
+  // User information form
+  const {
+    handleSubmit: deleteAccSubmit,
+    setValue: deleteAccSetVal,
+    reset: deleteAccReset,
+    control: deleteAccControl,
+    formState: { errors: deleteAccErrors },
+  } = useForm({
+    // resolver: zodResolver(),
+    defaultValues: {
+      reason: "",
+      email: "",
+      delete_acc_consent: false,
+    },
+  });
+
+  const onAccountDelete = (data: any) => {
     console.log("Data: ", data);
   };
 
@@ -638,28 +668,19 @@ const Profile = () => {
                 {/* Header */}
                 <div className="w-full min-h-20 flex justify-between items-center p-5 border-b border-b-slate-300">
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      className="p-1 cursor-pointer"
-                      onClick={openMobTravellerDrawer}
-                    >
-                      <GiHamburgerMenu className="text-2xl" />
-                    </button>
+                    {windowSize <= 640 && travellerForm === null && (
+                      <button
+                        type="button"
+                        className="p-1 cursor-pointer"
+                        onClick={openMobTravellerDrawer}
+                      >
+                        <GiHamburgerMenu className="text-2xl" />
+                      </button>
+                    )}
                     <p className="text-xl font-bold">My Profile</p>
                   </div>
 
                   <div className="hidden sm:flex justify-center gap-5">
-                    <button
-                      type="button"
-                      disabled={loading}
-                      className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
-                      onClick={() => {
-                        setTravellerForm(null);
-                      }}
-                    >
-                      Delete
-                    </button>
-
                     <button
                       type="button"
                       disabled={loading}
@@ -1044,6 +1065,18 @@ const Profile = () => {
                       <MdKeyboardArrowRight className="text-2xl" />
                     </button>
 
+                    {/* Delete Account */}
+                    <button
+                      type="button"
+                      className="w-full h-14 border rounded-md mb-7 flex items-center justify-between px-3 cursor-pointer hover:bg-slate-200"
+                      onClick={openDeleteAccDialog}
+                    >
+                      <p className="leading-none text-red-600 font-semibold">
+                        Delete account
+                      </p>
+                      <MdKeyboardArrowRight className="text-2xl" />
+                    </button>
+
                     {/* Action buttons */}
                     <div className="flex sm:hidden justify-center gap-5">
                       <button
@@ -1410,6 +1443,280 @@ const Profile = () => {
                     </div>
                   </form>
                 </Dialog>
+
+                {/* Delete account dialog */}
+                <Dialog
+                  fullScreen={windowSize > 640 ? false : true}
+                  open={delAccDialog}
+                  onClose={closeDeleteAccDialog}
+                  sx={{
+                    "& .MuiDialog-paper": {
+                      overflow: "hidden",
+                      borderRadius: windowSize > 640 ? "16px" : "0px",
+                    },
+                  }}
+                >
+                  <form
+                    className="relative sm:w-lg sm:max-h-[calc(100dvh-32px)] overflow-auto bg-white hideScrollBar"
+                    onSubmit={deleteAccSubmit(onAccountDelete)}
+                  >
+                    <div className="sticky top-0 bg-white z-10 flex justify-between items-center p-4">
+                      <p className="font-bold text-lg">Delete account</p>
+                      <button
+                        type="button"
+                        className="rounded-s-full rounded-e-full p-1.5 bg-slate-200 hover:bg-slate-300 cursor-pointer"
+                        onClick={closeDeleteAccDialog}
+                      >
+                        <IoMdClose className="text-2xl" />
+                      </button>
+                    </div>
+
+                    <div className="p-4">
+                      {/* Reason for leaving */}
+                      <div>
+                        <Controller
+                          name="reason"
+                          control={deleteAccControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <div className="flex-1 border rounded-lg">
+                              <TextField
+                                type="text"
+                                label="Reason for leaving (optional)"
+                                variant="filled"
+                                multiline
+                                minRows={4}
+                                disabled={loading}
+                                placeholder="Enter reasons here..."
+                                name={name}
+                                value={value}
+                                onChange={onChange}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    fontWeight: "500 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {deleteAccErrors.email
+                            ? deleteAccErrors.email.message
+                            : ""}
+                        </p>
+                      </div>
+
+                      {/* Email */}
+                      <div>
+                        <Controller
+                          name="email"
+                          control={deleteAccControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <div className="flex-1 border rounded-lg">
+                              <TextField
+                                type="text"
+                                label="Email"
+                                disabled={loading}
+                                placeholder="Enter email id."
+                                variant="filled"
+                                name={name}
+                                value={value}
+                                onChange={onChange}
+                                error={false}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-input": {
+                                    fontWeight: "500 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {deleteAccErrors.email
+                            ? deleteAccErrors.email.message
+                            : ""}
+                        </p>
+                      </div>
+
+                      {/* Password */}
+                      <div>
+                        <Controller
+                          name="new_password"
+                          control={passwordControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <div className="flex-1 border rounded-lg">
+                              <TextField
+                                type={newPasswordEye ? "text" : "password"}
+                                label="New password"
+                                disabled={loading}
+                                placeholder="Enter new password."
+                                variant="filled"
+                                name={name}
+                                value={value}
+                                onChange={onChange}
+                                error={false}
+                                autoComplete="new-password"
+                                slotProps={{
+                                  input: {
+                                    endAdornment: (
+                                      <button
+                                        type="button"
+                                        disabled={loading}
+                                        onClick={() =>
+                                          setNewPasswordEye(!newPasswordEye)
+                                        }
+                                        className="cursor-pointer disabled:cursor-default"
+                                      >
+                                        {newPasswordEye ? (
+                                          <VisibilityOff />
+                                        ) : (
+                                          <Visibility />
+                                        )}
+                                      </button>
+                                    ),
+                                  },
+                                }}
+                                sx={{
+                                  width: "100%",
+                                  "& .MuiFilledInput-root": {
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiFilledInput-input": {
+                                    fontWeight: "500 !important",
+                                    backgroundColor: "white !important",
+                                    borderRadius: "8px !important",
+                                  },
+                                  "& .MuiInputLabel-root": {
+                                    color: "#1d1d1da3",
+                                  },
+                                  "& ::before": {
+                                    display: "none",
+                                  },
+                                  "& ::after": {
+                                    display: "none",
+                                  },
+                                }}
+                              />
+                            </div>
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {passwordErrors.new_password
+                            ? passwordErrors.new_password.message
+                            : ""}
+                        </p>
+                      </div>
+
+                      <hr className="border-none h-px bg-gray-400 mt-2 mb-5" />
+
+                      {/* Consent */}
+                      <div>
+                        <Controller
+                          name="delete_acc_consent"
+                          control={deleteAccControl}
+                          render={({ field: { onChange, name, value } }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  name={name}
+                                  checked={value}
+                                  onChange={onChange}
+                                  sx={{
+                                    "&.MuiCheckbox-root": {
+                                      padding: "0px",
+                                    },
+                                  }}
+                                />
+                              }
+                              label="I understand that deleted accounts aren't recoverable."
+                              sx={{
+                                "& .MuiFormControlLabel-label": {
+                                  fontSize: "14px",
+                                },
+                                "&.MuiFormControlLabel-root": {
+                                  alignItems: "start",
+                                  margin: "0px",
+                                  gap: "8px",
+                                },
+                              }}
+                            />
+                          )}
+                        />
+
+                        <p className="my-1 text-xs text-red-600 min-h-5">
+                          {deleteAccErrors.delete_acc_consent
+                            ? deleteAccErrors.delete_acc_consent.message
+                            : ""}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="sticky bottom-0 flex justify-center gap-5 py-4 bg-white">
+                      <button
+                        type="button"
+                        disabled={loading}
+                        className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        onClick={closePasswordDialog}
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex justify-center items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        // onClick={() => {
+                        //   setTravellerForm("add");
+                        // }}
+                      >
+                        {loading ? (
+                          <>
+                            <CircularProgress
+                              size={20}
+                              sx={{
+                                "&.MuiCircularProgress-root": {
+                                  color: "#6a7282",
+                                },
+                              }}
+                            />
+                            <span>Deleting...</span>
+                          </>
+                        ) : (
+                          "Delete"
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </Dialog>
               </div>
             )}
 
@@ -1418,7 +1725,7 @@ const Profile = () => {
               <div>
                 {/* Header */}
                 <div className="w-full min-h-20 flex justify-between items-center p-5 border-b border-b-slate-300">
-                  <div className="w-full text-xl font-semibold flex items-center gap-2">
+                  <div className="text-xl font-semibold flex items-center gap-2">
                     {windowSize <= 640 && travellerForm === null && (
                       <button
                         type="button"
@@ -1462,29 +1769,22 @@ const Profile = () => {
                     </button>
                   )}
 
-                  {travellerForm !== null && windowSize > 640 && (
-                    <div className="flex gap-4">
-                      <button
-                        type="button"
-                        disabled={loading}
-                        className="p-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:cursor-not-allowed"
-                        // onClick={() => {
-                        //   setTravellerForm(null);
-                        // }}
-                      >
-                        <FaRegTrashCan />
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={loading}
-                        className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border border-primary disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
-                        onClick={() => {
-                          setTravellerForm(null);
-                        }}
-                      >
-                        Cancel
-                      </button>
+                  {travellerForm !== null && (
+                    <div className="hidden sm:flex gap-4">
+                      {travellerForm === "edit" && (
+                        <>
+                          <button
+                            type="button"
+                            disabled={loading}
+                            className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                            onClick={() => {
+                              setTravellerForm(null);
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
 
                       <button
                         type="button"
@@ -1916,8 +2216,8 @@ const Profile = () => {
                       </div>
                     </div>
 
-                    {travellerForm !== null && windowSize <= 640 && (
-                      <div className="pb-5 flex justify-center gap-5">
+                    {travellerForm !== null && (
+                      <div className="pb-5 flex sm:hidden justify-center gap-5">
                         <button
                           type="button"
                           disabled={loading}

@@ -719,10 +719,27 @@ const DefaultNavbar = ({
           <button
             type="button"
             onClick={handleUserDrawer}
-            className="p-3 text-black rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1 cursor-pointer"
+            className={`text-black rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer p-2 ${
+              sessionId ? "border" : ""
+            }`}
           >
-            <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
-            <span className="text-xs">Account</span>
+            {!sessionId ? (
+              <>
+                <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
+                <span className="text-xs">Account</span>
+              </>
+            ) : (
+              <>
+                <Image
+                  src="https://res.cloudinary.com/dcj3txipr/image/upload/v1768503255/randomUser_rty2wh.jpg"
+                  alt="User profile photo"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+                <span className="text-xs font-semibold">Nischay</span>
+              </>
+            )}
           </button>
         </li>
       </ul>
