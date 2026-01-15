@@ -7,10 +7,10 @@ import { LuDot } from "react-icons/lu";
 const BusCard = ({ openViewDrawer }: { openViewDrawer: () => void }) => {
   return (
     <div
-      className="bg-white flex flex-col rounded-2xl shadow-md p-4 cursor-pointer"
+      className="min-h-24 bg-white flex flex-col justify-center rounded-2xl shadow-md p-4 cursor-pointer"
       onClick={openViewDrawer}
     >
-      <div className="w-full flex flex-wrap md:flex-nowrap lg:pb-3 gap-y-4">
+      <div className="w-full flex flex-wrap md:flex-nowrap xl:pb-3 gap-y-4">
         <div className="w-3/4 lg:w-2/5 order-3 md:order-1">
           <p className="flex items-center gap-x-1">
             <span className="text-sm font-semibold">Vrundavan Travels</span>
@@ -50,7 +50,7 @@ const BusCard = ({ openViewDrawer }: { openViewDrawer: () => void }) => {
         </div>
       </div>
 
-      <div className="hidden lg:flex justify-between items-center pt-3 border-t border-dotted border-t-slate-200">
+      <div className="hidden xl:flex justify-between items-center pt-3 border-t border-dotted border-t-slate-200">
         <ul className="flex list-none">
           <li className="border-e border-e-slate-200">
             <button

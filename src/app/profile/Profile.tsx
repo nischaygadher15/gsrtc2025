@@ -465,13 +465,15 @@ const Profile = () => {
 
           {/* User name */}
           <div className="text-white">
-            <p className="text-2xl font-semibold mb-2">{"Nischay K Gadher"}</p>
+            <p className="text-2xl font-semibold mb-2 text-center">
+              {"Nischay K Gadher"}
+            </p>
             <div>
-              <p className="flex items-center gap-2 mb-2">
+              <p className="flex justify-center items-center gap-2 mb-2">
                 <MdOutlinePhone className="text-2xl" />
                 <span>{"8141409448"}</span>
               </p>
-              <p className="flex items-center gap-2">
+              <p className="flex justify-center items-center gap-2">
                 <FaRegEnvelope className="text-2xl" />
                 <span>{"nischaygadher15@gmail.com"}</span>
               </p>
@@ -1091,12 +1093,12 @@ const Profile = () => {
                       <button
                         type="button"
                         disabled={loading}
-                        className="p-1 ps-0 cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        className="p-1 ps-0 cursor-pointer text-primary disabled:text-gray-500 disabled:cursor-not-allowed"
                         onClick={() => {
                           setTravellerForm(null);
                         }}
                       >
-                        <FaArrowLeftLong className="text-2xl text-primary" />
+                        <FaArrowLeftLong className="text-2xl " />
                       </button>
                     )}
                     {travellerForm === null && "Co-Travellers"}
@@ -1190,7 +1192,7 @@ const Profile = () => {
                           </div>
                           <button
                             type="button"
-                            className="min-w-20 p-2 flex items-center gap-1 cursor-pointer"
+                            className="sm:min-w-20 p-2 flex items-center gap-1 cursor-pointer"
                             onClick={() => {
                               setTravellerForm("edit");
                             }}
@@ -1572,7 +1574,7 @@ const Profile = () => {
                         <button
                           type="button"
                           disabled={loading}
-                          className="p-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          className="p-2.5 cursor-pointer text-xl text-black/90 hover:text-red-700 disabled:text-gray-500 disabled:cursor-not-allowed"
                           // onClick={() => {
                           //   setTravellerForm(null);
                           // }}
@@ -1583,7 +1585,7 @@ const Profile = () => {
                         <button
                           type="button"
                           disabled={loading}
-                          className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border border-primary disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          className="text-sm font-semibold w-20 py-2.5 rounded-sm text-primary cursor-pointer hover:bg-slate-200 border disabled:border-none border-primary  disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                           onClick={() => {
                             window.scrollTo({
                               top: 0,
@@ -1598,12 +1600,26 @@ const Profile = () => {
                         <button
                           type="button"
                           disabled={loading}
-                          className="text-sm font-semibold bg-primary/90 hover:bg-primary w-20 py-2.5 rounded-sm text-white cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                          className="text-sm font-semibold bg-primary/90 hover:bg-primary min-w-20 p-2.5 rounded-sm text-white cursor-pointer flex items-center gap-2 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
                           // onClick={() => {
                           //   setTravellerForm("add");
                           // }}
                         >
-                          Save
+                          {loading ? (
+                            <>
+                              <CircularProgress
+                                size={20}
+                                sx={{
+                                  "&.MuiCircularProgress-root": {
+                                    color: "#6a7282",
+                                  },
+                                }}
+                              />
+                              <span>Saving...</span>
+                            </>
+                          ) : (
+                            "Save"
+                          )}
                         </button>
                       </div>
                     )}

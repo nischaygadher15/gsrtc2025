@@ -185,8 +185,8 @@ const DefaultNavbar = ({
   } = useForm<LoginByEmailSchemaType>({
     resolver: zodResolver(LoginByEmailSchema),
     defaultValues: {
-      userEmail: "ram50@gmail.com",
-      userPass: "Ram@@5050",
+      userEmail: "ram312@gmail.com",
+      userPass: "Ram@@312",
     },
   });
 
@@ -668,7 +668,7 @@ const DefaultNavbar = ({
           <Link
             href="/"
             className={`p-3 h-full w-full flex justify-center items-center gap-1.5 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
-              currentLocation === "/" ? "text-primary" : "text-[#1d1d1da3]"
+              currentLocation === "/" ? "text-primary" : "text-black"
             }`}
           >
             <IoMdHome className="w-6 h-6" />

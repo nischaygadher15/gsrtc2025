@@ -29,7 +29,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { TimelineType } from "./BusStationTimeline";
 import BoardingDroppingTimeline from "./BoardingDroppingTimeline";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaRegTrashCan } from "react-icons/fa6";
 import TextField from "@mui/material/TextField";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { FaWhatsapp } from "react-icons/fa";
@@ -39,6 +39,23 @@ import Radio from "@mui/material/Radio";
 import { redirect, useRouter } from "next/navigation";
 import Dialog from "@mui/material/Dialog";
 import RadioGroup from "@mui/material/RadioGroup";
+import { HiUserAdd } from "react-icons/hi";
+import { Controller } from "react-hook-form";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import useWindowSize from "@/Hooks/useWindowSize";
+import { FiEdit } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 const BookTicketDrawer = ({
   data,
@@ -51,7 +68,9 @@ const BookTicketDrawer = ({
   };
 }) => {
   let { viewDrawer, closeViewDrawer, activeTab, setActiveTab } = data;
-  const [windowSize, setWindowSize] = useState<number>(0);
+  const windowSize = useWindowSize();
+  const [travellerDialog, setTravellerDialog] = useState<boolean>(false);
+  const [seatSelect, setSeatSelect] = useState<string>("");
   const knowYourSeatType = [
     {
       seatType: "Available",
@@ -147,7 +166,24 @@ const BookTicketDrawer = ({
       age: 26,
       gender: "male",
     },
+    {
+      name: "Ram",
+      age: 30,
+      gender: "male",
+    },
+    {
+      name: "Sita",
+      age: 30,
+      gender: "female",
+    },
+    {
+      name: "Laxman",
+      age: 26,
+      gender: "male",
+    },
   ];
+
+  const [selectedTraveller, setSelectedTraveller] = useState({});
 
   const [passengerInfo, setPassengerInfo] = useState<PassengerInfo[]>([
     ...passengers,
@@ -157,21 +193,42 @@ const BookTicketDrawer = ({
     setActiveTab(newValue);
   };
 
-  // Window size listener
+  const openTravellerDialog = () => {
+    setTravellerDialog(true);
+  };
+
+  const closeTravellerDialog = () => {
+    setTravellerDialog(false);
+  };
+
+  const handleSeatChange = (id: string, seat: string) => {
+    if (Object.keys(selectedTraveller).length > 3) {
+      toast.error("Passengers exceeded no. of seats.");
+      return;
+    }
+
+    setSelectedTraveller((prev) => {
+      return { ...prev, [id]: seat };
+    });
+  };
+
+  const handleSelectTraveller = (id: string) => {
+    if (Object.keys(selectedTraveller).length > 3) {
+      toast.error("Passengers exceeded no. of seats.");
+      return;
+    }
+
+    setSelectedTraveller((prev) => {
+      return {
+        ...prev,
+        [id]: "",
+      };
+    });
+  };
+
   useEffect(() => {
-    const listenWindowSize = () => {
-      // console.log(window.innerWidth);
-      setWindowSize(window.innerWidth);
-    };
-
-    listenWindowSize();
-
-    window.addEventListener("resize", listenWindowSize);
-
-    return () => {
-      window.removeEventListener("resize", listenWindowSize);
-    };
-  }, []);
+    console.log("selectedTraveller: ", selectedTraveller);
+  }, [selectedTraveller]);
 
   // Passenger Gender
   const handleGenderChange = (
@@ -242,7 +299,9 @@ const BookTicketDrawer = ({
     { id: 35, state: "Puducherry", code: "PY" },
   ];
   const [contactInfoState, setContactInfoState] = useState<boolean>(false);
+
   const [stateName, setStateName] = useState<string>("Select state");
+
   const [filteredStatesList, setFilteredStatesList] =
     useState<StateInfoType[]>(indiaStatesAndUTs);
 
@@ -764,163 +823,268 @@ const BookTicketDrawer = ({
                 </form>
 
                 {/* Passengers details */}
-                <div className="w-full p-4 rounded-2xl shadow-md bg-white">
-                  <p className="text-xl font-bold mb-4">Passenger details</p>
+                <div className="w-full rounded-2xl shadow-md bg-white">
+                  <p className="p-4 flex flex-col">
+                    <span className="text-xl font-bold">Passenger details</span>
+                    <span className="text-sm text-[#1d1d1da3]">
+                      0/3 Selected
+                    </span>
+                  </p>
 
-                  {/* List for passenger info. from accordian */}
-                  <ul>
+                  <div className="px-4">
+                    <button
+                      type="button"
+                      className="w-full sm:min-w-[340px] py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              bg-primary outline-none flex justify-center items-center gap-2 mb-4"
+                      onClick={() => {
+                        setActiveTab((prev) => {
+                          if (prev < 2) return prev + 1;
+                          else return prev;
+                        });
+                      }}
+                    >
+                      <HiUserAdd className="text-xl" />
+                      <span>Add new passenger</span>
+                    </button>
+                  </div>
+
+                  {/* List for passengers */}
+                  <ul className="my-5">
                     {passengers &&
                       passengers.map((passenger, inx) => (
                         <li key={`passengerInfo-${inx}`}>
-                          <Accordion
-                            defaultExpanded
-                            sx={{
-                              "&.MuiAccordion-root": {
-                                boxShadow: "none !important",
-                              },
-                              "& .MuiAccordionSummary-root": {
-                                padding: "0px !important",
-                              },
-                            }}
+                          <label
+                            htmlFor={`passengerId-${inx}`}
+                            className={`p-4 border-b border-slate-500 flex justify-between gap-4 ${
+                              inx == 0 ? "border-t" : ""
+                            }`}
                           >
-                            <AccordionSummary
-                              expandIcon={<ExpandMoreIcon />}
-                              aria-controls="panel1-content"
-                              id={`pasenger-accordian-${inx}`}
-                            >
-                              <div className="flex items-center gap-4">
-                                <FaCircleUser className="text-4xl" />
-                                <div>
-                                  <p className="font-bold">
-                                    Passenger {inx + 1}
-                                  </p>
-                                  <p className="text-sm text-[#1d1d1da3]">
-                                    Male seat · Seat H, Upper Deck
-                                  </p>
-                                </div>
+                            <div className="flex items-center gap-4">
+                              <Checkbox
+                                id={`passengerId-${inx}`}
+                                onChange={() =>
+                                  handleSelectTraveller(`traveller-${inx}`)
+                                }
+                              />
+                              <FaCircleUser className="text-4xl" />
+                              <div>
+                                <p className="font-bold">Passenger {inx + 1}</p>
+                                <p className="text-sm text-[#1d1d1da3]">
+                                  Male, 26y
+                                </p>
                               </div>
-                            </AccordionSummary>
-                            <AccordionDetails className="!p-0">
-                              <form>
-                                {/* Name */}
-                                <div className="mb-4 border rounded-lg">
-                                  <TextField
-                                    type="text"
-                                    // id="passenger-info-name"
-                                    label="Name*"
-                                    variant="filled"
-                                    placeholder="Enter name"
-                                    sx={{
-                                      width: "100%",
-                                      "& .MuiFilledInput-root": {
-                                        fontWeight: "700 !important",
-                                        backgroundColor: "white !important",
-                                        borderRadius: "8px !important",
-                                      },
-                                      "& .MuiInputLabel-root": {
-                                        color: "#1d1d1da3 !important",
-                                      },
-                                      "& ::before": {
-                                        display: "none",
-                                      },
-                                      "& ::after": {
-                                        display: "none",
-                                      },
-                                    }}
-                                  />
-                                </div>
+                            </div>
 
-                                {/* Age */}
-                                <div className="mb-4 border rounded-lg">
-                                  <TextField
-                                    type="text"
-                                    // id="passenger-info-age"
-                                    label="Age*"
-                                    variant="filled"
-                                    placeholder="Enter age"
-                                    sx={{
-                                      width: "100%",
-                                      "& .MuiFilledInput-root": {
-                                        fontWeight: "700 !important",
-                                        backgroundColor: "white !important",
-                                        borderRadius: "8px !important",
-                                      },
-                                      "& .MuiInputLabel-root": {
-                                        color: "#1d1d1da3 !important",
-                                      },
-                                      "& ::before": {
-                                        display: "none",
-                                      },
-                                      "& ::after": {
-                                        display: "none",
-                                      },
-                                    }}
-                                  />
-                                </div>
+                            <div className="flex items-center gap-3">
+                              <select
+                                name=""
+                                className="min-w-20 border rounded-sm p-2"
+                                onChange={(event) =>
+                                  handleSeatChange(
+                                    `traveller-${inx}`,
+                                    event.target.value
+                                  )
+                                }
+                              >
+                                <option value="1">Seat</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                              </select>
 
-                                {/* Gender */}
-                                <div className="">
-                                  <p className="text-[#1d1d1da3] mb-1">
-                                    Gender*
-                                  </p>
-                                  <div className="flex gap-x-2">
-                                    {/* Female */}
-                                    <label
-                                      htmlFor={`passengerGenderFemale-${inx}`}
-                                      className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between cursor-pointer"
-                                    >
-                                      <p className="font-semibold">Female</p>
-                                      <Radio
-                                        id={`passengerGenderFemale-${inx}`}
-                                        sx={{
-                                          color: "#173c62",
-                                          "&.Mui-checked": {
-                                            color: "#173c62",
-                                          },
-                                        }}
-                                        checked={
-                                          passengerInfo[inx].gender === "female"
-                                        }
-                                        onChange={(
-                                          event: React.ChangeEvent<HTMLInputElement>
-                                        ) => handleGenderChange(event, inx)}
-                                        value="female"
-                                        name={`passenger-gender-${inx}`}
-                                      />
-                                    </label>
+                              <div className="flex gap-1.5">
+                                <button
+                                  type="button"
+                                  className="p-2 text-primary/90 hover:text-primary underline underline-offset-2 
+                                  cursor-pointer"
+                                  onClick={openTravellerDialog}
+                                >
+                                  <FiEdit className="text-xl" />
+                                </button>
 
-                                    {/* Male */}
-                                    <label
-                                      htmlFor={`passengerGenderMale-${inx}`}
-                                      className="w-1/2 ps-4 rounded-s-full rounded-e-full border flex items-center justify-between cursor-pointer"
-                                    >
-                                      <p className="font-semibold">Male</p>
-                                      <Radio
-                                        id={`passengerGenderMale-${inx}`}
-                                        sx={{
-                                          color: "#173c62",
-                                          "&.Mui-checked": {
-                                            color: "#173c62",
-                                          },
-                                        }}
-                                        checked={
-                                          passengerInfo[inx].gender === "male"
-                                        }
-                                        onChange={(
-                                          event: React.ChangeEvent<HTMLInputElement>
-                                        ) => handleGenderChange(event, inx)}
-                                        value="male"
-                                        name={`passenger-gender-${inx}`}
-                                      />
-                                    </label>
-                                  </div>
-                                </div>
-                              </form>
-                            </AccordionDetails>
-                          </Accordion>
+                                <button
+                                  type="button"
+                                  className="p-2 text-primary hover:text-red-600 underline underline-offset-2 cursor-pointer"
+                                >
+                                  <FaRegTrashCan className="text-xl" />
+                                </button>
+                              </div>
+                            </div>
+                          </label>
                         </li>
                       ))}
                   </ul>
+
+                  {/* Passenger Info. Dialog */}
+                  <Dialog
+                    open={travellerDialog}
+                    onClose={closeTravellerDialog}
+                    sx={{
+                      "& .MuiDialog-paper": {
+                        borderRadius: "10px",
+                      },
+                    }}
+                  >
+                    {/* Header */}
+                    <div className="p-4 flex justify-between items-center">
+                      <p className="font-bold text-xl">
+                        Edit/Add Traveller Information
+                      </p>
+                      <button
+                        type="button"
+                        className="rounded-s-full rounded-e-full px-3.5 py-2.5 bg-slate-200 hover:bg-slate-300"
+                        onClick={closeTravellerDialog}
+                      >
+                        <IoMdClose className="text-2xl" />
+                      </button>
+                    </div>
+
+                    {/* Info. form */}
+                    <form className="w-lg p-4" onSubmit={closeTravellerDialog}>
+                      {/* Name */}
+                      <div className="mb-4 border rounded-lg">
+                        <TextField
+                          type="text"
+                          // id="passenger-info-name"
+                          label="Name*"
+                          variant="filled"
+                          placeholder="Enter name"
+                          sx={{
+                            width: "100%",
+                            "& .MuiFilledInput-root": {
+                              fontWeight: "700 !important",
+                              backgroundColor: "white !important",
+                              borderRadius: "8px !important",
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: "#1d1d1da3 !important",
+                            },
+                            "& ::before": {
+                              display: "none",
+                            },
+                            "& ::after": {
+                              display: "none",
+                            },
+                          }}
+                        />
+                      </div>
+
+                      {/* Date of birth */}
+                      <div className="mb-4">
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <MobileDatePicker
+                            label="Date of birth"
+                            // disabled={loading}
+                            format="DD/MM/YYYY"
+                            // name={name}
+                            // value={value ? dayjs(value) : null}
+                            // onChange={(value) => {
+                            //   if (value) {
+                            //     onChange(value.toDate());
+                            //   }
+                            // }}
+                            sx={{
+                              "&.MuiPickersTextField-root": {
+                                width: "100%",
+                              },
+                              "& .MuiPickersOutlinedInput-notchedOutline": {
+                                //profileErrors.userDob
+                                borderColor: false
+                                  ? "#e7000b !important"
+                                  : "black !important",
+                                borderWidth: "1px !important",
+                                borderRadius: "8px",
+                                fontWeight: "700 !important",
+                              },
+                              "& .MuiPickersSectionList-root": {
+                                fontWeight: "700",
+                              },
+                            }}
+                          />
+                        </LocalizationProvider>
+                      </div>
+
+                      {/* Gender */}
+                      <div className="">
+                        <p className="text-[#1d1d1da3] mb-1">Gender*</p>
+                        <div className="flex gap-x-2">
+                          <RadioGroup
+                            row
+                            defaultValue="female"
+                            name="userGender"
+                            sx={{
+                              "&.MuiFormGroup-root": {
+                                width: "100%",
+                                gap: "16px",
+                                flexWrap: "nowrap",
+                              },
+                            }}
+                          >
+                            <FormControlLabel
+                              value="female"
+                              control={
+                                <Radio
+                                  sx={{
+                                    color: "#173c62",
+                                    "&.Mui-checked": {
+                                      color: "#173c62",
+                                    },
+                                  }}
+                                />
+                              }
+                              label="Female"
+                              sx={{
+                                "&.MuiFormControlLabel-root": {
+                                  width: "50%",
+                                  margin: "0px",
+                                  border: "1px solid black",
+                                  borderRadius: "30px",
+                                },
+                              }}
+                            />
+
+                            <FormControlLabel
+                              value="male"
+                              control={
+                                <Radio
+                                  sx={{
+                                    color: "#173c62",
+                                    "&.Mui-checked": {
+                                      color: "#173c62",
+                                    },
+                                  }}
+                                />
+                              }
+                              label="Male"
+                              sx={{
+                                "&.MuiFormControlLabel-root": {
+                                  width: "50%",
+                                  margin: "0px",
+                                  border: "1px solid black",
+                                  borderRadius: "30px",
+                                },
+                              }}
+                            />
+                          </RadioGroup>
+                        </div>
+                      </div>
+
+                      {/* Save button */}
+                      <button
+                        type="submit"
+                        className="w-full sm:min-w-[340px] py-2 sm:py-3 rounded-s-full rounded-e-full text-center cursor-pointer font-semibold text-white 
+              bg-primary outline-none flex justify-center items-center gap-2 mt-7 mb-3"
+                        onClick={() => {
+                          setActiveTab((prev) => {
+                            if (prev < 2) return prev + 1;
+                            else return prev;
+                          });
+                        }}
+                      >
+                        Save
+                      </button>
+                    </form>
+                  </Dialog>
                 </div>
 
                 {/* Term and conditions */}
