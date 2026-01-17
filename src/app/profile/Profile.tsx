@@ -2218,16 +2218,29 @@ const Profile = () => {
 
                     {travellerForm !== null && (
                       <div className="pb-5 flex sm:hidden justify-center gap-5">
-                        <button
-                          type="button"
-                          disabled={loading}
-                          className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
-                          onClick={() => {
-                            setTravellerForm(null);
-                          }}
-                        >
-                          Delete
-                        </button>
+                        {travellerForm === "add" ? (
+                          <button
+                            type="button"
+                            disabled={loading}
+                            className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                            onClick={() => {
+                              setTravellerForm(null);
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={loading}
+                            className="text-sm font-semibold w-20 py-2.5 rounded-sm text-red-600 cursor-pointer hover:bg-slate-200 border border-red-600 disabled:border-slate-300 disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                            onClick={() => {
+                              setTravellerForm(null);
+                            }}
+                          >
+                            Delete
+                          </button>
+                        )}
 
                         <button
                           type="button"
@@ -2301,7 +2314,7 @@ const Profile = () => {
                   <li>
                     <div className="flex gap-3">
                       <FaMobileAlt className="text-[40px] sm:text-5xl text-primary" />
-                      <div className="flex-1 flex items-center justify-between gap-3 border-b border-b-slate-300">
+                      <div className="flex-1 flex items-center justify-between gap-7 border-b border-b-slate-300">
                         <div className="flex-1 pb-3">
                           <p className="sm:text-lg font-bold">Chrome</p>
                           <p className="text-sm">Desktop Web</p>

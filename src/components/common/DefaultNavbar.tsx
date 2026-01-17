@@ -737,7 +737,7 @@ const DefaultNavbar = ({
                   height={32}
                   className="rounded-full"
                 />
-                <span className="text-xs font-semibold">Nischay</span>
+                <span className="text-sm font-semibold">Sita</span>
               </>
             )}
           </button>
@@ -771,9 +771,15 @@ const DefaultNavbar = ({
                 <Link href="/profile" onClick={closeUserDrawer}>
                   <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                     <div className="flex items-center gap-x-3">
-                      <FaUser className="w-6 h-6" />
+                      <Image
+                        src="https://res.cloudinary.com/dcj3txipr/image/upload/v1768503255/randomUser_rty2wh.jpg"
+                        alt="User profile photo"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
                       <div className="flex flex-col">
-                        <span>Username</span>
+                        <span>Sita</span>
                         <span className="text-xs font-normal text-blue-600">
                           View your profile
                         </span>
@@ -959,7 +965,7 @@ const DefaultNavbar = ({
             <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
-                  <TbTicketOff style={{ fontSize: 30 }} />
+                  <TbTicketOff style={{ fontSize: 24 }} />
                   <span>Cancel Ticket</span>
                 </div>
 
@@ -983,7 +989,7 @@ const DefaultNavbar = ({
             <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
-                  <BsTicketDetailed style={{ fontSize: 30 }} />
+                  <BsTicketDetailed style={{ fontSize: 24 }} />
                   <span>Search Ticket</span>
                 </div>
 
@@ -995,10 +1001,12 @@ const DefaultNavbar = ({
             <Link href="#" onClick={closeUserDrawer}>
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
-                  <RiFontSize style={{ fontSize: 30 }} />
-                  <div>
+                  <RiFontSize style={{ fontSize: 24 }} />
+                  <div className="flex flex-col">
                     <span>Langauge</span>
-                    <span>English</span>
+                    <span className="text-sm font-medium text-[#1d1d1da3]">
+                      English
+                    </span>
                   </div>
                 </div>
 
@@ -1023,9 +1031,11 @@ const DefaultNavbar = ({
               <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                 <div className="flex items-center gap-x-3">
                   <LocalOfferOutlinedIcon sx={{ fontSize: 24 }} />
-                  <div>
+                  <div className="flex flex-col">
                     <span>State</span>
-                    <span>Gujarat</span>
+                    <span className="text-sm font-medium text-[#1d1d1da3]">
+                      Gujarat
+                    </span>
                   </div>
                 </div>
 
@@ -1042,6 +1052,7 @@ const DefaultNavbar = ({
                     height={24}
                     width={24}
                     alt="Booking for women"
+                    className="h-6 w-6"
                   />
                   <div className="flex flex-col">
                     <span>Booking for women</span>
