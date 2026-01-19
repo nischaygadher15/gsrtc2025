@@ -1,12 +1,28 @@
 GSRTC Front-end:
 
-Redux:
- - redux state expansion
-
-User UI (Logged in):
+User UI:
+ - Protected routes
+ - auth flow => login, sign up, session, token authentication,
+ - emails => all emails templates, otp, etc.
+ - ticket booking flow => search buses => select seats => fill passenger info => make payment
+   => confirmed ticket.
+ - live bus tracking
  - profile page - update
- - delete profile
- - profile photo upload
+ - wallet page
+ - offers page
+ - Know Gsrtc page
+ - Help page - update
+ - Cancel ticket page
+ - reschedule ticket page
+ - Language change dialog
+ - Notification page - logged user
+
+ Deployment:
+ - deploy frontend
+ - deploy backend on AWS
+ - purchase the domain then deploy
+ - make email for gsrtc-dev
+
 
 
 

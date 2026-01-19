@@ -89,7 +89,7 @@ export default function Home() {
   //Hero section carousel
   const [heroCarouselRef, heroCarouselAPI] = useEmblaCarousel(
     { loop: true, dragFree: true },
-    [Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true })]
+    [Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true })],
   );
   const heroCarouselRefScrollNext = useCallback(() => {
     if (heroCarouselAPI) heroCarouselAPI.scrollNext();
@@ -123,7 +123,7 @@ export default function Home() {
   //Top destination carousel
   const [topDestinationCarousel, topDestinationCarouselAPI] = useEmblaCarousel(
     { loop: true, dragFree: true },
-    [Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true })]
+    [Autoplay({ stopOnInteraction: false, stopOnMouseEnter: true })],
   );
   const topDestinationCarouselScrollNext = useCallback(() => {
     if (topDestinationCarouselAPI) topDestinationCarouselAPI.scrollNext();
@@ -417,7 +417,7 @@ export default function Home() {
 
   // destination place popover
   const [journeyDatePop, setJourneyDatePop] = useState<HTMLElement | null>(
-    null
+    null,
   );
 
   const openJourneyDatePopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -651,7 +651,7 @@ export default function Home() {
       console.log("resetCode: ", resetCode);
 
       dispatch(setLoginDialog(true));
-      dispatch(setResetPasswordDialog(true));
+      dispatch(setResetPasswordDialog({ status: true, resetCode }));
     }
   }, []);
 
@@ -751,7 +751,7 @@ export default function Home() {
                 <div className="relative w-full md:w-1/2">
                   <button
                     type="button"
-                    className="w-full p-2.5 md:p-3.5 border border-b-0 lg:border-b-[1px] rounded-se-2xl md:rounded-se-none rounded-ss-2xl lg:rounded-s-2xl border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
+                    className="w-full h-full p-2.5 md:p-3.5 border border-b-0 lg:border-b-[1px] rounded-se-2xl md:rounded-se-none rounded-ss-2xl lg:rounded-s-2xl border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
                     onClick={(e) => {
                       if (busSearchBox.current) {
                         const eleCoord =
@@ -809,7 +809,7 @@ export default function Home() {
                                 {...register("boardingPoint")}
                                 ref={fromPlacePopInputRef}
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   if (e.target.value) {
                                     let filtered: string[] =
@@ -817,8 +817,8 @@ export default function Home() {
                                         city
                                           .toLowerCase()
                                           .includes(
-                                            e.target.value.toLowerCase()
-                                          )
+                                            e.target.value.toLowerCase(),
+                                          ),
                                       );
                                     setFilteredBrdPoints(filtered);
                                   } else {
@@ -888,7 +888,7 @@ export default function Home() {
                               <input
                                 type="text"
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   if (e.target.value) {
                                     let filtered: string[] =
@@ -896,8 +896,8 @@ export default function Home() {
                                         city
                                           .toLowerCase()
                                           .includes(
-                                            e.target.value.toLowerCase()
-                                          )
+                                            e.target.value.toLowerCase(),
+                                          ),
                                       );
                                     console.log("filtered: ", filtered);
                                     setFilteredBrdPoints(filtered);
@@ -963,7 +963,7 @@ export default function Home() {
                 <div className="relative w-full md:w-1/2">
                   <button
                     type="button"
-                    className="w-full p-2.5 md:p-3.5 border-s md:border-s-0 border-e lg:border-e-0 border-t border-b-none lg:border-b md:rounded-se-2xl lg:rounded-se-none border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
+                    className="w-full h-full p-2.5 md:p-3.5 border-s md:border-s-0 border-e lg:border-e-0 border-t border-b-none lg:border-b md:rounded-se-2xl lg:rounded-se-none border-slate-400 flex items-center gap-x-2 cursor-pointer outline-none"
                     onClick={(e) => {
                       if (busSearchBox.current) {
                         const eleCoord =
@@ -1020,7 +1020,7 @@ export default function Home() {
                                 {...register("destinationPoint")}
                                 ref={destPlacePopInput}
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   if (e.target.value) {
                                     let filtered: string[] =
@@ -1028,8 +1028,8 @@ export default function Home() {
                                         city
                                           .toLowerCase()
                                           .includes(
-                                            e.target.value.toLowerCase()
-                                          )
+                                            e.target.value.toLowerCase(),
+                                          ),
                                       );
                                     setFilteredDestPoints(filtered);
                                   } else {
@@ -1100,7 +1100,7 @@ export default function Home() {
                               <input
                                 type="text"
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   if (e.target.value) {
                                     let filtered: string[] =
@@ -1108,8 +1108,8 @@ export default function Home() {
                                         city
                                           .toLowerCase()
                                           .includes(
-                                            e.target.value.toLowerCase()
-                                          )
+                                            e.target.value.toLowerCase(),
+                                          ),
                                       );
                                     setFilteredDestPoints(filtered);
                                   } else {
@@ -1176,7 +1176,7 @@ export default function Home() {
               <div className="relative w-full lg:w-2/5">
                 <button
                   type="button"
-                  className="w-full p-2.5 md:p-3.5 border rounded-es-2xl lg:rounded-es-none rounded-ee-2xl lg:rounded-e-2xl border-slate-400 flex justify-between gap-x-1.5 items-center cursor-pointer outline-none"
+                  className="w-full h-full p-2.5 md:p-3.5 border rounded-es-2xl lg:rounded-es-none rounded-ee-2xl lg:rounded-e-2xl border-slate-400 flex justify-between gap-x-1.5 items-center cursor-pointer outline-none"
                   onClick={(event: React.MouseEvent<HTMLElement>) => {
                     if (busSearchBox.current) {
                       const eleCoord =
@@ -1219,7 +1219,7 @@ export default function Home() {
                         e.stopPropagation();
                         setValue(
                           "journeyDate",
-                          new Date(Date.now() + 24 * 60 * 60 * 1000)
+                          new Date(Date.now() + 24 * 60 * 60 * 1000),
                         );
                       }}
                     >

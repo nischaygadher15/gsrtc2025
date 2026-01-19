@@ -11,7 +11,7 @@ import {
 // <=================== Login ===================>
 
 export const loginWithMobileAPI = (
-  mobileLoginPayload: MobileLoginPayload
+  mobileLoginPayload: MobileLoginPayload,
 ): Promise<{ status: number; message: string; access_token: string }> => {
   return API.post("/auth/login/mobile", {
     userMobileNo: mobileLoginPayload.userMobileNo,
@@ -22,7 +22,7 @@ export const loginWithMobileAPI = (
 };
 
 export const sendOtpAPI = (
-  userMobileNo: string
+  userMobileNo: string,
 ): Promise<{ message: string }> => {
   return API.post("/auth/otp/send", {
     userMobileNo,
@@ -30,7 +30,7 @@ export const sendOtpAPI = (
 };
 
 export const otpVerificationAPI = (
-  userLoginOTP: string
+  userLoginOTP: string,
 ): Promise<{ message: string }> => {
   return API.post("/auth/otp/verify", {
     userLoginOTP,
@@ -38,7 +38,7 @@ export const otpVerificationAPI = (
 };
 
 export const loginWithEmailAPI = (
-  data: EmailLoginPayloadType
+  data: EmailLoginPayloadType,
 ): Promise<{ status: number; message: string; access_token: string }> => {
   return API.post("/auth/login/email", {
     userEmail: data.userEmail,
@@ -50,7 +50,7 @@ export const loginWithEmailAPI = (
 };
 
 export const loginWithGoogleAPI = (
-  googleSignupPayload: GoogleSignupPayload
+  googleSignupPayload: GoogleSignupPayload,
 ): Promise<{ status: number; message: string; access_token: string }> => {
   return API.post(
     "auth/login/google",
@@ -63,7 +63,7 @@ export const loginWithGoogleAPI = (
       headers: {
         Authorization: googleSignupPayload.code,
       },
-    }
+    },
   );
 };
 
@@ -76,13 +76,13 @@ export const logoutAPI = (): Promise<{ status: number; message: string }> => {
 // <=================== Sign up ===================>
 
 export const signUpWithEmailAPI = (
-  emailSignupPayload: EmailSignupPayload
+  emailSignupPayload: EmailSignupPayload,
 ): Promise<{ status: number; message: string }> => {
   return API.post("auth/signup/email", emailSignupPayload);
 };
 
 export const signUpWithGoogleAPI = (
-  googleSignupPayload: GoogleSignupPayload
+  googleSignupPayload: GoogleSignupPayload,
 ): Promise<{ status: number; message: string }> => {
   return API.post(
     "auth/signup/google",
@@ -95,14 +95,14 @@ export const signUpWithGoogleAPI = (
       headers: {
         Authorization: googleSignupPayload.code,
       },
-    }
+    },
   );
 };
 
 // <=================== Forgot/Reset Password ===================>
 
 export const forgotPasswordAPI = (
-  data: ForgotPasswordPayload
+  data: ForgotPasswordPayload,
 ): Promise<{ status: number; message: string }> => {
   return API.post("/auth/forgot/password", {
     userEmail: data.userEmail,
@@ -113,11 +113,11 @@ export const forgotPasswordAPI = (
 };
 
 export const resetPasswordAPI = (
-  data: ResetPasswordPayload
+  data: ResetPasswordPayload,
 ): Promise<{ status: number; message: string }> => {
   return API.post("/auth/reset/password", {
-    userPass: data.userPass,
-    userConfirmPass: data.userConfirmPass,
+    password: data.userPass,
+    reset_code: data.resetCode,
     device_ip: data.device_ip,
     device_lat: data.device_lat,
     device_long: data.device_long,

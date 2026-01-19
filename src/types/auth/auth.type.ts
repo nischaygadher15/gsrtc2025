@@ -41,7 +41,7 @@ export interface ForgotPasswordPayload {
 
 export interface ResetPasswordPayload {
   userPass: string;
-  userConfirmPass: string;
+  resetCode: string;
   device_ip: string | null;
   device_lat: number | null;
   device_long: number | null;

@@ -1,5 +1,5 @@
 import axios from "axios";
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import getDeviceId from "./getDeviceId";
 
 export const GetDeviceInfo = async (): Promise<{
   device_id: string;
@@ -8,19 +8,11 @@ export const GetDeviceInfo = async (): Promise<{
   device_long: number | null;
 }> => {
   // Device id no.
-  let device_id: string | null = localStorage.getItem("gsrtc_device_id");
+
+  let device_id: string | null = await getDeviceId();
   let device_ip: string | null = null,
     device_lat: number | null = null,
     device_long: number | null = null;
-
-  if (!device_id) {
-    // const new_device_id = crypto.randomUUID();
-    const fpAgent = FingerprintJS.load();
-    const fp = await fpAgent;
-    const newDeviceId = await fp.get();
-    localStorage.setItem("gsrtc_device_id", newDeviceId.visitorId);
-    device_id = newDeviceId.visitorId;
-  }
 
   // console.log("device_id: ", device_id);
 
@@ -36,19 +28,12 @@ export const GetDeviceInfo = async (): Promise<{
           });
         },
         resolve,
-        { timeout: 10000 }
+        { timeout: 10000 },
       );
     } else {
       resolve(null);
     }
   });
-
-  // console.log("deviceNavLoc: ", deviceNavLoc);
-
-  // console.log({
-  //   device_lat,
-  //   device_long,
-  // });
 
   //Device IP and Location by third party api
   const deviceInfo = await axios.get("https://ipinfo.io/json");

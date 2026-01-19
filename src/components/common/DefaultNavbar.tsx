@@ -88,13 +88,13 @@ const DefaultNavbar = ({
   const currentLocation = usePathname();
   const dispatch = useDispatch<AppDispatch>();
   const loginDialog = useSelector(
-    (state: RootState) => state.dialog.loginDialog
+    (state: RootState) => state.dialog.loginDialog,
   );
   const signUpDialog = useSelector(
-    (state: RootState) => state.dialog.signUpDialog
+    (state: RootState) => state.dialog.signUpDialog,
   );
   const resetPasswordDialog = useSelector(
-    (state: RootState) => state.dialog.resetPassword
+    (state: RootState) => state.dialog.resetPassword,
   );
   const winSize = useWindowSize();
   const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
@@ -102,7 +102,7 @@ const DefaultNavbar = ({
 
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");
   const [lostPassword, setLostPassword] = useState<"forgot" | "reset" | null>(
-    null
+    null,
   );
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -115,7 +115,7 @@ const DefaultNavbar = ({
   const [gsrtcLoginDialog, setGsrtcLoginDialog] = useState<boolean>(false);
   const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState<boolean>(false);
   const sessionId = useSelector(
-    (state: RootState) => state.session?.access_token
+    (state: RootState) => state.session?.access_token,
   );
   let fpAgent: any;
 
@@ -214,6 +214,8 @@ const DefaultNavbar = ({
 
       //Redux
       dispatch(setLoginDialog(false));
+
+      closeForgotPassword();
     }
   };
 
@@ -548,6 +550,12 @@ const DefaultNavbar = ({
     },
   });
 
+  const closeForgotPassword = () => {
+    setLostPassword(null);
+    setLoginWith("email");
+    forgotPassReset();
+  };
+
   const onForgotPassword = async (data: any) => {
     console.log("Data: ", data);
     setLoading(true);
@@ -596,16 +604,22 @@ const DefaultNavbar = ({
   });
 
   const onResetPassword = async (data: any) => {
+    if (!resetPasswordDialog.resetCode) {
+      toast.error("Unauthorized request!");
+      return;
+    }
+
     console.log("Data: ", data);
     setLoading(true);
 
     try {
       const deviceInfo = await GetDeviceInfo();
+
       console.log("deviceInfo: ", deviceInfo);
 
       const resetPasswordResp = await resetPasswordAPI({
         userPass: data.userPass,
-        userConfirmPass: data.userConfirmPass,
+        resetCode: resetPasswordDialog.resetCode,
         device_ip: deviceInfo.device_ip,
         device_lat: deviceInfo.device_lat,
         device_long: deviceInfo.device_long,
@@ -1132,7 +1146,7 @@ const DefaultNavbar = ({
           </div>
 
           {/* Forms */}
-          {!lostPassword && !resetPasswordDialog && (
+          {!lostPassword && !resetPasswordDialog.status && (
             <div className="px-4 flex-1">
               {loginWith === "mobile" ? (
                 <>
@@ -1752,11 +1766,7 @@ const DefaultNavbar = ({
                 <button
                   type="button"
                   className="text-sm text-center underline underline-offset-1 cursor-pointer font-semibold text-blue-500 p-1.5 "
-                  onClick={() => {
-                    setLostPassword(null);
-                    setLoginWith("mobile");
-                    forgotPassReset();
-                  }}
+                  onClick={closeForgotPassword}
                 >
                   Go to login
                 </button>
@@ -1765,7 +1775,7 @@ const DefaultNavbar = ({
           )}
 
           {lostPassword === "reset" ||
-            (resetPasswordDialog && (
+            (resetPasswordDialog.status && (
               <div className="px-4 flex-1">
                 <p className="text-2xl font-semibold mb-7">Password reset</p>
 

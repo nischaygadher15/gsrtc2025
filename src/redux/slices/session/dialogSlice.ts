@@ -3,7 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   loginDialog: false,
   signUpDialog: false,
-  resetPassword: false,
+  resetPassword: {
+    status: false,
+    resetCode: null,
+  },
 };
 
 const dialogSlice = createSlice({
