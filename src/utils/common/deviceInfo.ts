@@ -1,5 +1,8 @@
+"use client";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
 import axios from "axios";
-import getDeviceId from "./getDeviceId";
+import { getDeviceId, setDeviceId } from "./getDeviceId";
 
 export const GetDeviceInfo = async (): Promise<{
   device_id: string;
@@ -8,8 +11,17 @@ export const GetDeviceInfo = async (): Promise<{
   device_long: number | null;
 }> => {
   // Device id no.
-
   let device_id: string | null = await getDeviceId();
+
+  if (!device_id) {
+    const fpAgent = FingerprintJS.load();
+    const fp = await fpAgent;
+    const newDeviceId = await fp.get();
+    setDeviceId(newDeviceId.visitorId);
+    device_id = newDeviceId.visitorId;
+    console.log("device_id: ", newDeviceId.visitorId);
+  }
+
   let device_ip: string | null = null,
     device_lat: number | null = null,
     device_long: number | null = null;
@@ -47,12 +59,6 @@ export const GetDeviceInfo = async (): Promise<{
       device_long = parseFloat(deviceInfo.data.loc.split(",")[1]);
     }
   }
-
-  // console.log({
-  //   device_ip,
-  //   device_lat,
-  //   device_long,
-  // });
 
   return {
     device_id,
