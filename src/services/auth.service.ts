@@ -7,32 +7,33 @@ import {
   MobileLoginPayload,
   ResetPasswordPayload,
 } from "../types/auth/auth.type";
+import { UserLoginOTP } from "./auth.type";
 
 // <=================== Login ===================>
 
 export const loginWithMobileAPI = (
   mobileLoginPayload: MobileLoginPayload,
-): Promise<{ status: number; message: string; access_token: string }> => {
+): Promise<{ status: number; message: string; opt_id: string }> => {
   return API.post("/auth/login/mobile", {
-    userMobileNo: mobileLoginPayload.userMobileNo,
+    user_mobile_no: mobileLoginPayload.userMobileNo,
     device_ip: mobileLoginPayload.device_ip,
     device_lat: mobileLoginPayload.device_lat,
     device_long: mobileLoginPayload.device_long,
   });
 };
 
-export const sendOtpAPI = (
+export const mobileLoginResendOtpAPI = (
   userMobileNo: string,
 ): Promise<{ message: string }> => {
-  return API.post("/auth/otp/send", {
+  return API.post("/auth/login/mobile/otp/resend", {
     userMobileNo,
   });
 };
 
-export const otpVerificationAPI = (
-  userLoginOTP: string,
-): Promise<{ message: string }> => {
-  return API.post("/auth/otp/verify", {
+export const onMobileOtpLoginAPI = (
+  userLoginOTP: UserLoginOTP,
+): Promise<{ status: number; message: string; access_token: string }> => {
+  return API.post("/auth/login/mobile/otp/verify", {
     userLoginOTP,
   });
 };

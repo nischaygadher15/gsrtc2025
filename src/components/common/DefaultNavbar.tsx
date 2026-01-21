@@ -57,9 +57,9 @@ import {
   loginWithGoogleAPI,
   loginWithMobileAPI,
   logoutAPI,
-  otpVerificationAPI,
+  mobileLoginResendOtpAPI,
+  onMobileOtpLoginAPI,
   resetPasswordAPI,
-  sendOtpAPI,
   signUpWithEmailAPI,
   signUpWithGoogleAPI,
 } from "@/services/auth.service";
@@ -109,7 +109,10 @@ const DefaultNavbar = ({
   const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
   const [otpResending, setOtpResending] = useState<boolean>(false);
-  const [optSent, setOptSent] = useState<boolean>(false);
+  const [optSent, setOptSent] = useState<{ status: boolean; otp_id: string }>({
+    status: false,
+    otp_id: "",
+  });
   const [otpCounting, setOtpCounting] = useState<boolean>(false);
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
   const [gsrtcLoginDialog, setGsrtcLoginDialog] = useState<boolean>(false);
@@ -208,7 +211,10 @@ const DefaultNavbar = ({
       setLoading(false);
       setOtpVerifying(false);
       setOtpResending(false);
-      setOptSent(false);
+      setOptSent({
+        status: false,
+        otp_id: "",
+      });
       setOtpExpired(false);
       setOtpCounting(false);
 
@@ -244,8 +250,10 @@ const DefaultNavbar = ({
       console.log("mobileLoginRes: ", mobileLoginRes);
 
       if (mobileLoginRes.status === 200) {
-        setOptSent(true);
-
+        setOptSent({
+          status: true,
+          otp_id: mobileLoginRes.opt_id,
+        });
         toast.success(mobileLoginRes.message);
       } else {
         toast.error(mobileLoginRes.message);
@@ -261,18 +269,28 @@ const DefaultNavbar = ({
     setOtpVerifying(true);
     console.log("OTP: ", data);
     try {
-      const otpVerifyRes = await otpVerificationAPI(data.userLoginOTP);
+      // Create or Get device id
+      const deviceInfo = await GetDeviceInfo();
+      console.log("deviceInfo: ", deviceInfo);
 
-      if (otpVerifyRes.message === "success") {
-        dispatch(setSession("1234567890"));
+      const otpVerifyRes = await onMobileOtpLoginAPI({
+        otp: data.userLoginOTP,
+        otp_id: optSent.otp_id,
+        device_ip: deviceInfo.device_ip,
+        device_lat: deviceInfo.device_lat,
+        device_long: deviceInfo.device_long,
+      });
+
+      if (otpVerifyRes.status === 200) {
+        dispatch(setSession(otpVerifyRes.access_token));
         closeGsrctLoginDialog();
         closeUserDrawer();
         toast.success("OTP verified successfully.");
-        setOtpVerifying(false);
       }
     } catch (error) {
       console.log("error", error);
-
+      setOtpVerifying(false);
+    } finally {
       setOtpVerifying(false);
     }
   };
@@ -286,7 +304,7 @@ const DefaultNavbar = ({
 
     try {
       setOtpResending(true);
-      const resendOtpRes = await sendOtpAPI(userMobileNo);
+      const resendOtpRes = await mobileLoginResendOtpAPI(userMobileNo);
 
       console.log("resendOtpRes: ", resendOtpRes);
 
@@ -302,7 +320,7 @@ const DefaultNavbar = ({
   };
 
   useEffect(() => {
-    if (optSent) {
+    if (optSent.status) {
       setOtpCounting(true);
     } else {
       setOtpCounting(false);
@@ -1153,7 +1171,9 @@ const DefaultNavbar = ({
                   {/* OPT Verification form */}
                   <form
                     className={`${
-                      optSent ? "" : "w-0 h-0 overflow-hidden -z-10 opacity-0"
+                      optSent.status
+                        ? ""
+                        : "w-0 h-0 overflow-hidden -z-10 opacity-0"
                     }`}
                     onSubmit={otpSubmit(onOtpSubmit)}
                   >
@@ -1174,7 +1194,10 @@ const DefaultNavbar = ({
                         type="button"
                         className="px-3 py-1.5 rounded-s-full rounded-e-full font-semibold text-sm underline underline-offset-1 hover:bg-slate-200"
                         onClick={() => {
-                          setOptSent(false);
+                          setOptSent({
+                            status: false,
+                            otp_id: "",
+                          });
                           otpReset();
                           setOtpCounting(false);
                         }}
@@ -1277,7 +1300,9 @@ const DefaultNavbar = ({
                   <form
                     onSubmit={mobileSubmit(onMobileLogin)}
                     className={`${
-                      optSent ? "w-0 h-0 overflow-hidden -z-10 opacity-0" : ""
+                      optSent.status
+                        ? "w-0 h-0 overflow-hidden -z-10 opacity-0"
+                        : ""
                     }`}
                   >
                     {/* Mobile no. */}
