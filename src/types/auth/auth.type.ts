@@ -14,12 +14,13 @@ export interface MobileLoginPayload {
 }
 
 export interface EmailSignupPayload {
-  firstName: string;
-  lastName: string;
-  userDob: Date;
-  userMobileNo: string;
-  userEmail: string;
-  userPass: string;
+  first_name: string;
+  last_name: string;
+  user_dob: Date;
+  gender: string;
+  user_mobile_no: string;
+  user_email: string;
+  user_pass: string;
   device_ip: string | null;
   device_lat: number | null;
   device_long: number | null;

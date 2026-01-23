@@ -32,6 +32,7 @@ export type LoginByEmailSchemaType = z.infer<typeof LoginByEmailSchema>;
 // Sign up schema
 const MAX_AGE_DATE = new Date();
 MAX_AGE_DATE.setFullYear(MAX_AGE_DATE.getFullYear() - 14);
+const GENDER = ["male", "female", "other"] as const;
 
 export const EmailSignUpSchema = z.object({
   firstName: z
@@ -41,7 +42,7 @@ export const EmailSignUpSchema = z.object({
     .max(20, "First name mst have maximum 20 characters")
     .refine(
       (value) => /^[a-zA-Z]+$/.test(value),
-      "First name must have characters only"
+      "First name must have characters only",
     ),
   lastName: z
     .string("Last name is required.")
@@ -50,16 +51,17 @@ export const EmailSignUpSchema = z.object({
     .max(20, "Last name mst have maximum 20 characters")
     .refine(
       (value) => /^[a-zA-Z]+$/.test(value),
-      "Last name must have characters only"
+      "Last name must have characters only",
     ),
   userDob: z
     .date("Date of birth is required")
     .max(MAX_AGE_DATE, "User must be 14 years old."),
+  gender: z.enum(GENDER, "Gender is required"),
   userMobileNo: z
     .string("Mobile no. is required.")
     .refine(
       (value) => /^[6-9]\d{9}$/.test(value),
-      "Invalid indian mobile number."
+      "Invalid indian mobile number.",
     ),
   userEmail: z.string("Email is required.").email("Invalid email format"),
   userPass: z
@@ -68,15 +70,15 @@ export const EmailSignUpSchema = z.object({
     .refine((value) => /\d/.test(value), "Password must have 1 digit")
     .refine(
       (value) => /[a-z]/.test(value),
-      "Password must have 1 small alphabet"
+      "Password must have 1 small alphabet",
     )
     .refine(
       (value) => /[A-Z]/.test(value),
-      "Password must have 1 capital alphabet"
+      "Password must have 1 capital alphabet",
     )
     .refine(
       (value) => /[~`!@#$%\^&*\(\)_\-+=\{\}\[\]\|\:;\"\'<,>\.?\/]/.test(value),
-      "Password must have 1 special character"
+      "Password must have 1 special character",
     ),
 });
 

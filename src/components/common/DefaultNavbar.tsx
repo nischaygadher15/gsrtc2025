@@ -1,6 +1,14 @@
 "use client";
 import navbarLogo from "@/assets/images/Logos/gsrtcLogo2.svg";
-import { CircularProgress, Drawer, TextField } from "@mui/material";
+import {
+  CircularProgress,
+  Drawer,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -75,6 +83,7 @@ import {
   setSignUpDialog,
 } from "@/redux/slices/session/dialogSlice";
 import { GetDeviceInfo } from "@/utils/common/deviceInfo";
+import { AxiosError } from "axios";
 
 const DefaultNavbar = ({
   accDrawer,
@@ -258,8 +267,9 @@ const DefaultNavbar = ({
       } else {
         toast.error(mobileLoginRes.message);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setLoading(false);
     }
@@ -287,8 +297,9 @@ const DefaultNavbar = ({
         closeUserDrawer();
         toast.success("OTP verified successfully.");
       }
-    } catch (error) {
-      console.log("error", error);
+    } catch (error: any) {
+      console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
       setOtpVerifying(false);
     } finally {
       setOtpVerifying(false);
@@ -312,8 +323,9 @@ const DefaultNavbar = ({
         setOtpCounting(true);
         toast.success(`OTP sent successfully on ${userMobileNo}.`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setOtpResending(false);
     }
@@ -357,10 +369,9 @@ const DefaultNavbar = ({
       } else {
         toast.error(emailLoginRes.message);
       }
-    } catch (error: unknown) {
-      let err = error as { message: string };
-      console.log("error: ", error);
-      toast.error(err.message);
+    } catch (error: any) {
+      console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setLoading(false);
     }
@@ -384,10 +395,9 @@ const DefaultNavbar = ({
       } else {
         toast.error(logoutRes.message);
       }
-    } catch (error: unknown) {
-      let err = error as { message: string };
-      console.log("error: ", error);
-      toast.error(err.message);
+    } catch (error: any) {
+      console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setLoading(false);
     }
@@ -407,6 +417,7 @@ const DefaultNavbar = ({
       firstName: "sita",
       lastName: "ram",
       userDob: new Date("2000-01-01"),
+      gender: "male",
       userMobileNo: "8141409448",
       userEmail: `ram${randomUser}@gmail.com`,
       userPass: `Ram@@${randomUser}`,
@@ -438,12 +449,13 @@ const DefaultNavbar = ({
       console.log("deviceInfo: ", deviceInfo);
 
       const signUpRes = await signUpWithEmailAPI({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        userDob: data.userDob,
-        userMobileNo: data.userMobileNo,
-        userEmail: data.userEmail,
-        userPass: data.userPass,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        user_dob: data.userDob,
+        gender: data.gender,
+        user_mobile_no: data.userMobileNo,
+        user_email: data.userEmail,
+        user_pass: data.userPass,
         device_ip: deviceInfo.device_ip,
         device_lat: deviceInfo.device_lat,
         device_long: deviceInfo.device_long,
@@ -451,16 +463,15 @@ const DefaultNavbar = ({
 
       console.log("signUpRes: ", signUpRes);
 
-      if (signUpRes.status) {
+      if (signUpRes && signUpRes.status === 201) {
         toast.success(signUpRes.message);
         dispatch(setSession("1234567890"));
         closeGsrtcSignUpDialog();
         closeUserDrawer();
-      } else {
-        toast.error(signUpRes.message);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setLoading(false);
     }
@@ -498,8 +509,11 @@ const DefaultNavbar = ({
         } else {
           toast.error(googleLoginRes.message);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log("error:", error);
+        toast.error(
+          error.response ? error.response.data.message : error.message,
+        );
       } finally {
         setLoadingGoogle(false);
       }
@@ -543,8 +557,11 @@ const DefaultNavbar = ({
         } else {
           toast.error(googleSignupRes.message);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log("error:", error);
+        toast.error(
+          error.response ? error.response.data.message : error.message,
+        );
       } finally {
         setLoadingGoogle(false);
       }
@@ -598,10 +615,9 @@ const DefaultNavbar = ({
       } else {
         toast.error(forgotPasswordResp.message);
       }
-    } catch (error: unknown) {
-      console.log("Error: ", error);
-      const err = error as { message: string };
-      toast.error(err.message);
+    } catch (error: any) {
+      console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setLoading(false);
     }
@@ -650,10 +666,9 @@ const DefaultNavbar = ({
       } else {
         toast.error(resetPasswordResp.message);
       }
-    } catch (error: unknown) {
-      console.log("Error: ", error);
-      const err = error as { message: string };
-      toast.error(err.message);
+    } catch (error: any) {
+      console.log("error:", error);
+      toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setLoading(false);
     }
@@ -853,7 +868,7 @@ const DefaultNavbar = ({
                   <p className="font-medium">Don&apos;t have an account?</p>
                   <button
                     type="button"
-                    className="text-sm underline font-bold hover:bg-slate-200 py-2 px-3 rounded-s-full rounded-e-full"
+                    className="text-sm underline font-bold hover:bg-slate-200 py-2 px-3 rounded-s-full rounded-e-full cursor-pointer"
                     onClick={openGsrctSignUpDialog}
                   >
                     Sign up
@@ -1610,7 +1625,7 @@ const DefaultNavbar = ({
                 </div>
               </div>
 
-              {!optSent && (
+              {!optSent.status && (
                 <>
                   <p className="flex justify-center items-center gap-2 py-5">
                     <span className="w-10 h-px bg-slate-200"></span>
@@ -2183,6 +2198,43 @@ const DefaultNavbar = ({
 
                 <p className="my-1 text-xs text-red-600 min-h-5">
                   {signUpErrors.userDob ? signUpErrors.userDob.message : ""}
+                </p>
+              </div>
+
+              {/* Gender */}
+              <div className="w-full">
+                <Controller
+                  name="gender"
+                  control={signUpControl}
+                  render={({ field: { onChange, name, value } }) => (
+                    <div>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Age
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={value}
+                          label="Gender"
+                          onChange={onChange}
+                          sx={{
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              border: "1px solid black !important",
+                            },
+                          }}
+                        >
+                          <MenuItem value={"male"}>Male</MenuItem>
+                          <MenuItem value={"female"}>Female</MenuItem>
+                          <MenuItem value={"other"}>Other</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                  )}
+                />
+
+                <p className="my-1 text-xs text-red-600 min-h-5">
+                  {signUpErrors.gender ? signUpErrors.gender.message : ""}
                 </p>
               </div>
 
