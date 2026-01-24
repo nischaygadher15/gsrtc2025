@@ -125,8 +125,8 @@ const DefaultNavbar = ({
   const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
   const [otpResending, setOtpResending] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<{ status: boolean; otp_id: string }>({
-    status: false,
-    otp_id: "",
+    status: true,
+    otp_id: "d7dcee02-d1cc-4207-b31a-e1724593a8c7",
   });
   const [multipleUsers, setMultipleUsers] = useState<{
     status: boolean;
@@ -233,9 +233,10 @@ const DefaultNavbar = ({
       setGsrtcLoginDialog(false);
       setCaptchaToken("");
       setIAmNotRobot(false);
-      setLoginWith("mobile");
       mobileReset();
       emailReset();
+      closeForgotPassword();
+      setLoginWith("mobile");
 
       // OPT Form
       otpReset();
@@ -255,8 +256,6 @@ const DefaultNavbar = ({
 
       //Redux
       dispatch(setLoginDialog(false));
-
-      closeForgotPassword();
     }
   };
 
@@ -353,11 +352,11 @@ const DefaultNavbar = ({
         device_long: deviceInfo.device_long,
       });
 
-      if (otpVerifyRes.status === 200) {
+      if (otpVerifyRes && otpVerifyRes.status === 200) {
         dispatch(setSession(otpVerifyRes.access_token));
         closeGsrctLoginDialog();
         closeUserDrawer();
-        toast.success("OTP verified successfully.");
+        toast.success(otpVerifyRes.message);
       }
     } catch (error: any) {
       console.log("error:", error);
@@ -1294,7 +1293,7 @@ const DefaultNavbar = ({
                               value={value}
                               onChange={onChange}
                               numInputs={6}
-                              containerStyle="flex gap-2"
+                              containerStyle="flex justify-center gap-2"
                               inputStyle="min-w-8 sm:min-w-12 h-10 sm:h-14 rounded-sm sm:rounded-lg border focus:border-2 text-xl sm:text-2xl font-semibold focus:outline-4 outline-primary/20"
                               renderInput={(props) => <input {...props} />}
                             />
@@ -1333,12 +1332,35 @@ const DefaultNavbar = ({
                       )}
                     </button>
 
-                    <div className="py-5 flex items-center gap-2">
+                    <div className="pt-5 flex items-center gap-2">
                       <p className="text-sm font-medium">
-                        Didn't receive the OTP? Retry in
+                        Didn't receive the OTP?
                       </p>
+                      <button
+                        type="button"
+                        disabled={otpResending ? true : false}
+                        className={`px-2.5 py-1.5 rounded-s-full rounded-e-full  underline-offset-1 hover:bg-slate-200 text-sm underline font-semibold text-primary cursor-pointer disabled:cursor-default
+                     disabled:bg-gray-200 disabled:text-gray-500`}
+                        onClick={handleResendOtp}
+                      >
+                        {otpResending ? (
+                          <>
+                            <span>Resending...</span>
+                            <CircularProgress
+                              size={16}
+                              sx={{
+                                "&.MuiCircularProgress-root": {
+                                  color: "#6a7282",
+                                },
+                              }}
+                            />
+                          </>
+                        ) : (
+                          "Resend"
+                        )}
+                      </button>
                       <LocalTimer
-                        time={15}
+                        time={60}
                         isCounting={otpCounting}
                         setIsCounting={setOtpCounting}
                         expiry={setOtpExpired}
@@ -1346,7 +1368,7 @@ const DefaultNavbar = ({
                     </div>
 
                     {/* Resend button */}
-                    {otpExpired && (
+                    {/* {otpExpired && (
                       <button
                         type="button"
                         disabled={otpResending ? true : false}
@@ -1370,7 +1392,7 @@ const DefaultNavbar = ({
                           "Resend OTP"
                         )}
                       </button>
-                    )}
+                    )} */}
                   </form>
 
                   {/* Mobile login form */}

@@ -37,9 +37,7 @@ export const mobileLoginResendOtpAPI = (
 export const onMobileOtpLoginAPI = (
   userLoginOTP: UserLoginOTP,
 ): Promise<{ status: number; message: string; access_token: string }> => {
-  return API.post("/auth/login/mobile/otp/verify", {
-    userLoginOTP,
-  });
+  return API.post("/auth/login/mobile/otp/verify", userLoginOTP);
 };
 
 export const loginWithEmailAPI = (

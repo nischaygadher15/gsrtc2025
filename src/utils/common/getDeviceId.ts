@@ -4,13 +4,13 @@ import { cookies } from "next/headers";
 
 export const getDeviceId = async () => {
   const cookieStore = await cookies();
-  let get_device_id = cookieStore.get("gsrtc_device_id")?.value;
+  let get_device_id = cookieStore.get("GSRTC_DEVICE_ID")?.value;
   return get_device_id ?? null;
 };
 
 export const setDeviceId = async (id: string) => {
   const cookieStore = await cookies();
-  cookieStore.set("gsrtc_device_id", id, {
+  cookieStore.set("GSRTC_DEVICE_ID", id, {
     httpOnly: true,
     secure: process.env.NEXT_PUBLIC_APP_ENV === "production",
     sameSite:
