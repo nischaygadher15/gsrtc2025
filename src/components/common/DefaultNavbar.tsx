@@ -38,7 +38,12 @@ import ReCAPTCHA from "react-google-recaptcha";
 import googleIcon from "@/assets/images/google-sing-In.svg";
 import { IoListOutline } from "react-icons/io5";
 import { MdOutlineEmail } from "react-icons/md";
-import { FaMobileAlt, FaUser } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaMobileAlt,
+  FaUser,
+  FaUserCircle,
+} from "react-icons/fa";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { BiHelpCircle, BiLogOut } from "react-icons/bi";
@@ -83,7 +88,8 @@ import {
   setSignUpDialog,
 } from "@/redux/slices/session/dialogSlice";
 import { GetDeviceInfo } from "@/utils/common/deviceInfo";
-import { AxiosError } from "axios";
+import { UserDataType } from "@/types/user/user.type";
+import { MobileLoginPayloadType } from "@/types/auth/auth.type";
 
 const DefaultNavbar = ({
   accDrawer,
@@ -121,6 +127,19 @@ const DefaultNavbar = ({
   const [optSent, setOptSent] = useState<{ status: boolean; otp_id: string }>({
     status: false,
     otp_id: "",
+  });
+  const [multipleUsers, setMultipleUsers] = useState<{
+    status: boolean;
+    users:
+      | Omit<
+          UserDataType,
+          "user_dob" | "gender" | "user_mobile_no" | "user_pass"
+        >[]
+      | null;
+    selectedUser?: string;
+  }>({
+    status: false,
+    users: null,
   });
   const [otpCounting, setOtpCounting] = useState<boolean>(false);
   const [otpExpired, setOtpExpired] = useState<boolean>(false);
@@ -167,6 +186,7 @@ const DefaultNavbar = ({
     handleSubmit: mobileSubmit,
     reset: mobileReset,
     getValues: mobileGetValues,
+    watch: mobileWatch,
     control: mobileControl,
     formState: { errors: mobileErrors },
   } = useForm<LoginByMobileSchemaType>({
@@ -175,6 +195,8 @@ const DefaultNavbar = ({
       userMobileNo: "8141409448",
     },
   });
+
+  const user_mob_no = mobileWatch("userMobileNo");
 
   const {
     handleSubmit: otpSubmit,
@@ -226,6 +248,10 @@ const DefaultNavbar = ({
       });
       setOtpExpired(false);
       setOtpCounting(false);
+      setMultipleUsers({
+        status: false,
+        users: null,
+      });
 
       //Redux
       dispatch(setLoginDialog(false));
@@ -240,7 +266,11 @@ const DefaultNavbar = ({
     if (captchaToken) setIAmNotRobot(true);
   }, [loginWith]);
 
-  const onMobileLogin = async (data: LoginByMobileSchemaType) => {
+  const sendMobLoginOtp = async (
+    data?: LoginByMobileSchemaType,
+    user_id?: string,
+  ) => {
+    let mobileLoginPayload: MobileLoginPayloadType | null = null;
     try {
       setLoading(true);
 
@@ -249,23 +279,52 @@ const DefaultNavbar = ({
 
       console.log("deviceInfo: ", deviceInfo);
 
-      const mobileLoginRes = await loginWithMobileAPI({
-        userMobileNo: data.userMobileNo,
-        device_ip: deviceInfo.device_ip,
-        device_lat: deviceInfo.device_lat,
-        device_long: deviceInfo.device_long,
-      });
+      if (!multipleUsers.status && data) {
+        mobileLoginPayload = {
+          user_mobile_no: data.userMobileNo,
+          device_ip: deviceInfo.device_ip,
+          device_lat: deviceInfo.device_lat,
+          device_long: deviceInfo.device_long,
+        };
+      }
+
+      if (multipleUsers.status && user_id) {
+        mobileLoginPayload = {
+          user_id: user_id,
+          device_ip: deviceInfo.device_ip,
+          device_lat: deviceInfo.device_lat,
+          device_long: deviceInfo.device_long,
+        };
+      }
+
+      if (!mobileLoginPayload) {
+        throw new Error("mobileLoginPayload do not found!");
+      }
+
+      const mobileLoginRes = await loginWithMobileAPI(mobileLoginPayload);
 
       console.log("mobileLoginRes: ", mobileLoginRes);
 
-      if (mobileLoginRes.status === 200) {
+      if (mobileLoginRes.status === 200 && mobileLoginRes.opt_id) {
         setOptSent({
           status: true,
           otp_id: mobileLoginRes.opt_id,
         });
+
+        if (multipleUsers.status) {
+          setMultipleUsers({
+            status: false,
+            users: null,
+          });
+        }
         toast.success(mobileLoginRes.message);
-      } else {
-        toast.error(mobileLoginRes.message);
+      }
+
+      if (mobileLoginRes.status === 400 && mobileLoginRes.users) {
+        setMultipleUsers({
+          status: true,
+          users: mobileLoginRes.users,
+        });
       }
     } catch (error: any) {
       console.log("error:", error);
@@ -274,6 +333,9 @@ const DefaultNavbar = ({
       setLoading(false);
     }
   };
+
+  const onMobileLogin = async (data: LoginByMobileSchemaType) =>
+    sendMobLoginOtp(data);
 
   const onOtpSubmit = async (data: any) => {
     setOtpVerifying(true);
@@ -1181,7 +1243,7 @@ const DefaultNavbar = ({
           {/* Forms */}
           {!lostPassword && !resetPasswordDialog.status && (
             <div className="px-4 flex-1">
-              {loginWith === "mobile" ? (
+              {loginWith === "mobile" && !multipleUsers.status && (
                 <>
                   {/* OPT Verification form */}
                   <form
@@ -1433,7 +1495,78 @@ const DefaultNavbar = ({
                     </div>
                   </form>
                 </>
-              ) : (
+              )}
+
+              {loginWith === "mobile" && multipleUsers.status && (
+                <div className="">
+                  <p>
+                    Please select your account registered with mobile no:
+                    <b className="mx-1">{user_mob_no}</b>
+                    to continue.
+                  </p>
+                  <ul className="p-7 flex flex-col gap-y-1.5">
+                    {multipleUsers.users &&
+                      multipleUsers.users.map((usr, inx) => (
+                        <li key={`gsrtc-users-${inx}`}>
+                          <button
+                            type="button"
+                            disabled={loading}
+                            className="w-full flex justify-between items-center gap-x-4 px-4 py-2.5 hover:bg-slate-200 cursor-pointer disabled:text-gray-500 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                            onClick={() => {
+                              setMultipleUsers((prev) => {
+                                return { ...prev, selectedUser: usr.user_id };
+                              });
+                              sendMobLoginOtp(undefined, usr.user_id);
+                            }}
+                          >
+                            {/* User photo */}
+                            <div>
+                              {usr.user_photo ? (
+                                <Image
+                                  src={usr.user_photo}
+                                  alt="User photo"
+                                  width={40}
+                                  height={40}
+                                  className="rounded-full"
+                                />
+                              ) : (
+                                <FaUserCircle className="w-10 h-10 text-slate-500" />
+                              )}
+                            </div>
+
+                            {/* User name & email */}
+                            <div className="flex-1 text-left">
+                              <p className="font-semibold">{`${usr.first_name} ${usr.last_name}`}</p>
+                              <p className="text-sm text-slate-500">
+                                {usr.user_email}
+                              </p>
+                            </div>
+
+                            {loading &&
+                            usr.user_id === multipleUsers.selectedUser ? (
+                              <CircularProgress
+                                size={25}
+                                sx={{
+                                  "&.MuiCircularProgress-root": {
+                                    color: "#6a7282",
+                                  },
+                                }}
+                              />
+                            ) : (
+                              <p
+                                className={`p-2 text-xl ${loading ? "text-gray-500" : "text-black"}`}
+                              >
+                                <FaArrowRight />
+                              </p>
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+
+              {loginWith === "email" && (
                 <form onSubmit={emailSubmit(onEmailLogin)}>
                   {/* Email */}
                   <div>
@@ -1595,7 +1728,7 @@ const DefaultNavbar = ({
                 </form>
               )}
 
-              <div className="w-full mt-5 flex justify-between items-center gap-2 text-sm">
+              <div className="mt-4 w-full flex justify-between items-center gap-2 text-sm">
                 {loginWith === "email" && (
                   <button
                     type="button"
@@ -1635,7 +1768,7 @@ const DefaultNavbar = ({
                     <span className="w-10 h-px bg-slate-200"></span>
                   </p>
 
-                  <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <div className="flex flex-col sm:flex-row justify-center gap-4 mb-7">
                     {/* Login with google */}
                     <button
                       type="button"
@@ -2003,7 +2136,7 @@ const DefaultNavbar = ({
             ))}
 
           {/* Footer */}
-          <div className="w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
+          <div className="sticky bottom-0 left-0 right-0 z-999 bg-white w-full p-3 flex flex-col justify-center items-center border-t border-t-slate-200">
             <p className="text-xs text-center">By logging in, I agree</p>
             <p className="text-xs flex justify-center items-center gap-2">
               <a

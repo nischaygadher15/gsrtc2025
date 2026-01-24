@@ -6,13 +6,6 @@ export interface EmailLoginPayloadType {
   device_long: number | null;
 }
 
-export interface MobileLoginPayload {
-  userMobileNo: string;
-  device_ip: string | null;
-  device_lat: number | null;
-  device_long: number | null;
-}
-
 export interface EmailSignupPayload {
   first_name: string;
   last_name: string;
@@ -43,6 +36,22 @@ export interface ForgotPasswordPayload {
 export interface ResetPasswordPayload {
   userPass: string;
   resetCode: string;
+  device_ip: string | null;
+  device_lat: number | null;
+  device_long: number | null;
+}
+
+export interface UserLoginOTP {
+  otp: string;
+  otp_id: string;
+  device_ip: string | null;
+  device_lat: number | null;
+  device_long: number | null;
+}
+
+export interface MobileLoginPayloadType {
+  user_id?: string;
+  user_mobile_no?: string;
   device_ip: string | null;
   device_lat: number | null;
   device_long: number | null;

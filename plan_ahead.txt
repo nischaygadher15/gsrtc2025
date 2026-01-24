@@ -6,6 +6,7 @@ User UI:
  - emails => all emails templates, otp, etc.
  - ticket booking flow => search buses => select seats => fill passenger info => make payment
    => confirmed ticket.
+ - think about tables
  - live bus tracking
  - profile page - update
  - wallet page

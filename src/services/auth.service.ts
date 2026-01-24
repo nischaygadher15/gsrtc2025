@@ -4,22 +4,26 @@ import {
   EmailSignupPayload,
   ForgotPasswordPayload,
   GoogleSignupPayload,
-  MobileLoginPayload,
+  MobileLoginPayloadType,
   ResetPasswordPayload,
+  UserLoginOTP,
 } from "../types/auth/auth.type";
-import { UserLoginOTP } from "./auth.type";
+import { UserDataType } from "@/types/user/user.type";
 
 // <=================== Login ===================>
 
 export const loginWithMobileAPI = (
-  mobileLoginPayload: MobileLoginPayload,
-): Promise<{ status: number; message: string; opt_id: string }> => {
-  return API.post("/auth/login/mobile", {
-    user_mobile_no: mobileLoginPayload.userMobileNo,
-    device_ip: mobileLoginPayload.device_ip,
-    device_lat: mobileLoginPayload.device_lat,
-    device_long: mobileLoginPayload.device_long,
-  });
+  mobileLoginPayload: MobileLoginPayloadType,
+): Promise<{
+  status: number;
+  message: string;
+  opt_id?: string;
+  users?: Omit<
+    UserDataType,
+    "user_dob" | "gender" | "user_mobile_no" | "user_pass"
+  >[];
+}> => {
+  return API.post("/auth/login/mobile", mobileLoginPayload);
 };
 
 export const mobileLoginResendOtpAPI = (
