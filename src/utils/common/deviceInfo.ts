@@ -17,6 +17,9 @@ export const GetDeviceInfo = async (): Promise<{
     const fpAgent = FingerprintJS.load();
     const fp = await fpAgent;
     const newDeviceId = await fp.get();
+    if (!newDeviceId.visitorId) {
+      throw new Error("No device id generated!");
+    }
     setDeviceId(newDeviceId.visitorId);
     device_id = newDeviceId.visitorId;
     console.log("device_id: ", newDeviceId.visitorId);

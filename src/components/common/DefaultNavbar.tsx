@@ -125,8 +125,8 @@ const DefaultNavbar = ({
   const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
   const [otpResending, setOtpResending] = useState<boolean>(false);
   const [optSent, setOptSent] = useState<{ status: boolean; otp_id: string }>({
-    status: true,
-    otp_id: "d7dcee02-d1cc-4207-b31a-e1724593a8c7",
+    status: false,
+    otp_id: "",
   });
   const [multipleUsers, setMultipleUsers] = useState<{
     status: boolean;
