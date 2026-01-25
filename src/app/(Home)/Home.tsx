@@ -314,7 +314,7 @@ export default function Home() {
       title: "Wallet User Count",
       number: 1225081,
       footerText: "As on 15/10/2025",
-      backgroundImg: ` linear-gradient(to right, #b35d00, #c56400, #d76b00, #ea7200, #fd7900)`,
+      backgroundImg: `linear-gradient(to right, #b35d00, #c56400, #d76b00, #ea7200, #fd7900)`,
     },
     {
       link: "#",
