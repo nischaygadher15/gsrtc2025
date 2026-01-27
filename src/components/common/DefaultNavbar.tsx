@@ -112,7 +112,7 @@ const DefaultNavbar = ({
     (state: RootState) => state.dialog.resetPassword,
   );
   const winSize = useWindowSize();
-  const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
+  const CaptchaClientKey = process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
 
   const [loginWith, setLoginWith] = useState<"mobile" | "email">("mobile");

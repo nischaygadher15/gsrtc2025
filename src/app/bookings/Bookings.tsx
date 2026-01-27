@@ -45,7 +45,7 @@ const Bookings = () => {
     if (newValue <= 2) setBookingTab(newValue);
   };
 
-  const CaptchaClientKey = process.env.NEXT_PUBLIC_Recaptcha_client_key;
+  const CaptchaClientKey = process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
 
   useEffect(() => {

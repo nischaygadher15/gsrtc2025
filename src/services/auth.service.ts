@@ -9,6 +9,30 @@ import {
   UserLoginOTP,
 } from "../types/auth/auth.type";
 import { UserDataType } from "@/types/user/user.type";
+import axios from "axios";
+
+// <=================== Authentication ===================>
+
+export const verifySessionAPI = (
+  token: string,
+): Promise<{ status: number; access_token: string }> => {
+  return API.get("/session/verify", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const refreshSessionAPI = (session_id: string) => {
+  return axios.get<{ status: number; message: string }>(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh/token`,
+    {
+      headers: {
+        Cookie: `session_id=${session_id}`,
+      },
+    },
+  );
+};
 
 // <=================== Login ===================>
 
