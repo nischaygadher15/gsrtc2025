@@ -76,6 +76,7 @@ import {
   setLoginDialog,
   setResetPasswordDialog,
 } from "@/redux/slices/session/dialogSlice";
+import { getAuth } from "@/lib/auth/getAuth";
 
 export default function Home() {
   const windowSize = useWindowSize();
@@ -85,6 +86,15 @@ export default function Home() {
   const callback = searchParams.get("callback");
   const resetCode = searchParams.get("resetcode");
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getAuthFunc = async () => {
+      const auth = await getAuth();
+      console.log("auth: ", auth);
+    };
+
+    getAuthFunc();
+  }, []);
 
   //Hero section carousel
   const [heroCarouselRef, heroCarouselAPI] = useEmblaCarousel(

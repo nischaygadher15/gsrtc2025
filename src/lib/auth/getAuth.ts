@@ -10,17 +10,18 @@ export async function getAuth() {
 
   if (!isAuth.status) {
     console.log("Not Authenticated");
+    // redirect("/");
 
     // Check if session expired
-    let isRefreshed = await refreshSession();
+    // let isRefreshed = await refreshSession();
 
-    console.log("isRefreshed: ", isRefreshed);
+    // console.log("isRefreshed: ", isRefreshed);
 
-    if (!isRefreshed.status) {
-      redirect("/login");
-    }
+    // if (!isRefreshed.status) {
+    //   redirect("/login");
+    // }
 
-    return isRefreshed;
+    // return isRefreshed;
   }
 
   return isAuth;

@@ -219,8 +219,8 @@ const DefaultNavbar = ({
   } = useForm<LoginByEmailSchemaType>({
     resolver: zodResolver(LoginByEmailSchema),
     defaultValues: {
-      userEmail: "ram312@gmail.com",
-      userPass: "Ram@@312",
+      userEmail: "nischaygadher15@gmail.com",
+      userPass: "Nisc@2026",
     },
   });
 

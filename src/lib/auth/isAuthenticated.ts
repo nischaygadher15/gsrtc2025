@@ -12,13 +12,15 @@ const isAuthenticated = async (): Promise<{
     const access_token = cookieStore.get("GSRTC_ACCESS_TOKEN")?.value;
     const session = cookieStore.get("GSRTC_SESSION")?.value;
 
+    console.log("cookieStore: ", access_token, session);
+
     if (!access_token || !session) {
       return {
         status: false,
       };
     }
 
-    const verifySessionRes = await verifySessionAPI(access_token);
+    const verifySessionRes = await verifySessionAPI(access_token, session);
 
     console.log("verifySessionRes: ", verifySessionRes);
 

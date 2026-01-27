@@ -15,12 +15,17 @@ import axios from "axios";
 
 export const verifySessionAPI = (
   token: string,
+  session: string,
 ): Promise<{ status: number; access_token: string }> => {
-  return API.get("/session/verify", {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  return axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Cookie: session,
+      },
     },
-  });
+  );
 };
 
 export const refreshSessionAPI = (session_id: string) => {

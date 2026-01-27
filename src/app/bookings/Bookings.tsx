@@ -31,11 +31,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { sessionLogout, setSession } from "@/redux/slices/session/sessionSlice";
 import { setLoginDialog } from "@/redux/slices/session/dialogSlice";
+import { getAuth } from "@/lib/auth/getAuth";
 
 const Bookings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const sessionId = useSelector(
-    (state: RootState) => state.session.access_token
+    (state: RootState) => state.session.access_token,
   );
   const [bookingTab, setBookingTab] = useState<number>(0);
   let winSize = useWindowSize();
@@ -51,6 +52,15 @@ const Bookings = () => {
   useEffect(() => {
     console.log("Current Session: ", sessionId);
   }, [sessionId]);
+
+  useEffect(() => {
+    const getAuthFunc = async () => {
+      const auth = await getAuth();
+      console.log("auth: ", auth);
+    };
+
+    getAuthFunc();
+  }, []);
 
   return (
     <>
