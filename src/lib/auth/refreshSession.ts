@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 export const refreshSession = async (): Promise<{
   status: number;
   access_token?: string;
+  message?: string;
 }> => {
   try {
     const cookieStore = await cookies();
@@ -15,7 +16,7 @@ export const refreshSession = async (): Promise<{
     const clearSession = () => {
       cookieStore.set("GSRTC_ACCESS_TOKEN", "", {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NEXT_PUBLIC_APP_ENV === "production",
         path: "/",
         sameSite:
           process.env.NEXT_PUBLIC_APP_ENV === "production" ? "none" : "strict",
@@ -23,7 +24,7 @@ export const refreshSession = async (): Promise<{
       });
       cookieStore.set("GSRTC_SESSION", "", {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NEXT_PUBLIC_APP_ENV === "production",
         path: "/",
         sameSite:
           process.env.NEXT_PUBLIC_APP_ENV === "production" ? "none" : "strict",
@@ -32,9 +33,11 @@ export const refreshSession = async (): Promise<{
     };
 
     if (!sessionId) {
+      console.log("401: sessionId not found");
       clearSession();
       return {
         status: 401,
+        message: "401: sessionId not found",
       };
     }
 
@@ -45,10 +48,11 @@ export const refreshSession = async (): Promise<{
     const setCookieHeader = refreshTokenRes.headers["set-cookie"];
 
     if (!setCookieHeader) {
-      console.log("!setCookieHeader");
+      console.log("401: setCookieHeader not found");
       clearSession();
       return {
         status: 401,
+        message: "401: setCookieHeader not found",
       };
     }
 
@@ -63,9 +67,10 @@ export const refreshSession = async (): Promise<{
       setCookieHeader.toString().split(",")[0],
       {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NEXT_PUBLIC_APP_ENV === "production",
         path: "/",
-        sameSite: "strict",
+        sameSite:
+          process.env.NEXT_PUBLIC_APP_ENV === "production" ? "none" : "strict",
         expires: new Date(parseInt(setCookieHeader.toString().split(",")[1])),
       },
     );
@@ -77,10 +82,11 @@ export const refreshSession = async (): Promise<{
         access_token: setCookieHeader.toString().split(",")[0],
       };
     } else {
-      console.log("Failed Refreshed");
+      console.log("401: Failed Refreshed");
       clearSession();
       return {
         status: 401,
+        message: "401: Failed Refreshed",
       };
     }
   } catch (error) {
