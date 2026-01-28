@@ -35,7 +35,7 @@ export const refreshSession = async (): Promise<{
 
     if (!sessionId) {
       console.log("401: sessionId not found");
-      clearSession();
+      // clearSession();
       return {
         status: 401,
         message: "401: sessionId not found",
@@ -50,7 +50,7 @@ export const refreshSession = async (): Promise<{
 
     if (!setCookieHeader) {
       console.log("401: setCookieHeader not found");
-      clearSession();
+      // clearSession();
       return {
         status: 401,
         message: "401: setCookieHeader not found",
@@ -84,7 +84,7 @@ export const refreshSession = async (): Promise<{
       };
     } else {
       console.log("401: Failed Refreshed");
-      clearSession();
+      // clearSession();
       return {
         status: 401,
         message: "401: Failed Refreshed",
