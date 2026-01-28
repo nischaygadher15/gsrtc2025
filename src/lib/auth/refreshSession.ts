@@ -12,6 +12,7 @@ export const refreshSession = async (): Promise<{
   try {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get("GSRTC_SESSION")?.value;
+    console.log("sessionId: ", sessionId, cookieStore);
 
     const clearSession = () => {
       cookieStore.set("GSRTC_ACCESS_TOKEN", "", {
