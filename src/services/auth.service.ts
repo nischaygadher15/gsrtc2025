@@ -13,10 +13,7 @@ import axios from "axios";
 
 // <=================== Authentication ===================>
 
-export const verifySessionAPI = (
-  token: string,
-  session: string,
-): Promise<{ status: number; access_token: string }> => {
+export const verifySessionAPI = (token: string, session: string) => {
   return axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`,
     {
@@ -30,10 +27,10 @@ export const verifySessionAPI = (
 
 export const refreshSessionAPI = (session_id: string) => {
   return axios.get<{ status: number; message: string }>(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh/token`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/refresh`,
     {
       headers: {
-        Cookie: `session_id=${session_id}`,
+        Cookie: session_id,
       },
     },
   );

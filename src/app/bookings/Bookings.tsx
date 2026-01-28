@@ -34,6 +34,11 @@ import { setLoginDialog } from "@/redux/slices/session/dialogSlice";
 import { getAuth } from "@/lib/auth/getAuth";
 
 const Bookings = () => {
+  // Check user authentication
+  useEffect(() => {
+    getAuth();
+  }, []);
+
   const dispatch = useDispatch<AppDispatch>();
   const sessionId = useSelector(
     (state: RootState) => state.session.access_token,
@@ -48,19 +53,6 @@ const Bookings = () => {
 
   const CaptchaClientKey = process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
-
-  useEffect(() => {
-    console.log("Current Session: ", sessionId);
-  }, [sessionId]);
-
-  useEffect(() => {
-    const getAuthFunc = async () => {
-      const auth = await getAuth();
-      console.log("auth: ", auth);
-    };
-
-    getAuthFunc();
-  }, []);
 
   return (
     <>

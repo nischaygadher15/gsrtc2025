@@ -25,6 +25,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import useWindowSize from "@/Hooks/useWindowSize";
 import { useRouter } from "next/navigation";
+import { getAuth } from "@/lib/auth/getAuth";
 
 // Types
 interface PassengerInfo {
@@ -35,6 +36,11 @@ interface PassengerInfo {
 }
 
 const CheckoutPage = () => {
+  // Check user authentication
+  useEffect(() => {
+    getAuth();
+  }, []);
+
   let router = useRouter();
   const windowSize = useWindowSize();
   const [cancelPayDialog, setCancelPayDialog] = useState<boolean>(false);
@@ -66,7 +72,7 @@ const CheckoutPage = () => {
   // Passenger Gender
   const handleGenderChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     passengerInfo[index].gender = event.target.value as "male" | "female";
     setPassengerInfo([...passengerInfo]);
@@ -138,7 +144,7 @@ const CheckoutPage = () => {
     const filtered: StateInfoType[] = contList.filter(
       (states) =>
         states.state.toLocaleLowerCase().includes(text.toLocaleLowerCase()) ||
-        states.code.toLocaleLowerCase().includes(text.toLocaleLowerCase())
+        states.code.toLocaleLowerCase().includes(text.toLocaleLowerCase()),
     );
     setFilteredStatesList(filtered);
   };
@@ -413,11 +419,11 @@ const CheckoutPage = () => {
                               className="py-4 px-5 w-full h-full rounded-s-full rounded-e-full bg-[#f2f2f8] placeholder:text-gray-500 outline-none"
                               placeholder="Search for state"
                               onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
+                                e: React.ChangeEvent<HTMLInputElement>,
                               ) =>
                                 SearchStatesList(
                                   e.currentTarget.value,
-                                  indiaStatesAndUTs
+                                  indiaStatesAndUTs,
                                 )
                               }
                             />
@@ -425,16 +431,16 @@ const CheckoutPage = () => {
                           <RadioGroup
                             value={
                               indiaStatesAndUTs.find(
-                                (st) => st.state == stateName
+                                (st) => st.state == stateName,
                               )?.code
                             }
                             name="radio-buttons-state"
                             onChange={(
-                              event: React.ChangeEvent<HTMLInputElement>
+                              event: React.ChangeEvent<HTMLInputElement>,
                             ) => {
                               setStateName(() => {
                                 let index = indiaStatesAndUTs.findIndex(
-                                  (state) => state.code == event.target.value
+                                  (state) => state.code == event.target.value,
                                 );
                                 return indiaStatesAndUTs[index].state;
                               });
@@ -651,7 +657,7 @@ const CheckoutPage = () => {
                                     passengerInfo[inx].gender === "female"
                                   }
                                   onChange={(
-                                    event: React.ChangeEvent<HTMLInputElement>
+                                    event: React.ChangeEvent<HTMLInputElement>,
                                   ) => handleGenderChange(event, inx)}
                                   value="female"
                                   name={`passenger-gender-${inx}`}
@@ -679,7 +685,7 @@ const CheckoutPage = () => {
                                   }}
                                   checked={passengerInfo[inx].gender === "male"}
                                   onChange={(
-                                    event: React.ChangeEvent<HTMLInputElement>
+                                    event: React.ChangeEvent<HTMLInputElement>,
                                   ) => handleGenderChange(event, inx)}
                                   value="male"
                                   name={`passenger-gender-${inx}`}

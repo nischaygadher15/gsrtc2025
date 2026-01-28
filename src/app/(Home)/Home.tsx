@@ -79,6 +79,11 @@ import {
 import { getAuth } from "@/lib/auth/getAuth";
 
 export default function Home() {
+  // Check user authentication
+  useEffect(() => {
+    getAuth();
+  }, []);
+
   const windowSize = useWindowSize();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -86,15 +91,6 @@ export default function Home() {
   const callback = searchParams.get("callback");
   const resetCode = searchParams.get("resetcode");
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const getAuthFunc = async () => {
-      const auth = await getAuth();
-      console.log("auth: ", auth);
-    };
-
-    getAuthFunc();
-  }, []);
 
   //Hero section carousel
   const [heroCarouselRef, heroCarouselAPI] = useEmblaCarousel(

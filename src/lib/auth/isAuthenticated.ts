@@ -22,12 +22,12 @@ const isAuthenticated = async (): Promise<{
 
     const verifySessionRes = await verifySessionAPI(access_token, session);
 
-    console.log("verifySessionRes: ", verifySessionRes);
+    console.log("verifySessionRes: ", verifySessionRes.data);
 
-    if (verifySessionRes.status === 200) {
+    if (verifySessionRes.data && verifySessionRes.status === 200) {
       return {
         status: true,
-        access_token: verifySessionRes.access_token,
+        access_token: verifySessionRes.data.access_token,
       };
     } else {
       return {
@@ -36,7 +36,9 @@ const isAuthenticated = async (): Promise<{
     }
   } catch (error) {
     console.log("isAuthenticated - Error: ", error);
-    throw error;
+    return {
+      status: false,
+    };
   }
 };
 

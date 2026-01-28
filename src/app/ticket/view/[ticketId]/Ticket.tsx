@@ -28,6 +28,7 @@ import { Rating } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import toast from "react-hot-toast";
 import { IoCall } from "react-icons/io5";
+import { getAuth } from "@/lib/auth/getAuth";
 
 interface TagType {
   tagTitle: string;
@@ -35,6 +36,11 @@ interface TagType {
 }
 
 const ViewTicket = () => {
+  // Check user authentication
+  useEffect(() => {
+    getAuth();
+  }, []);
+
   const router = useRouter();
   const windowSize = useWindowSize();
   const customerFeedbackMsg = useRef<HTMLTextAreaElement>(null);
@@ -42,7 +48,7 @@ const ViewTicket = () => {
   const [tagList, setTagList] = useState<TagType[]>([]);
   const [returnTicketDrawer, setReturnTicketDrawer] = useState<boolean>(false);
   const [returnDate, setReturnDate] = useState<Date>(
-    new Date(Date.now() + 24 * 60 * 60 * 1000)
+    new Date(Date.now() + 24 * 60 * 60 * 1000),
   );
 
   const RatingState: {

@@ -1,8 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import indiaLangGif from "@/assets/images/india_language.gif";
 import customerCare from "@/assets/images/help_bg.jpg";
+import { useEffect } from "react";
+import { getAuth } from "@/lib/auth/getAuth";
 
 const Help = () => {
+  // Check user authentication
+  useEffect(() => {
+    getAuth();
+  }, []);
   return (
     <div className="myContainer bg-primary/90 min-h-[700px] flex flex-col lg:flex-row items-stretch sm:gap-4">
       <div className="order-2 lg:order-1 w-full lg:max-w-[400px] sm:min-w-[400px] sm:px-4 py-5 sm:py-10">

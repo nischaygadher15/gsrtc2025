@@ -41,7 +41,7 @@ import {
 } from "react-icons/md";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { BiUserCircle } from "react-icons/bi";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { TbLogout, TbUserCog } from "react-icons/tb";
 import { PiUserCircleLight } from "react-icons/pi";
 import { HiOutlineLogout } from "react-icons/hi";
@@ -67,6 +67,7 @@ import { useRouter } from "next/navigation";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { getAuth } from "@/lib/auth/getAuth";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -81,6 +82,11 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const Profile = () => {
+  // Check user authentication
+  useEffect(() => {
+    getAuth(true);
+  }, []);
+
   const router = useRouter();
   const [profileTab, setProfileTab] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -88,7 +94,7 @@ const Profile = () => {
   const [newPasswordEye, setNewPasswordEye] = useState<boolean>(false);
   const [cnfNewPasswordEye, setCnfNewPasswordEye] = useState<boolean>(false);
   const [travellerForm, setTravellerForm] = useState<"add" | "edit" | null>(
-    null
+    null,
   );
   const windowSize = useWindowSize();
   const indiaStatesAndUTs: StateInfoType[] = [
@@ -135,7 +141,7 @@ const Profile = () => {
   const [filteredStatesList, setFilteredStatesList] =
     useState<StateInfoType[]>(indiaStatesAndUTs);
   const [userPhotoUrl, setUserPhotoUrl] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [userPhotoCrop, setUserPhotoCrop] = useState({ x: 0, y: 0 });
   const [userPhotoZoom, setUserPhotoZoom] = useState(1);
@@ -158,7 +164,7 @@ const Profile = () => {
 
   const handleProfileTabChange = (
     event: React.SyntheticEvent,
-    newValue: number
+    newValue: number,
   ) => {
     if (mobTravellerDrawer) {
       closeMobTravellerDrawer();
@@ -218,7 +224,7 @@ const Profile = () => {
     const filtered: StateInfoType[] = contList.filter(
       (states) =>
         states.state.toLocaleLowerCase().includes(text.toLocaleLowerCase()) ||
-        states.code.toLocaleLowerCase().includes(text.toLocaleLowerCase())
+        states.code.toLocaleLowerCase().includes(text.toLocaleLowerCase()),
     );
     setFilteredStatesList(filtered);
   };
@@ -303,7 +309,7 @@ const Profile = () => {
       const croppedImage = await getCroppedImage(
         userPhotoUrl,
         photoDimension,
-        userPhotoRotate
+        userPhotoRotate,
       );
 
       const croppedFile = new File([croppedImage as Blob], "cropped.jpg", {
@@ -1314,7 +1320,7 @@ const Profile = () => {
                                         disabled={loading}
                                         onClick={() =>
                                           setCnfNewPasswordEye(
-                                            !cnfNewPasswordEye
+                                            !cnfNewPasswordEye,
                                           )
                                         }
                                         className="cursor-pointer disabled:cursor-default"
@@ -2383,7 +2389,7 @@ const Profile = () => {
                   }
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     let index = indiaStatesAndUTs.findIndex(
-                      (state) => state.code == event.target.value
+                      (state) => state.code == event.target.value,
                     );
 
                     profileSetVal("userState", indiaStatesAndUTs[index].state);

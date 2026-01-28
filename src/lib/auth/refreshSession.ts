@@ -5,8 +5,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const refreshSession = async (): Promise<{
-  status: boolean;
-  access_token: string;
+  status: number;
+  access_token?: string;
 }> => {
   try {
     const cookieStore = await cookies();
@@ -33,7 +33,9 @@ export const refreshSession = async (): Promise<{
 
     if (!sessionId) {
       clearSession();
-      redirect("/login");
+      return {
+        status: 401,
+      };
     }
 
     const refreshTokenRes = await refreshSessionAPI(sessionId);
@@ -43,38 +45,43 @@ export const refreshSession = async (): Promise<{
     const setCookieHeader = refreshTokenRes.headers["set-cookie"];
 
     if (!setCookieHeader) {
+      console.log("!setCookieHeader");
       clearSession();
-      redirect("/login");
+      return {
+        status: 401,
+      };
     }
 
     // console.log(
     //   "setCookieHeader: ",
-    //   typeof setCookieHeader,
-    //   setCookieHeader.toString().split(";")
+    //   setCookieHeader,
+    //   new Date(parseInt(setCookieHeader.toString().split(",")[1])),
     // );
 
     cookieStore.set(
-      setCookieHeader.toString().split("=")[0],
-      setCookieHeader?.toString().split("=")[1].split(";")[0],
+      "GSRTC_ACCESS_TOKEN",
+      setCookieHeader.toString().split(",")[0],
       {
         httpOnly: true,
         secure: false,
         path: "/",
         sameSite: "strict",
-        expires: new Date(Date.now() + 15 * 60 * 1000),
+        expires: new Date(parseInt(setCookieHeader.toString().split(",")[1])),
       },
     );
 
     if (refreshTokenRes.data.status === 200) {
       console.log("Refreshed");
       return {
-        status: true,
-        access_token: setCookieHeader?.toString().split("=")[1].split(";")[0],
+        status: 200,
+        access_token: setCookieHeader.toString().split(",")[0],
       };
     } else {
       console.log("Failed Refreshed");
       clearSession();
-      redirect("/login");
+      return {
+        status: 401,
+      };
     }
   } catch (error) {
     console.log("Error: ", error);

@@ -46,6 +46,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Link as MuiLink } from "@mui/material";
 import { motion, useScroll } from "motion/react";
+import { getAuth } from "@/lib/auth/getAuth";
 
 export interface FilterStateType {
   filterId: string;
@@ -57,6 +58,11 @@ export interface FilterStateType {
 export type FilterStateObjectType = Record<string, FilterStateType>;
 
 const BusListPage = () => {
+  // Check user authentication
+  useEffect(() => {
+    getAuth();
+  }, []);
+
   const [loading, setLoading] = useState<boolean>(false);
   const windowSize = useWindowSize();
   const router = useRouter();
@@ -131,11 +137,11 @@ const BusListPage = () => {
 
   // destination place popover
   const [journeyDatePop, setJourneyDatePop] = useState<HTMLElement | null>(
-    null
+    null,
   );
   const [dateDialog, setDateDialog] = useState<boolean>(false);
   const [journeyDateBtn, setJourneyDateBtn] = useState<Date>(
-    new Date(Date.now())
+    new Date(Date.now()),
   );
 
   const openJourneyDatePopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -256,7 +262,7 @@ const BusListPage = () => {
 
   const handleActiveFilter = (
     event: React.SyntheticEvent,
-    newValue: number
+    newValue: number,
   ) => {
     setFilterActiveTab(newValue);
   };
@@ -568,7 +574,7 @@ const BusListPage = () => {
     // console.log("filterList[index]: ", temp[index]);
 
     const filtered = temp[index].contentsList.filter((flt: FilterContentType) =>
-      flt.filterId.toLocaleLowerCase().includes(text.toLocaleLowerCase())
+      flt.filterId.toLocaleLowerCase().includes(text.toLocaleLowerCase()),
     );
     console.log("filtered", filtered);
 
@@ -1026,7 +1032,7 @@ const BusListPage = () => {
                       e.stopPropagation();
                       setValue(
                         "journeyDate",
-                        new Date(Date.now() + 24 * 60 * 60 * 1000)
+                        new Date(Date.now() + 24 * 60 * 60 * 1000),
                       );
                     }}
                   >
@@ -1398,11 +1404,11 @@ const BusListPage = () => {
                                       filter.title.toLocaleLowerCase()
                                     }
                                     onChange={(
-                                      e: React.ChangeEvent<HTMLInputElement>
+                                      e: React.ChangeEvent<HTMLInputElement>,
                                     ) =>
                                       SearchFiltersFromList(
                                         e.currentTarget.value,
-                                        filter.title
+                                        filter.title,
                                       )
                                     }
                                   />
@@ -1450,11 +1456,11 @@ const BusListPage = () => {
                                           }}
                                           value={flt.filterId}
                                           onChange={(
-                                            event: React.ChangeEvent<HTMLInputElement>
+                                            event: React.ChangeEvent<HTMLInputElement>,
                                           ) => {
                                             let tempState = Object.assign(
                                               {},
-                                              filterState
+                                              filterState,
                                             );
                                             tempState[flt.filterId].isActive =
                                               event.target.checked;
@@ -1463,7 +1469,7 @@ const BusListPage = () => {
                                         />
                                       </label>
                                     </li>
-                                  )
+                                  ),
                                 )}
 
                               {filter.contentsList &&
