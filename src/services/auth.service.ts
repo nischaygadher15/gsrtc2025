@@ -17,12 +17,7 @@ export const verifySessionAPI = (
   token: string = "token",
   session: string = "session",
 ) => {
-  return API.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Cookie: session,
-    },
-  });
+  return API.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`);
 };
 
 export const refreshSessionAPI = (session_id: string) => {

@@ -1,26 +1,13 @@
-"use server";
+"use client";
 
 import { verifySessionAPI } from "@/services/auth.service";
-import { cookies } from "next/headers";
 
 const isAuthenticated = async (): Promise<{
   status: boolean;
   access_token?: string;
 }> => {
   try {
-    const cookieStore = await cookies();
-    const access_token = cookieStore.get("GSRTC_ACCESS_TOKEN")?.value;
-    const session = cookieStore.get("GSRTC_SESSION")?.value;
-
-    console.log("cookieStore: ", access_token, session);
-
-    // if (!access_token || !session) {
-    //   return {
-    //     status: false,
-    //   };
-    // }
-
-    const verifySessionRes = await verifySessionAPI(access_token, session);
+    const verifySessionRes = await verifySessionAPI();
 
     console.log("verifySessionRes: ", verifySessionRes.data);
 
