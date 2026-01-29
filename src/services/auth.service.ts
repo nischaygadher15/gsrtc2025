@@ -17,16 +17,12 @@ export const verifySessionAPI = (
   token: string = "token",
   session: string = "session",
 ) => {
-  return axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Cookie: session,
-      },
-      withCredentials: true,
+  return API.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Cookie: session,
     },
-  );
+  });
 };
 
 export const refreshSessionAPI = (session_id: string) => {
