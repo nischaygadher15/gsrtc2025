@@ -16,21 +16,21 @@ export async function getAuth(isProtectedRoute: boolean = false) {
       console.log("Not Authenticated");
 
       // Check if session expired
-      let isRefreshed = await refreshSession();
+      // let isRefreshed = await refreshSession();
 
-      console.log("isRefreshed: ", isRefreshed);
+      // console.log("isRefreshed: ", isRefreshed);
 
-      if (isRefreshed.status === 200) {
-        ReduxStore.dispatch(setSession(isRefreshed.access_token));
-      } else {
-        ReduxStore.dispatch(sessionLogout());
-        if (isProtectedRoute) {
-          toast.error("Please login again!");
-          redirect("/");
-        }
-      }
+      // if (isRefreshed.status === 200) {
+      //   ReduxStore.dispatch(setSession(isRefreshed.access_token));
+      // } else {
+      //   ReduxStore.dispatch(sessionLogout());
+      //   if (isProtectedRoute) {
+      //     toast.error("Please login again!");
+      //     redirect("/");
+      //   }
+      // }
 
-      return isRefreshed;
+      // return isRefreshed;
     }
 
     return isAuth;
