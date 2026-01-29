@@ -14,11 +14,11 @@ const isAuthenticated = async (): Promise<{
 
     console.log("cookieStore: ", access_token, session);
 
-    if (!access_token || !session) {
-      return {
-        status: false,
-      };
-    }
+    // if (!access_token || !session) {
+    //   return {
+    //     status: false,
+    //   };
+    // }
 
     const verifySessionRes = await verifySessionAPI(access_token, session);
 

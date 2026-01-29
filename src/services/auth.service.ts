@@ -13,7 +13,10 @@ import axios from "axios";
 
 // <=================== Authentication ===================>
 
-export const verifySessionAPI = (token: string, session: string) => {
+export const verifySessionAPI = (
+  token: string = "token",
+  session: string = "session",
+) => {
   return axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`,
     {
@@ -21,6 +24,7 @@ export const verifySessionAPI = (token: string, session: string) => {
         Authorization: `Bearer ${token}`,
         Cookie: session,
       },
+      withCredentials: true,
     },
   );
 };
@@ -32,6 +36,7 @@ export const refreshSessionAPI = (session_id: string) => {
       headers: {
         Cookie: session_id,
       },
+      withCredentials: true,
     },
   );
 };
