@@ -77,6 +77,7 @@ import {
   setResetPasswordDialog,
 } from "@/redux/slices/session/dialogSlice";
 import { getAuth } from "@/lib/auth/getAuth";
+import { setSession } from "@/redux/slices/session/sessionSlice";
 
 export default function Home() {
   // Check user authentication

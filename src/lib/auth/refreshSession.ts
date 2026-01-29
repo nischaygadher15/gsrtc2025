@@ -1,8 +1,8 @@
-"use server";
+"use client";
 
 import { refreshSessionAPI } from "@/services/auth.service";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { clearSession, setAccessToken } from "./manageCookies";
 
 export const refreshSession = async (): Promise<{
   status: number;
@@ -10,81 +10,25 @@ export const refreshSession = async (): Promise<{
   message?: string;
 }> => {
   try {
-    const cookieStore = await cookies();
-    const sessionId = cookieStore.get("GSRTC_SESSION")?.value;
-    console.log("sessionId: ", sessionId, cookieStore);
+    const refreshTokenRes = await refreshSessionAPI();
 
-    const clearSession = () => {
-      cookieStore.set("GSRTC_ACCESS_TOKEN", "", {
-        httpOnly: true,
-        secure: process.env.NEXT_PUBLIC_APP_ENV === "production",
-        path: "/",
-        sameSite:
-          process.env.NEXT_PUBLIC_APP_ENV === "production" ? "none" : "strict",
-        maxAge: 0,
-      });
-      cookieStore.set("GSRTC_SESSION", "", {
-        httpOnly: true,
-        secure: process.env.NEXT_PUBLIC_APP_ENV === "production",
-        path: "/",
-        sameSite:
-          process.env.NEXT_PUBLIC_APP_ENV === "production" ? "none" : "strict",
-        maxAge: 0,
-      });
-    };
+    console.log("refreshTokenRes: ", refreshTokenRes);
 
-    if (!sessionId) {
-      console.log("401: sessionId not found");
-      clearSession();
-      return {
-        status: 401,
-        message: "401: sessionId not found",
-      };
-    }
-
-    const refreshTokenRes = await refreshSessionAPI(sessionId);
-
-    console.log("refreshTokenRes: ", refreshTokenRes.data);
-
-    const setCookieHeader = refreshTokenRes.headers["set-cookie"];
-
-    if (!setCookieHeader) {
-      console.log("401: setCookieHeader not found");
-      clearSession();
-      return {
-        status: 401,
-        message: "401: setCookieHeader not found",
-      };
-    }
-
-    // console.log(
-    //   "setCookieHeader: ",
-    //   setCookieHeader,
-    //   new Date(parseInt(setCookieHeader.toString().split(",")[1])),
-    // );
-
-    cookieStore.set(
-      "GSRTC_ACCESS_TOKEN",
-      setCookieHeader.toString().split(",")[0],
-      {
-        httpOnly: true,
-        secure: process.env.NEXT_PUBLIC_APP_ENV === "production",
-        path: "/",
-        sameSite:
-          process.env.NEXT_PUBLIC_APP_ENV === "production" ? "none" : "strict",
-        expires: new Date(parseInt(setCookieHeader.toString().split(",")[1])),
-      },
-    );
-
-    if (refreshTokenRes.data.status === 200) {
+    if (refreshTokenRes.status === 200) {
       console.log("Refreshed");
+
+      await setAccessToken(
+        refreshTokenRes.access_token,
+        refreshTokenRes.access_token_exp,
+      );
+
       return {
         status: 200,
-        access_token: setCookieHeader.toString().split(",")[0],
+        access_token: refreshTokenRes.access_token,
       };
     } else {
       console.log("401: Failed Refreshed");
-      clearSession();
+      await clearSession();
       return {
         status: 401,
         message: "401: Failed Refreshed",
@@ -92,6 +36,10 @@ export const refreshSession = async (): Promise<{
     }
   } catch (error) {
     console.log("Error: ", error);
-    throw error;
+
+    return {
+      status: 500,
+      message: "500: Failed Refreshed",
+    };
   }
 };

@@ -13,23 +13,18 @@ import axios from "axios";
 
 // <=================== Authentication ===================>
 
-export const verifySessionAPI = (
-  token: string = "token",
-  session: string = "session",
-) => {
+export const verifySessionAPI = (): Promise<{
+  status: number;
+}> => {
   return API.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`);
 };
 
-export const refreshSessionAPI = (session_id: string) => {
-  return axios.get<{ status: number; message: string }>(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/refresh`,
-    {
-      headers: {
-        Cookie: session_id,
-      },
-      withCredentials: true,
-    },
-  );
+export const refreshSessionAPI = (): Promise<{
+  status: number;
+  access_token: string;
+  access_token_exp: Date;
+}> => {
+  return API.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/refresh`);
 };
 
 // <=================== Login ===================>

@@ -3,28 +3,29 @@
 import { verifySessionAPI } from "@/services/auth.service";
 
 const isAuthenticated = async (): Promise<{
-  status: boolean;
+  status: number;
   access_token?: string;
 }> => {
   try {
     const verifySessionRes = await verifySessionAPI();
 
-    console.log("verifySessionRes: ", verifySessionRes.data);
+    console.log("verifySessionRes: ", verifySessionRes);
 
-    if (verifySessionRes.data && verifySessionRes.status === 200) {
+    if (verifySessionRes && verifySessionRes.status === 200) {
       return {
-        status: true,
-        access_token: verifySessionRes.data.access_token,
+        status: 200,
       };
     } else {
+      if (verifySessionRes && verifySessionRes.status === 401)
+        console.log("Need Refreshing");
       return {
-        status: false,
+        status: 401,
       };
     }
   } catch (error) {
     console.log("isAuthenticated - Error: ", error);
     return {
-      status: false,
+      status: 500,
     };
   }
 };
