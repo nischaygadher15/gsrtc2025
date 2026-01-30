@@ -68,6 +68,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { getAuth } from "@/lib/auth/getAuth";
+import BusLoaderProvider from "../loading";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -82,12 +83,8 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const Profile = () => {
-  // Check user authentication
-  useEffect(() => {
-    getAuth(true);
-  }, []);
-
   const router = useRouter();
+  const [loader, setLoader] = useState<boolean>(true);
   const [profileTab, setProfileTab] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [currPasswordEye, setCurrPasswordEye] = useState<boolean>(false);
@@ -388,6 +385,20 @@ const Profile = () => {
   const onAccountDelete = (data: any) => {
     console.log("Data: ", data);
   };
+
+  // Check user authentication
+  useEffect(() => {
+    const checkAuth = async () => {
+      await getAuth(true);
+      setLoader(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  if (loader) {
+    return <BusLoaderProvider />;
+  }
 
   return (
     <div>
