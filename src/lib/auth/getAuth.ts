@@ -32,12 +32,11 @@ export async function getAuth(isProtectedRoute: boolean = false) {
 
       return isRefreshed;
     }
+    // console.log("isAuth: ", isAuth);
 
     if (isAuth.status === 200) {
       ReduxStore.dispatch(setSession(isAuth.access_token));
     }
-
-    console.log("isAuth: ", isAuth);
 
     return isAuth;
   } catch (error: unknown) {

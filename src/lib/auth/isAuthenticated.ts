@@ -26,7 +26,7 @@ const isAuthenticated = async (): Promise<{
   } catch (error) {
     console.log("isAuthenticated - Error: ", error);
     return {
-      status: 500,
+      status: 401,
     };
   }
 };
