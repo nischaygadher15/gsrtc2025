@@ -14,6 +14,7 @@ const isAuthenticated = async (): Promise<{
     if (verifySessionRes && verifySessionRes.status === 200) {
       return {
         status: 200,
+        access_token: verifySessionRes.access_token,
       };
     } else {
       if (verifySessionRes && verifySessionRes.status === 401)

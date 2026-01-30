@@ -15,6 +15,8 @@ import axios from "axios";
 
 export const verifySessionAPI = (): Promise<{
   status: number;
+  access_token: string;
+  access_token_exp: Date;
 }> => {
   return API.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session/verify`);
 };
