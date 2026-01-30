@@ -1,8 +1,7 @@
 "use client";
 
 import { refreshSessionAPI } from "@/services/auth.service";
-import { redirect } from "next/navigation";
-import { clearSession, setAccessToken } from "./manageCookies";
+import { setAccessToken } from "./manageCookies";
 
 export const refreshSession = async (): Promise<{
   status: number;
@@ -28,7 +27,6 @@ export const refreshSession = async (): Promise<{
       };
     } else {
       console.log("401: Failed Refreshed");
-      await clearSession();
       return {
         status: 401,
         message: "401: Failed Refreshed",
