@@ -243,6 +243,8 @@ const DefaultNavbar = ({
           resetCode: null,
         }),
       );
+      setLoginPassEye(false);
+      setLoginCPassEye(false);
 
       // OPT Form
       otpReset();
@@ -503,6 +505,8 @@ const DefaultNavbar = ({
     if (!loading && !loadingGoogle) {
       setGsrtcSignUpDialog(false);
       signUpReset();
+      setLoginPassEye(false);
+      setLoginCPassEye(false);
 
       //Redux
       dispatch(setSignUpDialog(false));
@@ -845,16 +849,16 @@ const DefaultNavbar = ({
                   <Image
                     src={userData.user_photo}
                     alt="User profile photo"
-                    width={32}
-                    height={32}
+                    width={28}
+                    height={28}
                     className="rounded-full"
                   />
                 ) : (
                   <Avatar
                     alt="User profile photo"
                     sx={{
-                      width: 32,
-                      height: 32,
+                      width: 28,
+                      height: 28,
                       bgcolor: "#173c62",
                       color: "white",
                     }}
@@ -2045,6 +2049,7 @@ const DefaultNavbar = ({
                             autoComplete="new-password"
                             slotProps={{
                               input: {
+                                autoComplete: "off",
                                 endAdornment: (
                                   <button
                                     type="button"
@@ -2114,6 +2119,7 @@ const DefaultNavbar = ({
                             autoComplete="new-password"
                             slotProps={{
                               input: {
+                                autoComplete: "off",
                                 endAdornment: (
                                   <button
                                     type="button"
