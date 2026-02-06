@@ -2,7 +2,7 @@ import { EmailLoginResponse } from "@/types/auth/auth.type";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     const user_agent = req.headers.get("user-agent");
     const cookieStore = await cookies();

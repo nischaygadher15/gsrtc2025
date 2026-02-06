@@ -2,7 +2,7 @@ import { MobileLoginResponse } from "@/types/auth/auth.type";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const user_agent = req.headers.get("user-agent");
