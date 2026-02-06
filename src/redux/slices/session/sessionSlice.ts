@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface sessionStateType {
-  access_token: string | null;
+  session_id: string | null;
 }
 
 const initialState: sessionStateType = {
-  access_token: null,
+  session_id: null,
 };
 
 const sessionSlice = createSlice({
@@ -13,11 +13,11 @@ const sessionSlice = createSlice({
   initialState,
   reducers: {
     setSession: (state, action) => {
-      state.access_token = action.payload;
+      state.session_id = action.payload;
     },
 
     sessionLogout: (state) => {
-      state.access_token = null;
+      state.session_id = null;
     },
   },
 });

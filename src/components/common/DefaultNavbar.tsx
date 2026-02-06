@@ -1,6 +1,7 @@
 "use client";
 import navbarLogo from "@/assets/images/Logos/gsrtcLogo2.svg";
 import {
+  Avatar,
   CircularProgress,
   Drawer,
   FormControl,
@@ -31,7 +32,7 @@ import { BsTicketDetailed } from "react-icons/bs";
 import { RiFontSize } from "react-icons/ri";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import womenSvg from "@/assets/images/female.svg";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Dialog from "@mui/material/Dialog";
 import { IoMdArrowDropdown, IoMdClose, IoMdHome } from "react-icons/io";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -64,18 +65,6 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { sessionLogout, setSession } from "@/redux/slices/session/sessionSlice";
-import {
-  forgotPasswordAPI,
-  loginWithEmailAPI,
-  loginWithGoogleAPI,
-  loginWithMobileAPI,
-  logoutAPI,
-  mobileLoginResendOtpAPI,
-  onMobileOtpLoginAPI,
-  resetPasswordAPI,
-  signUpWithEmailAPI,
-  signUpWithGoogleAPI,
-} from "@/services/auth.service";
 import OtpInput from "react-otp-input";
 import LocalTimer from "./LocalTimer";
 import useWindowSize from "@/Hooks/useWindowSize";
@@ -85,11 +74,14 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {
   setLoginDialog,
+  setResetPasswordDialog,
   setSignUpDialog,
-} from "@/redux/slices/session/dialogSlice";
+} from "@/redux/slices/dialog/dialogSlice";
 import { GetDeviceInfo } from "@/utils/common/deviceInfo";
 import { UserDataType } from "@/types/user/user.type";
 import { MobileLoginPayloadType } from "@/types/auth/auth.type";
+import api from "@/lib/axios";
+import { clearUser, setUser } from "@/redux/slices/user/user.slice";
 
 const DefaultNavbar = ({
   accDrawer,
@@ -102,6 +94,7 @@ const DefaultNavbar = ({
   const { userAccDrawer, setUserAccDrawer } = accDrawer;
   const currentLocation = usePathname();
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const loginDialog = useSelector(
     (state: RootState) => state.dialog.loginDialog,
   );
@@ -111,6 +104,7 @@ const DefaultNavbar = ({
   const resetPasswordDialog = useSelector(
     (state: RootState) => state.dialog.resetPassword,
   );
+  const userData = useSelector((state: RootState) => state.user.data);
   const winSize = useWindowSize();
   const CaptchaClientKey = process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY;
   if (!CaptchaClientKey) throw new Error("Captcha key do not found!");
@@ -120,6 +114,7 @@ const DefaultNavbar = ({
     null,
   );
   const [loginPassEye, setLoginPassEye] = useState<boolean>(false);
+  const [loginCPassEye, setLoginCPassEye] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
   const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
@@ -146,9 +141,13 @@ const DefaultNavbar = ({
   const [gsrtcLoginDialog, setGsrtcLoginDialog] = useState<boolean>(false);
   const [gsrtcSignUpDialog, setGsrtcSignUpDialog] = useState<boolean>(false);
   const sessionId = useSelector(
-    (state: RootState) => state.session?.access_token,
+    (state: RootState) => state.session?.session_id,
   );
   let fpAgent: any;
+
+  useEffect(() => {
+    console.log("userData: ", userData);
+  }, [userData]);
 
   // User Account Dropdown
   const handleUserDrawer = () => {
@@ -237,6 +236,13 @@ const DefaultNavbar = ({
       emailReset();
       closeForgotPassword();
       setLoginWith("mobile");
+      setLostPassword(null);
+      dispatch(
+        setResetPasswordDialog({
+          status: false,
+          resetCode: null,
+        }),
+      );
 
       // OPT Form
       otpReset();
@@ -300,14 +306,17 @@ const DefaultNavbar = ({
         throw new Error("mobileLoginPayload do not found!");
       }
 
-      const mobileLoginRes = await loginWithMobileAPI(mobileLoginPayload);
+      const mobileLoginRes = await api.post(
+        "/auth/login/mobile/sendotp",
+        mobileLoginPayload,
+      );
 
       console.log("mobileLoginRes: ", mobileLoginRes);
 
-      if (mobileLoginRes.status === 200 && mobileLoginRes.opt_id) {
+      if (mobileLoginRes.status === 200 && mobileLoginRes.data.otp_id) {
         setOptSent({
           status: true,
-          otp_id: mobileLoginRes.opt_id,
+          otp_id: mobileLoginRes.data.otp_id,
         });
 
         if (multipleUsers.status) {
@@ -316,13 +325,13 @@ const DefaultNavbar = ({
             users: null,
           });
         }
-        toast.success(mobileLoginRes.message);
+        toast.success(mobileLoginRes.data.message);
       }
 
-      if (mobileLoginRes.status === 400 && mobileLoginRes.users) {
+      if (mobileLoginRes.data.status === 400 && mobileLoginRes.data.users) {
         setMultipleUsers({
           status: true,
-          users: mobileLoginRes.users,
+          users: mobileLoginRes.data.users,
         });
       }
     } catch (error: any) {
@@ -344,7 +353,7 @@ const DefaultNavbar = ({
       const deviceInfo = await GetDeviceInfo();
       console.log("deviceInfo: ", deviceInfo);
 
-      const otpVerifyRes = await onMobileOtpLoginAPI({
+      const otpVerifyRes = await api.post("/auth/login/mobile/verify", {
         otp: data.userLoginOTP,
         otp_id: optSent.otp_id,
         device_ip: deviceInfo.device_ip,
@@ -352,12 +361,11 @@ const DefaultNavbar = ({
         device_long: deviceInfo.device_long,
       });
 
-      if (otpVerifyRes && otpVerifyRes.status === 200) {
-        dispatch(setSession(otpVerifyRes.access_token));
-        closeGsrctLoginDialog();
-        closeUserDrawer();
-        toast.success(otpVerifyRes.message);
-      }
+      dispatch(setSession(otpVerifyRes.data.session_id));
+      dispatch(setUser(otpVerifyRes.data.user));
+      closeGsrctLoginDialog();
+      closeUserDrawer();
+      toast.success(otpVerifyRes.data.message);
     } catch (error: any) {
       console.log("error:", error);
       toast.error(error.response ? error.response.data.message : error.message);
@@ -376,13 +384,19 @@ const DefaultNavbar = ({
 
     try {
       setOtpResending(true);
-      const resendOtpRes = await mobileLoginResendOtpAPI(userMobileNo);
+      const resendOtpRes = await api.post("/auth/login/mobile/resend", {
+        otp_id: optSent.otp_id,
+      });
 
       console.log("resendOtpRes: ", resendOtpRes);
 
-      if (resendOtpRes.message === "success") {
-        setOtpCounting(true);
-        toast.success(`OTP sent successfully on ${userMobileNo}.`);
+      if (resendOtpRes.status === 200 && resendOtpRes.data.otp_id) {
+        setOptSent({
+          status: true,
+          otp_id: resendOtpRes.data.otp_id,
+        });
+
+        toast.success(resendOtpRes.data.message);
       }
     } catch (error: any) {
       console.log("error:", error);
@@ -411,7 +425,7 @@ const DefaultNavbar = ({
 
       console.log("deviceInfo: ", deviceInfo);
 
-      const emailLoginRes = await loginWithEmailAPI({
+      const emailLoginRes = await api.post("/auth/login/email", {
         userEmail: data.userEmail,
         userPass: data.userPass,
         device_ip: deviceInfo.device_ip,
@@ -421,15 +435,12 @@ const DefaultNavbar = ({
 
       console.log("emailLoginRes: ", emailLoginRes);
 
-      if (emailLoginRes.status === 200) {
-        setLoading(false);
-        toast.success(emailLoginRes.message);
-        dispatch(setSession(emailLoginRes.access_token));
-        closeGsrctLoginDialog();
-        closeUserDrawer();
-      } else {
-        toast.error(emailLoginRes.message);
-      }
+      setLoading(false);
+      toast.success(emailLoginRes.data.message);
+      dispatch(setSession(emailLoginRes.data.session_id));
+      dispatch(setUser(emailLoginRes.data.user));
+      closeGsrctLoginDialog();
+      closeUserDrawer();
     } catch (error: any) {
       console.log("error:", error);
       toast.error(error.response ? error.response.data.message : error.message);
@@ -445,16 +456,17 @@ const DefaultNavbar = ({
   const handleSessionLogout = async () => {
     try {
       setLoading(true);
-      const logoutRes = await logoutAPI();
+      const logoutRes = await api.get("/logout");
 
       console.log("logoutRes: ", logoutRes);
 
       if (logoutRes.status === 200) {
         dispatch(sessionLogout());
+        dispatch(clearUser());
         closeUserDrawer();
         toast.success("You have successfully logged out!");
       } else {
-        toast.error(logoutRes.message);
+        toast.error(logoutRes.data.message);
       }
     } catch (error: any) {
       console.log("error:", error);
@@ -463,8 +475,6 @@ const DefaultNavbar = ({
       setLoading(false);
     }
   };
-
-  const randomUser = Math.ceil(Math.random() * 10000);
 
   // Email Sign up form
   const {
@@ -509,7 +519,7 @@ const DefaultNavbar = ({
 
       console.log("deviceInfo: ", deviceInfo);
 
-      const signUpRes = await signUpWithEmailAPI({
+      const signUpRes = await api.post("/auth/signup/email", {
         first_name: data.firstName,
         last_name: data.lastName,
         user_dob: data.userDob,
@@ -525,8 +535,9 @@ const DefaultNavbar = ({
       console.log("signUpRes: ", signUpRes);
 
       if (signUpRes && signUpRes.status === 201) {
-        toast.success(signUpRes.message);
-        dispatch(setSession("1234567890"));
+        toast.success(signUpRes.data.message);
+        dispatch(setSession(signUpRes.data.session_id));
+        dispatch(setUser(signUpRes.data.user));
         closeGsrtcSignUpDialog();
         closeUserDrawer();
       }
@@ -553,23 +564,27 @@ const DefaultNavbar = ({
 
         console.log("deviceInfo: ", deviceInfo);
 
-        const googleLoginRes = await loginWithGoogleAPI({
-          code,
-          device_ip: deviceInfo.device_ip,
-          device_lat: deviceInfo.device_lat,
-          device_long: deviceInfo.device_long,
-        });
+        const googleLoginRes = await api.post(
+          "/auth/login/google",
+          {
+            device_ip: deviceInfo.device_ip,
+            device_lat: deviceInfo.device_lat,
+            device_long: deviceInfo.device_long,
+          },
+          {
+            headers: {
+              Authorization: code,
+            },
+          },
+        );
 
         console.log("googleLoginRes: ", googleLoginRes);
 
-        if (googleLoginRes.status === 200) {
-          toast.success(googleLoginRes.message);
-          dispatch(setSession(googleLoginRes.access_token));
-          closeGsrctLoginDialog();
-          closeUserDrawer();
-        } else {
-          toast.error(googleLoginRes.message);
-        }
+        toast.success(googleLoginRes.data.message);
+        dispatch(setSession(googleLoginRes.data.session_id));
+        dispatch(setUser(googleLoginRes.data.user));
+        closeGsrctLoginDialog();
+        closeUserDrawer();
       } catch (error: any) {
         console.log("error:", error);
         toast.error(
@@ -601,23 +616,28 @@ const DefaultNavbar = ({
 
       try {
         setLoadingGoogle(true);
-        const googleSignupRes = await signUpWithGoogleAPI({
-          code,
-          device_ip: deviceInfo.device_ip,
-          device_lat: deviceInfo.device_lat,
-          device_long: deviceInfo.device_long,
-        });
+        const googleSignupRes = await api.post(
+          "/auth/signup/google",
+          {
+            device_ip: deviceInfo.device_ip,
+            device_lat: deviceInfo.device_lat,
+            device_long: deviceInfo.device_long,
+          },
+          {
+            headers: {
+              Authorization: code,
+              "Content-Type": "application/json",
+            },
+          },
+        );
 
         console.log("googleSignupRes: ", googleSignupRes);
 
-        if (googleSignupRes.status === 201) {
-          toast.success(googleSignupRes.message);
-          dispatch(setSession(code));
-          closeGsrtcSignUpDialog();
-          closeUserDrawer();
-        } else {
-          toast.error(googleSignupRes.message);
-        }
+        toast.success(googleSignupRes.data.message);
+        dispatch(setSession(googleSignupRes.data.session_id));
+        dispatch(setUser(googleSignupRes.data.user));
+        closeGsrtcSignUpDialog();
+        closeUserDrawer();
       } catch (error: any) {
         console.log("error:", error);
         toast.error(
@@ -660,7 +680,7 @@ const DefaultNavbar = ({
       const deviceInfo = await GetDeviceInfo();
       console.log("deviceInfo: ", deviceInfo);
 
-      const forgotPasswordResp = await forgotPasswordAPI({
+      const forgotPasswordResp = await api.post("/auth/forgot", {
         userEmail: data.userEmail,
         device_ip: deviceInfo.device_ip,
         device_lat: deviceInfo.device_lat,
@@ -670,11 +690,9 @@ const DefaultNavbar = ({
       console.log("forgotPasswordResp: ", forgotPasswordResp);
 
       if (forgotPasswordResp && forgotPasswordResp.status === 200) {
-        toast.success(forgotPasswordResp.message);
+        toast.success(forgotPasswordResp.data.message);
         closeGsrctLoginDialog();
         closeUserDrawer();
-      } else {
-        toast.error(forgotPasswordResp.message);
       }
     } catch (error: any) {
       console.log("error:", error);
@@ -712,9 +730,9 @@ const DefaultNavbar = ({
 
       console.log("deviceInfo: ", deviceInfo);
 
-      const resetPasswordResp = await resetPasswordAPI({
-        userPass: data.userPass,
-        resetCode: resetPasswordDialog.resetCode,
+      const resetPasswordResp = await api.post("/auth/reset", {
+        password: data.userPass,
+        reset_code: resetPasswordDialog.resetCode,
         device_ip: deviceInfo.device_ip,
         device_lat: deviceInfo.device_lat,
         device_long: deviceInfo.device_long,
@@ -723,15 +741,15 @@ const DefaultNavbar = ({
       console.log("resetPasswordResp: ", resetPasswordResp);
 
       if (resetPasswordResp.status === 200) {
-        toast.success(resetPasswordResp.message);
-      } else {
-        toast.error(resetPasswordResp.message);
+        toast.success(resetPasswordResp.data.message);
       }
     } catch (error: any) {
       console.log("error:", error);
       toast.error(error.response ? error.response.data.message : error.message);
     } finally {
       setLoading(false);
+      closeGsrctLoginDialog();
+      router.replace("/");
     }
   };
 
@@ -775,7 +793,7 @@ const DefaultNavbar = ({
         <li>
           <Link
             href="/"
-            className={`p-3 h-full w-full flex justify-center items-center gap-1.5 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+            className={`p-2 h-full w-full flex justify-center items-center gap-1.5 rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
               currentLocation === "/" ? "text-primary" : "text-black"
             }`}
           >
@@ -783,10 +801,11 @@ const DefaultNavbar = ({
             <span>Home</span>
           </Link>
         </li>
+
         <li>
           <Link
             href="/bookings"
-            className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+            className={`p-2 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
               currentLocation === "/bookings" ? "text-primary" : "text-black"
             }`}
           >
@@ -794,10 +813,11 @@ const DefaultNavbar = ({
             <span>Bookings</span>
           </Link>
         </li>
+
         <li>
           <Link
             href="/help"
-            className={`p-3 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
+            className={`p-2 h-full w-full flex items-center gap-1.5  rounded-s-full rounded-e-full bg-white hover:bg-slate-200 ${
               currentLocation === "/help" ? "text-primary" : "text-black"
             }`}
           >
@@ -805,29 +825,12 @@ const DefaultNavbar = ({
             <span>Help</span>
           </Link>
         </li>
-        {/* <li className="">
-          <a
-            href="https://yatradham.gujarat.gov.in/Booking"
-            className="p-3 text-black rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
-          >
-            <span>Sharvan Tirth</span>
-            <span>Darshan</span>
-          </a>
-        </li> */}
-        {/* <li>
-          <a
-            href="https://www.soutickets.in/#/gsrtc-booking"
-            className="p-3 text-black rounded-s-full flex flex-col xl:flex-row xl:items-center gap-1  rounded-e-full bg-white hover:bg-slate-200"
-          >
-            <span>Unity</span>
-            <span>Booking</span>
-          </a>
-        </li> */}
+
         <li className="">
           <button
             type="button"
             onClick={handleUserDrawer}
-            className={`text-black rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer p-2 ${
+            className={`p-2 text-black rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer ${
               sessionId ? "border" : ""
             }`}
           >
@@ -838,14 +841,34 @@ const DefaultNavbar = ({
               </>
             ) : (
               <>
-                <Image
-                  src="https://res.cloudinary.com/dcj3txipr/image/upload/v1768503255/randomUser_rty2wh.jpg"
-                  alt="User profile photo"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
-                <span className="text-sm font-semibold">Sita</span>
+                {userData.user_photo ? (
+                  <Image
+                    src={userData.user_photo}
+                    alt="User profile photo"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <Avatar
+                    alt="User profile photo"
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      bgcolor: "#173c62",
+                      color: "white",
+                    }}
+                    children={
+                      <p className="text-sm font-semibold">
+                        {userData.first_name.toUpperCase()[0]}
+                        {userData.last_name.toUpperCase()[0]}
+                      </p>
+                    }
+                  />
+                )}
+                <span className="text-sm font-semibold capitalize">
+                  {userData.first_name}
+                </span>
               </>
             )}
           </button>
@@ -879,15 +902,35 @@ const DefaultNavbar = ({
                 <Link href="/profile" onClick={closeUserDrawer}>
                   <div className="w-full flex justify-between items-center p-4 font-semibold border-b-1 border-b-slate-400">
                     <div className="flex items-center gap-x-3">
-                      <Image
-                        src="https://res.cloudinary.com/dcj3txipr/image/upload/v1768503255/randomUser_rty2wh.jpg"
-                        alt="User profile photo"
-                        width={32}
-                        height={32}
-                        className="rounded-full"
-                      />
+                      {userData.user_photo ? (
+                        <Image
+                          src={userData.user_photo}
+                          alt="User profile photo"
+                          width={32}
+                          height={32}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <Avatar
+                          alt="User profile photo"
+                          sx={{
+                            width: 32,
+                            height: 32,
+                            bgcolor: "#173c62",
+                            color: "white",
+                          }}
+                          children={
+                            <p className="text-sm font-semibold">
+                              {userData.first_name[0].toUpperCase()}
+                              {userData.last_name[0].toUpperCase()}
+                            </p>
+                          }
+                        />
+                      )}
                       <div className="flex flex-col">
-                        <span>Sita</span>
+                        <span className="leading-tight">
+                          {userData.first_name}
+                        </span>
                         <span className="text-xs font-normal text-blue-600">
                           View your profile
                         </span>
@@ -2060,7 +2103,7 @@ const DefaultNavbar = ({
                       render={({ field: { onChange, name, value } }) => (
                         <div className="flex-1 border rounded-lg">
                           <TextField
-                            type={loginPassEye ? "text" : "password"}
+                            type={loginCPassEye ? "text" : "password"}
                             label="Confirm Password"
                             placeholder="Enter confirm password"
                             variant="filled"
@@ -2075,11 +2118,11 @@ const DefaultNavbar = ({
                                   <button
                                     type="button"
                                     onClick={() =>
-                                      setLoginPassEye(!loginPassEye)
+                                      setLoginCPassEye(!loginCPassEye)
                                     }
                                     className="cursor-pointer"
                                   >
-                                    {loginPassEye ? (
+                                    {loginCPassEye ? (
                                       <VisibilityOff />
                                     ) : (
                                       <Visibility />

@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { Avatar } from "@mui/material";
 
 const FooterNavbar = ({
   accDrawer,
@@ -22,9 +23,8 @@ const FooterNavbar = ({
   const currentRoute = usePathname();
   const currentLocation = usePathname();
   const { setUserAccDrawer } = accDrawer;
-  const sessionId = useSelector(
-    (state: RootState) => state.session?.access_token
-  );
+  const sessionId = useSelector((state: RootState) => state.session.session_id);
+  const userData = useSelector((state: RootState) => state.user.data);
 
   return (
     <div
@@ -77,22 +77,40 @@ const FooterNavbar = ({
             className={`w-full h-full text-[#1d1d1da3] rounded-s-full rounded-e-full bg-white hover:bg-slate-200 flex flex-col justify-center items-center gap-1.5 cursor-pointer  `}
           >
             {!sessionId ? (
-              <>
-                <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
-                <span className="text-xs">Account</span>
-              </>
+              <AccountCircleOutlinedIcon sx={{ fontSize: 24 }} />
             ) : (
               <>
-                <Image
-                  src="https://res.cloudinary.com/dcj3txipr/image/upload/v1768503255/randomUser_rty2wh.jpg"
-                  alt="User profile photo"
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                />
-                <span className="text-xs font-medium">Nischay</span>
+                {userData.user_photo ? (
+                  <Image
+                    src={userData.user_photo}
+                    alt="User profile photo"
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <Avatar
+                    alt="User profile photo"
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      bgcolor: "#173c62",
+                      color: "white",
+                    }}
+                    children={
+                      <p className="text-xs font-semibold">
+                        {userData.first_name.toUpperCase()[0]}
+                        {userData.last_name.toUpperCase()[0]}
+                      </p>
+                    }
+                  />
+                )}
               </>
             )}
+
+            <span className="text-xs font-medium capitalize">
+              {userData.first_name ? userData.first_name : "Account"}
+            </span>
           </button>
         </li>
       </ul>

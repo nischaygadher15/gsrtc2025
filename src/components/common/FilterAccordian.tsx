@@ -6,7 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Checkbox from "@mui/material/Checkbox";
 import { FilterContentType } from "./SearchPageData";
-import { FilterStateObjectType } from "@/app/search-bus/BustListPage";
+import { FilterStateObjectType } from "@/app/(public)/search-bus/BustListPage";
 
 interface FilterAccordianType {
   isSearchable: boolean;
@@ -32,10 +32,10 @@ const FilterAccordian = ({
 
   const SearchFiltersFromList = (
     text: string,
-    contList: FilterContentType[]
+    contList: FilterContentType[],
   ) => {
     const filtered = contList.filter((filter: FilterContentType) =>
-      filter.filterId.toLocaleLowerCase().includes(text.toLocaleLowerCase())
+      filter.filterId.toLocaleLowerCase().includes(text.toLocaleLowerCase()),
     );
     setFilteredContentsList(filtered);
   };
